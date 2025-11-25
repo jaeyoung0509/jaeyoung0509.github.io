@@ -1,0 +1,33 @@
+package templates
+
+import (
+"github.com/jaeyoung0509/myblog/internal/content"
+"fmt"
+)
+
+templ Index(posts []content.Post) {
+@Layout("jaeyoung0509") {
+<div class="search-container">
+	<input type="text" id="search-input" placeholder="Search posts..." />
+</div>
+<div class="posts-list" id="posts-list">
+	for _, post := range posts {
+	<article class="post-preview" data-title={ post.Title } data-tags={ fmt.Sprintf("%v", post.Tags) }>
+		<h2><a href={ templ.SafeURL(fmt.Sprintf("/posts/%s/", post.Slug)) }>{ post.Title }</a></h2>
+		<div class="meta">
+			<time>{ post.Date.Format("January 02, 2006") }</time>
+			if len(post.Tags) > 0 {
+			<span class="tags">
+				for _, tag := range post.Tags {
+				<a href={ templ.SafeURL(fmt.Sprintf("/?q=%s", tag)) } class="tag">#{ tag }</a>
+				}
+			</span>
+			}
+		</div>
+		<p class="description">{ post.Description }</p>
+	</article>
+	}
+</div>
+<script src="/static/search.js"></script>
+}
+}

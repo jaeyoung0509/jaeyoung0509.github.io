@@ -1,0 +1,57 @@
+package templates
+
+templ Layout(title string) {
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>{ title }</title>
+	<link rel="stylesheet" href="/static/style.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+	<div class="container">
+		<header>
+			<nav>
+				<a href="/" class="logo">jaeyoung0509</a>
+			</nav>
+		</header>
+		<main>
+			{ children... }
+		</main>
+		<footer>
+			<p>&copy; 2025 jaeyoung0509.</p>
+		</footer>
+	</div>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			document.querySelectorAll('pre').forEach(pre => {
+				const button = document.createElement('button');
+				button.className = 'copy-button';
+				button.innerText = 'Copy';
+
+				button.addEventListener('click', () => {
+					const code = pre.querySelector('code').innerText;
+					navigator.clipboard.writeText(code).then(() => {
+						button.innerText = 'Copied!';
+						button.classList.add('copied');
+						setTimeout(() => {
+							button.innerText = 'Copy';
+							button.classList.remove('copied');
+						}, 2000);
+					});
+				});
+
+				pre.appendChild(button);
+			});
+		});
+	</script>
+</body>
+
+</html>
+}

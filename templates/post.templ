@@ -1,0 +1,29 @@
+package templates
+
+import (
+"fmt"
+"github.com/jaeyoung0509/myblog/internal/content"
+)
+
+templ Post(post content.Post) {
+@Layout(post.Title) {
+<article class="post-full">
+	<header>
+		<h1>{ post.Title }</h1>
+		<div class="meta">
+			<time>{ post.Date.Format("January 02, 2006") }</time>
+			if len(post.Tags) > 0 {
+			<span class="tags">
+				for _, tag := range post.Tags {
+				<a href={ templ.SafeURL(fmt.Sprintf("/?q=%s", tag)) } class="tag">#{ tag }</a>
+				}
+			</span>
+			}
+		</div>
+	</header>
+	<div class="content">
+		@templ.Raw(string(post.Content))
+	</div>
+</article>
+}
+}

@@ -1,0 +1,15 @@
+# Build outputs
+dist/
+
+# Temporary files
+tmp/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
