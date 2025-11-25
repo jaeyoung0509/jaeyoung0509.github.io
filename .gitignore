@@ -13,3 +13,6 @@ tmp/
 # IDE
 .vscode/
 .idea/
+
+# ETC
+todo.md
