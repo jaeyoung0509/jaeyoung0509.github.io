@@ -12,16 +12,18 @@ description: "Software Engineer with 3+ years in FinTech (BNPL/Payments)"
       <span>&bull;</span>
       <a href="https://github.com/jaeyoung0509" target="_blank" rel="noopener">GitHub</a>
       <span>&bull;</span>
-      <span class="location">London, UK (YMS — No sponsorship required)</span>
+      <a href="/static/cv_jaeyoung_lee.pdf" target="_blank" class="download-link" aria-label="Download PDF Resume">Download PDF</a>
+      <span>&bull;</span>
+      <span class="location">London, UK &mdash; UK Youth Mobility Visa (expires Oct 2027, no sponsorship required)</span>
     </div>
   </div>
 </div>
 
 ## About
 
-I am a Software Engineer with 3+ years of experience in FinTech (BNPL/Payments), specializing in building highly scalable, event-driven AWS serverless microservices. My primary toolchain includes **Python** and **Go**, designing robust distributed systems with DynamoDB single-table design and resilient async workflows via EventBridge, SQS, and DynamoDB Streams. 
+I am a Software Engineer with 3+ years of experience in FinTech (BNPL/Payments). Working in an early-stage startup environment, I have developed a self-driven, agile approach to engineering&mdash;balancing the need to rapidly adapt to shifting business requirements with the strict reliability and compliance standards required in the financial domain.
 
-I strongly advocate for Domain-Driven Design (DDD), Event Storming, and Hexagonal (Ports & Adapters) Architecture to isolate domain logic from infrastructural constraints.
+My primary toolchain includes **Python** and **Go**. I specialize in building scalable, event-driven AWS serverless microservices and designing resilient async workflows via EventBridge, SQS, and DynamoDB Streams. I strongly advocate for Domain-Driven Design (DDD) and Hexagonal (Ports & Adapters) Architecture to isolate core domain logic from infrastructural constraints, ensuring systems remain adaptable yet robust.
 
 ---
 
@@ -38,7 +40,7 @@ I strongly advocate for Domain-Driven Design (DDD), Event Storming, and Hexagona
   </div>
   <div class="skill-category">
     <h3>Infrastructure & AWS</h3>
-    <p>Lambda, EventBridge, SQS/SNS, DynamoDB, API Gateway, Terraform</p>
+    <p>Lambda, EventBridge, SQS/SNS, DynamoDB, API Gateway, AWS CDK</p>
   </div>
   <div class="skill-category">
     <h3>Architecture</h3>
@@ -61,6 +63,7 @@ I strongly advocate for Domain-Driven Design (DDD), Event Storming, and Hexagona
     <li>Standardised Chalice-based services (API + event handlers) as the primary runtime across cross-functional engineering teams.</li>
     <li>Maintained robust operational hygiene for PostgreSQL and DynamoDB, optimizing single-table designs strictly against access patterns.</li>
     <li>Re-architected legacy services into Hexagonal Architecture, significantly reducing blast radius and improving unit testability.</li>
+    <li>Integrated external APIs across diverse partner industries, seamlessly incorporating third-party services for identity verification and credit scoring into the core workflow.</li>
     <li>Mitigated Lambda cold-start impact on critical payment paths by implementing shared Lambda Layers and intelligent traffic-warming schedules.</li>
   </ul>
 </div>

@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 10pt;
+  line-height: 1.5;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 {
+  font-size: 22pt;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+  color: #000;
+}
+
+h2 {
+  font-size: 11pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #555;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+}
+
+h3 {
+  font-size: 11pt;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  color: #1a1a1a;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+h2, h3 {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Keep each project block together */
+h3 + p,
+h3 + p + p,
+h3 + p + p + p,
+h3 + p + p + ul {
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+ul, li {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+p {
+  margin-bottom: 6px;
+  color: #333;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+strong {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+em {
+  font-style: italic;
+  color: #555;
+  font-size: 9.5pt;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 14px 0;
+}
+
+ul {
+  padding-left: 18px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+li {
+  margin-bottom: 3px;
+  color: #333;
+}
+
+/* First paragraph after h1 acts as the subtitle/tagline */
+h1 + p {
+  font-size: 10.5pt;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+/* Contact info line */
+h1 + p + p {
+  font-size: 9pt;
+  color: #666;
+  margin-bottom: 2px;
+}
+h1 + p + p + p {
+  font-size: 8.5pt;
+  color: #888;
+  margin-bottom: 0;
+}
