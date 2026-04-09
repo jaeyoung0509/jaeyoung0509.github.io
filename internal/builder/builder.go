@@ -26,21 +26,47 @@ func Build() error {
 		return fmt.Errorf("failed to copy static: %w", err)
 	}
 
-	// 3. Parse posts
+	// 3. Parse posts and pages
 	posts, err := content.ParsePosts("content/posts")
 	if err != nil {
 		return fmt.Errorf("failed to parse posts: %w", err)
 	}
+	pages, err := content.ParsePosts("content/pages")
+	if err != nil {
+		return fmt.Errorf("failed to parse pages: %w", err)
+	}
 
-	// 4. Generate Index
+	var aboutPage content.Post
+	for _, p := range pages {
+		if p.Slug == "about" {
+			aboutPage = p
+			break
+		}
+	}
+
+	// 4. Generate Landing Page (About)
 	f, err := os.Create("dist/index.html")
 	if err != nil {
 		return fmt.Errorf("failed to create index.html: %w", err)
 	}
 	defer f.Close()
 
-	if err := templates.Index(posts).Render(context.Background(), f); err != nil {
+	if err := templates.Page(aboutPage).Render(context.Background(), f); err != nil {
 		return fmt.Errorf("failed to render index: %w", err)
+	}
+
+	// 4.1 Generate Blog Listing (/blog/index.html)
+	if err := os.MkdirAll("dist/blog", 0755); err != nil {
+		return fmt.Errorf("failed to create dist/blog: %w", err)
+	}
+	fBlog, err := os.Create("dist/blog/index.html")
+	if err != nil {
+		return fmt.Errorf("failed to create blog index.html: %w", err)
+	}
+	defer fBlog.Close()
+
+	if err := templates.Index(posts).Render(context.Background(), fBlog); err != nil {
+		return fmt.Errorf("failed to render blog index: %w", err)
 	}
 
 	// 4.5 Generate search.json

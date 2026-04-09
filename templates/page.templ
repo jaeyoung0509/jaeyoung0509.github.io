@@ -1,0 +1,13 @@
+package templates
+
+import "github.com/jaeyoung0509/myblog/internal/content"
+
+templ Page(post content.Post) {
+	@Layout(post.Title) {
+		<article class="page-full">
+			<div class="content">
+				@templ.Raw(string(post.Content))
+			</div>
+		</article>
+	}
+}
