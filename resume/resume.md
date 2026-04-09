@@ -8,10 +8,11 @@ stylesheet: resume.css
 
 # Jaeyoung Lee
 
-**Software Engineer (Python / Go / TypeScript) | FinTech Payments & BNPL**
+**Software Engineer — Python / Go / TypeScript | FinTech Payments & BNPL**
 
-London, UK — UK Youth Mobility Visa, expires Oct 2027 (no sponsorship required)
-LinkedIn: https://www.linkedin.com/in/jaeyoung-lee-72908227a/ · GitHub: https://github.com/jaeyoung0509
+London, UK &nbsp;·&nbsp; UK Youth Mobility Visa, expires Oct 2027 &nbsp;·&nbsp; No sponsorship required
+
+[linkedin.com/in/jaeyoung-lee-72908227a](https://www.linkedin.com/in/jaeyoung-lee-72908227a/) &nbsp;·&nbsp; [github.com/jaeyoung0509](https://github.com/jaeyoung0509)
 
 ---
 

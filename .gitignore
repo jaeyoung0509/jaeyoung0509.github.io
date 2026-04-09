@@ -1,5 +1,6 @@
 # Build outputs
 dist/
+resume/resume.pdf
 
 # Temporary files
 tmp/
