@@ -12,6 +12,8 @@ description: "Software Engineer with 3+ years in FinTech (BNPL/Payments)"
       <span>&bull;</span>
       <a href="https://github.com/jaeyoung0509" target="_blank" rel="noopener">GitHub</a>
       <span>&bull;</span>
+      <a href="mailto:ejaebbang@gmail.com">ejaebbang@gmail.com</a>
+      <span>&bull;</span>
       <a href="/static/cv_jaeyoung_lee.pdf" target="_blank" class="download-link" aria-label="Download PDF Resume">Download PDF</a>
       <span>&bull;</span>
       <span class="location">London, UK &mdash; UK Youth Mobility Visa (expires Oct 2027, no sponsorship required)</span>

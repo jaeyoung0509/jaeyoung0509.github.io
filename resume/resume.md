@@ -13,7 +13,8 @@ stylesheet: resume.css
 London, UK &nbsp;·&nbsp; UK Youth Mobility Visa, expires Oct 2027 &nbsp;·&nbsp; No sponsorship required
 
 LinkedIn: [linkedin.com/in/jaeyoung-lee-72908227a](https://www.linkedin.com/in/jaeyoung-lee-72908227a/)  
-GitHub: [github.com/jaeyoung0509](https://github.com/jaeyoung0509)
+GitHub: [github.com/jaeyoung0509](https://github.com/jaeyoung0509)  
+Email: [ejaebbang@gmail.com](mailto:ejaebbang@gmail.com)
 
 ---
 
