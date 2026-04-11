@@ -6,8 +6,6 @@ tags: [coding-agent, llm, dev-productivity]
 draft: false
 ---
 
-# 5 Principles Learned After Burning $1,000 on LLM Coding Agents
-
 Cursor, Claude Code, Codex, Ollama Cloud...
 I get pulled into new tools embarrassingly easily, what we call being "thin-eared" in Korean, so I have tried just about every coding agent that got popular.
 If I add up the receipts, I have probably spent around **$1,000** on this ecosystem.

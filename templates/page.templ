@@ -5,7 +5,7 @@ import "github.com/jaeyoung0509/myblog/internal/content"
 templ Page(post content.Post) {
 	@Layout(post.Title) {
 		<article class="page-full">
-			<div class="content">
+			<div class="prose prose-slate max-w-none prose-a:text-brand-text prose-a:underline prose-a:decoration-black/30 hover:prose-a:text-brand-accent hover:prose-a:decoration-brand-accent prose-pre:bg-[#F4F2EE] prose-pre:text-brand-text prose-pre:border prose-pre:border-brand-border prose-img:rounded-md prose-blockquote:border-l-brand-border prose-blockquote:text-brand-sub prose-blockquote:font-normal prose-blockquote:not-italic">
 				@templ.Raw(string(post.Content))
 			</div>
 		</article>

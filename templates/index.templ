@@ -7,24 +7,24 @@ import (
 
 templ Index(posts []content.Post) {
 @Layout("jaeyoung0509") {
-<div class="search-container">
-	<input type="text" id="search-input" placeholder="Search posts..." />
+<div class="mb-12">
+	<input type="text" id="search-input" placeholder="Search posts..." class="w-full py-4 text-lg bg-transparent border-b border-brand-border focus:outline-none focus:border-brand-accent transition-colors placeholder:text-[#B3B0AB]" />
 </div>
-<div class="posts-list" id="posts-list">
+<div class="flex flex-col gap-14" id="posts-list">
 	for _, post := range posts {
 	<article class="post-preview" data-title={ post.Title } data-tags={ fmt.Sprintf("%v", post.Tags) }>
-		<h2><a href={ templ.SafeURL(fmt.Sprintf("/posts/%s/", post.Slug)) }>{ post.Title }</a></h2>
-		<div class="meta">
+		<h2 class="text-2xl font-medium mb-2"><a href={ templ.SafeURL(fmt.Sprintf("/posts/%s/", post.Slug)) } class="text-brand-text hover:text-brand-accent transition-colors no-underline">{ post.Title }</a></h2>
+		<div class="flex items-center gap-4 text-sm text-brand-sub mb-4">
 			<time>{ post.Date.Format("January 02, 2006") }</time>
 			if len(post.Tags) > 0 {
-			<span class="tags">
+			<span class="flex gap-2 flex-wrap">
 				for _, tag := range post.Tags {
-				<a href={ templ.SafeURL(fmt.Sprintf("/?q=%s", tag)) } class="tag">#{ tag }</a>
+				<a href={ templ.SafeURL(fmt.Sprintf("/blog/?q=%s", tag)) } class="bg-black/5 hover:bg-brand-accent/10 text-brand-sub hover:text-brand-accent px-2.5 py-1 rounded text-xs font-medium transition-colors no-underline">#{ tag }</a>
 				}
 			</span>
 			}
 		</div>
-		<p class="description">{ post.Description }</p>
+		<p class="text-brand-sub m-0">{ post.Description }</p>
 	</article>
 	}
 </div>

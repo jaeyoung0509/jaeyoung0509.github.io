@@ -6,8 +6,6 @@ tags: [coding-agent, ai-agent, developer-tools, session-migration, mcp]
 draft: false
 ---
 
-# How Coding-Agent Sessions Actually Work (and How to Bridge Them)
-
 Many developers, me included, move between AI coding agents like Claude Code, Gemini CLI, Codex CLI, and OpenCode depending on cost and the kind of work in front of them. I might use a stronger model for architecture work, then switch to a cheaper, faster one for long editing passes.
 
 The annoying part is the "context-switch tax." Every time I change agents, I lose task state, tool context, project-specific instructions, and MCP setup, which are the exact things that made the previous session useful.

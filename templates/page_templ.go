@@ -43,7 +43,7 @@ func Page(post content.Post) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"page-full\"><div class=\"content\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<article class=\"page-full\"><div class=\"prose prose-slate max-w-none prose-a:text-brand-text prose-a:underline prose-a:decoration-black/30 hover:prose-a:text-brand-accent hover:prose-a:decoration-brand-accent prose-pre:bg-[#F4F2EE] prose-pre:text-brand-text prose-pre:border prose-pre:border-brand-border prose-img:rounded-md prose-blockquote:border-l-brand-border prose-blockquote:text-brand-sub prose-blockquote:font-normal prose-blockquote:not-italic\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

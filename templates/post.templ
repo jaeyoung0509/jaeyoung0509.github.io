@@ -8,20 +8,20 @@ import (
 templ Post(post content.Post) {
 @Layout(post.Title) {
 <article class="post-full">
-	<header>
-		<h1>{ post.Title }</h1>
-		<div class="meta">
+	<header class="mb-12 pb-6 border-b border-brand-border">
+		<h1 class="text-4xl font-semibold leading-tight tracking-tight mb-4 text-brand-text">{ post.Title }</h1>
+		<div class="flex items-center gap-5 flex-wrap text-sm text-brand-sub">
 			<time>{ post.Date.Format("January 02, 2006") }</time>
 			if len(post.Tags) > 0 {
-			<span class="tags">
+			<span class="flex gap-2 flex-wrap">
 				for _, tag := range post.Tags {
-				<a href={ templ.SafeURL(fmt.Sprintf("/?q=%s", tag)) } class="tag">#{ tag }</a>
+				<a href={ templ.SafeURL(fmt.Sprintf("/blog/?q=%s", tag)) } class="bg-black/5 hover:bg-brand-accent/10 text-brand-sub hover:text-brand-accent px-2.5 py-1 rounded text-xs font-medium transition-colors no-underline">#{ tag }</a>
 				}
 			</span>
 			}
 		</div>
 	</header>
-	<div class="content">
+	<div class="prose prose-slate max-w-none prose-a:text-brand-text prose-a:underline prose-a:decoration-black/30 hover:prose-a:text-brand-accent hover:prose-a:decoration-brand-accent prose-pre:bg-[#F4F2EE] prose-pre:text-brand-text prose-pre:border prose-pre:border-brand-border prose-img:rounded-md prose-blockquote:border-l-brand-border prose-blockquote:text-brand-sub prose-blockquote:font-normal prose-blockquote:not-italic">
 		@templ.Raw(string(post.Content))
 	</div>
 </article>

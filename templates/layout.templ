@@ -15,20 +15,48 @@ templ Layout(title string) {
 	<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+	<script>
+		tailwind.config = {
+			theme: {
+				extend: {
+					fontFamily: {
+						sans: ['Pretendard', 'Inter', 'sans-serif'],
+					},
+					colors: {
+						brand: {
+							bg: '#FAF9F6',
+							text: '#2D2A26',
+							sub: '#66635F',
+							accent: '#D35400',
+							border: '#E8E5DF'
+						}
+					}
+				}
+			}
+		}
+	</script>
 </head>
 
-<body>
-	<div class="container">
-		<header>
-			<div class="nav-links">
-				<a href="/" class="nav-link">About</a>
-				<a href="/blog/" class="nav-link">Blog</a>
+<body class="bg-brand-bg text-brand-text font-sans antialiased leading-relaxed">
+	<div class="max-w-3xl mx-auto px-6 py-16">
+		<header class="flex justify-between items-center mb-16">
+			<div class="flex gap-6 items-center">
+				<a href="/" class="flex items-center gap-1.5 font-medium text-brand-sub hover:text-brand-accent transition-colors text-[0.95rem]">
+					<i data-lucide="user" class="w-4 h-4"></i>
+					<span>About</span>
+				</a>
+				<a href="/blog/" class="flex items-center gap-1.5 font-medium text-brand-sub hover:text-brand-accent transition-colors text-[0.95rem]">
+					<i data-lucide="book-open" class="w-4 h-4"></i>
+					<span>Blog</span>
+				</a>
 			</div>
 		</header>
 		<main data-aos="fade-up" data-aos-duration="800">
 			{ children... }
 		</main>
-		<footer>
+		<footer class="mt-24 pt-8 border-t border-brand-border text-brand-sub text-sm">
 			<p>&copy; 2026 jaeyoung0509.</p>
 		</footer>
 	</div>
@@ -37,22 +65,25 @@ templ Layout(title string) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
 	<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+	<script src="https://unpkg.com/lucide@latest"></script>
 	<script>
 		AOS.init({ once: true });
+		lucide.createIcons();
 		document.addEventListener('DOMContentLoaded', () => {
 			document.querySelectorAll('pre').forEach(pre => {
+				pre.classList.add('group', 'relative');
 				const button = document.createElement('button');
-				button.className = 'copy-button';
+				button.className = 'absolute top-2 right-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 transition-all font-sans z-10';
 				button.innerText = 'Copy';
 
 				button.addEventListener('click', () => {
 					const code = pre.querySelector('code').innerText;
 					navigator.clipboard.writeText(code).then(() => {
 						button.innerText = 'Copied!';
-						button.classList.add('copied');
+						button.classList.add('!bg-brand-accent', '!border-brand-accent');
 						setTimeout(() => {
 							button.innerText = 'Copy';
-							button.classList.remove('copied');
+							button.classList.remove('!bg-brand-accent', '!border-brand-accent');
 						}, 2000);
 					});
 				});

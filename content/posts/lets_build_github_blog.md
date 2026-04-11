@@ -5,8 +5,6 @@ description: How I built a simple static blog with Go, Templ, Goldmark, and GitH
 tags: [go, templ, tutorial, github-pages, static-site-generator]
 ---
 
-# Building a Static Site Generator with Go & Templ
-
 This post walks through the small static site generator behind this blog. The stack is simple on purpose: Go handles the build step, Templ renders HTML, and GitHub Actions takes care of deployment.
 
 ## Tech Stack
