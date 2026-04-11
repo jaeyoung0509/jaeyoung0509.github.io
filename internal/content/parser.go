@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting/v2"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"gopkg.in/yaml.v3"
@@ -24,6 +25,7 @@ type Post struct {
 	Tags        []string      `yaml:"tags"`
 	Slug        string        `yaml:"-"`
 	Content     template.HTML `yaml:"-"`
+	ReadingTime int           `yaml:"-"`
 }
 
 func ParsePosts(dir string) ([]Post, error) {
@@ -53,10 +55,26 @@ func ParsePosts(dir string) ([]Post, error) {
 			return fmt.Errorf("failed to parse frontmatter in %s: %w", path, err)
 		}
 
+		// Calculate reading time
+		wordCount := len(bytes.Fields(parts[2]))
+		readingTime := wordCount / 200
+		if readingTime == 0 {
+			readingTime = 1
+		}
+		post.ReadingTime = readingTime
+
 		// Parse Markdown
 		var buf bytes.Buffer
 		md := goldmark.New(
-			goldmark.WithParserOptions(parser.WithAttribute()),
+			goldmark.WithExtensions(
+				highlighting.NewHighlighting(
+					highlighting.WithStyle("dracula"),
+				),
+			),
+			goldmark.WithParserOptions(
+				parser.WithAttribute(),
+				parser.WithAutoHeadingID(),
+			),
 			goldmark.WithRendererOptions(html.WithUnsafe()),
 		)
 		if err := md.Convert(parts[2], &buf); err != nil {

@@ -7,11 +7,13 @@ import (
 
 templ Post(post content.Post) {
 @Layout(post.Title) {
-<article class="post-full">
+<article class="post-full relative">
 	<header class="mb-12 pb-6 border-b border-brand-border">
 		<h1 class="text-4xl font-semibold leading-tight tracking-tight mb-4 text-brand-text">{ post.Title }</h1>
 		<div class="flex items-center gap-5 flex-wrap text-sm text-brand-sub">
 			<time>{ post.Date.Format("January 02, 2006") }</time>
+			<span>&middot;</span>
+			<span>{ fmt.Sprintf("%d min read", post.ReadingTime) }</span>
 			if len(post.Tags) > 0 {
 			<span class="flex gap-2 flex-wrap">
 				for _, tag := range post.Tags {
@@ -21,9 +23,18 @@ templ Post(post content.Post) {
 			}
 		</div>
 	</header>
-	<div class="prose prose-slate max-w-none prose-a:text-brand-text prose-a:underline prose-a:decoration-black/30 hover:prose-a:text-brand-accent hover:prose-a:decoration-brand-accent prose-pre:bg-[#F4F2EE] prose-pre:text-brand-text prose-pre:border prose-pre:border-brand-border prose-img:rounded-md prose-blockquote:border-l-brand-border prose-blockquote:text-brand-sub prose-blockquote:font-normal prose-blockquote:not-italic">
+	<div class="prose prose-slate max-w-none w-full min-w-0 prose-a:text-brand-text prose-a:underline prose-a:decoration-black/30 hover:prose-a:text-brand-accent hover:prose-a:decoration-brand-accent prose-pre:shadow-sm prose-pre:rounded-xl prose-pre:text-[13.5px] prose-code:bg-black/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:font-normal prose-code:before:content-none prose-code:after:content-none prose-img:rounded-md prose-blockquote:border-l-brand-border prose-blockquote:text-brand-sub prose-blockquote:font-normal prose-blockquote:not-italic">
 		@templ.Raw(string(post.Content))
 	</div>
+	
+	<!-- Table of Contents Sidebar -->
+	<aside class="hidden xl:block absolute left-full top-0 w-64 pl-12 h-full z-10" style="margin-top: 10rem;">
+		<div class="sticky top-24">
+			<h3 class="font-semibold text-sm uppercase tracking-wider text-brand-sub mb-4">Table of Contents</h3>
+			<nav id="toc" class="text-sm flex flex-col gap-2.5 text-brand-sub max-h-[80vh] overflow-y-auto pr-4"></nav>
+		</div>
+	</aside>
 </article>
+<script src="/static/post.js" defer></script>
 }
 }
