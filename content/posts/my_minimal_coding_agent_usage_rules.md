@@ -1,223 +1,223 @@
 ---
 title: "5 Lessons Learned After Burning $1,000 on LLM Coding Agents"
 date: 2025-12-09T21:00:00Z
-description: "Five principles I established to maintain code quality and sanity while using AI coding assistants."
+description: "The five rules I ended up with after spending too much money on AI coding agents."
 tags: [coding-agent, llm, dev-productivity]
 draft: false
 ---
 
 # 5 Principles Learned After Burning $1,000 on LLM Coding Agents
 
-Cursor, Claude Code, Codex, Ollama Cloud…
-I'm confusingly easily tempted by new tech trends ("thin ears," as we say in Korea), so I've tried almost every popular coding agent out there.
-If I gather all my payment receipts, I've probably burned through about **$1,000** in this ecosystem.
+Cursor, Claude Code, Codex, Ollama Cloud...
+I get pulled into new tools embarrassingly easily, what we call being "thin-eared" in Korean, so I have tried just about every coding agent that got popular.
+If I add up the receipts, I have probably spent around **$1,000** on this ecosystem.
 
-The result? **It's true that I benefited significantly.**
+And yes, I got real value out of it.
 
-- When I had to build an in-house backoffice as a backend/cloud engineer, I was able to push through the frontend work with the help of LLMs.
-- For complex Excel generation features where cell positioning is critical, the code generation accuracy of LLMs helped me finish much faster than expected.
+- When I had to build an internal backoffice as a backend and cloud engineer, LLMs helped me get through the frontend work without getting stuck.
+- When I worked on Excel generation features where exact cell placement mattered, they helped me finish much faster than I expected.
 
-However, as I started breaking my own rules one by one, the number of days I spent **"stuck to my chair until dawn"** noticeably increased.
-Codes that I skimmed over, thinking *"Eh, it probably wrote it well,"* started rolling like a snowball, eventually exploding all at once. And the responsibility was 100% mine.
+But once I started relaxing my own rules, I also started collecting more nights where I was still in the chair until dawn.
+Code I skimmed with, *"It probably did this right,"* in mind quietly piled up, then blew up all at once. And when that happens, the responsibility is still mine.
 
-This post is a memo to remind myself of the **five principles** I organized during that process, and a small warning to others walking a similar path.
+This post is mostly a memo to myself. If you are walking a similar path, maybe it will save you a few painful nights too.
 
 ---
 
 ## 1. Break Issues Down. Then Break Them Down Further.
 
-Nowadays, models like Gemini 3 Pro are long-distance runners with **context windows up to 1M tokens**.
-Naturally, you might think:
+Models like Gemini 3 Pro now come with **context windows up to 1M tokens**.
+That naturally makes you think:
 
-> "Let's just dump the entire codebase and requirements and finish this in one shot."
+> "Let's just dump the whole codebase and the requirements in once and finish this in one shot."
 
-But this turned out to be the **perfect recipe for disaster** (or as we say, "the ship goes to the mountain").
+In practice, that turned out to be a very reliable way to make a mess.
 
-- If you cram requirements, design, implementation, refactoring, and bug fixes into a single chat, you can't trace **why a decision was made** later.
-- When you look back at the conversation thinking, "Why is the code like this?", you only face a scrolling hell.
-- When there's too much to review, you naturally start thinking, "I'll test/review it all at once later..." and eventually, you don't.
+- If you mix requirements, design, implementation, refactoring, and bug fixes in one chat, it gets very hard to trace **why a decision was made** later.
+- When you come back wondering, "Why is the code like this?", all you get is an endless scroll.
+- When the review surface gets too large, you start telling yourself, "I'll test and review it all at once later," and that usually means you never do.
 
-So now, I deliberately split tasks like this:
+So now I split work much more aggressively:
 
 - **Chat 1:** Design only.
 - **Chat 2:** Implement **one core endpoint** based on that design.
-- **Chat 3:** Write **test codes** for that endpoint only.
+- **Chat 3:** Write **tests** for that endpoint only.
 
 **Why this works:**
-1. I can fully follow the context of the conversation.
-2. I can enforce "Review & Test" as a mandatory step for each stage.
-3. If a problem occurs later, it's much easier to pinpoint which layer went wrong.
+1. I can actually follow the context of the conversation.
+2. I can make review and testing a required step for each stage.
+3. If something goes wrong later, it is much easier to see which layer went wrong.
 
-Just because the context window gets bigger, **doesn't mean the human working memory gets bigger.**
+Just because the context window gets bigger, **does not mean human working memory gets bigger too.**
 
-Instead of aiming for a "Wow, it worked in one shot!" moment by throwing in complex tasks, it was much safer to work in **units that I could fully take responsibility for**.
+Chasing the "wow, it worked in one shot" moment was a bad trade. Working in **units I can fully understand and own** has been much safer.
 
 ---
 
 ## 2. The Moment I Pretend to Know When I Don't, It Gets Dangerous
 
-Honestly, models these days feel **much smarter than me in many areas**.
+Honestly, models now feel **smarter than me in a lot of areas**.
 
-They bring in library combinations or patterns I've never used, sometimes generating code that makes me think, *"Wait, this is possible?"*
+They bring in library combinations or patterns I have never used before, and sometimes they produce code that makes me think, *"Wait, you can do that?"*
 The problem starts right after that.
 
-- "Wow... doesn't it know better than me?"
-- "With this quality, I can probably just trust it, right?"
-- "Maybe I don't need to understand every single line..."
+- "Maybe it really does know better than me."
+- "With output like this, maybe I can just trust it."
+- "Maybe I do not need to understand every line."
 
-The moment I think this, I enter the **"I don't really know, but I'll pretend I do"** mode.
+That is the exact moment I slip into **"I do not really get this, but I will act like I do"** mode.
 
-**But what if an outage happens?**
-- Customers, the company, and colleagues only see "the person who merged this."
-- "The LLM wrote it, so I don't know" is not an excuse.
-- The responsibility **always returns to me**.
+**And if there is an outage?**
+- Customers, the company, and coworkers only see the person who merged it.
+- "The LLM wrote it, so I do not know" is not an excuse.
+- The responsibility **comes back to me every time**.
 
-So I constantly tell myself:
+So I keep repeating the same rule to myself:
 - **Balance convenience with responsibility.**
-- If I don't understand, admit "I don't know" and ask:
-  - "Explain why you chose this pattern."
-  - "Explain this step-by-step as if I'm debugging it."
-  - "Refactor this into a simpler version that I can understand at a glance."
+- If I do not understand something, admit that and ask:
+  - "Why did you choose this pattern?"
+  - "Walk me through this step by step as if we were debugging it."
+  - "Refactor this into a simpler version I can understand at a glance."
 
-Studies show that while AI code generation boosts productivity, vague requirements or lack of understanding can lead to increased **bugs and security issues**.
+AI code generation absolutely helps with productivity, but vague requirements and shallow understanding still turn into **bugs and security problems**.
 
-> "Just because the model looks smarter than me doesn't mean it takes responsibility for me."
+> "Just because the model looks smarter than me does not mean it takes responsibility for me."
 
-The moment I forget this, the LLM stops being a tool and becomes a risk.
+The moment I forget that, the LLM stops being a tool and starts becoming a liability.
 
 ---
 
-## 3. Sometimes I Don't Even Know What I'm Doing (Organize Thoughts First)
+## 3. Sometimes I Don't Even Know What I'm Doing, So I Organize My Thoughts First
 
-Working on projects, I often hit moments like:
-- "Why am I designing the backoffice this way?"
-- "Is this actually a feature the user needs?"
-- "I don't even know where this current task ends..."
+In the middle of a project, I often hit moments like:
+- "Why am I designing this backoffice this way?"
+- "Does the user actually need this feature?"
+- "I do not even know where this task really ends."
 
-If I run a coding agent in this state, it usually **amplifies the confusion**.
+If I throw a coding agent at the problem in that state, it usually **amplifies the confusion**.
 
-So these days, I separate **"Thinking LLMs"** from **"Coding Agents"**.
+So now I separate **thinking models** from **coding agents**.
 
 **My workflow:**
-- **Gemini 3 Pro + Antigravity (Thinking)**
-  - Great for emergent ideas, overall structure, design, extracting PRDs, and code reviews.
-  - I throw in scattered memos and requirements and ask, *"Organize this into a PRD format."*
-- **Coding Agents (Execution)**
-  - Only after the Design/PRD is set, I entrust the implementation of specific endpoints or features.
+- **Gemini 3 Pro + Antigravity (thinking)**
+  - Good for messy ideas, overall structure, design, turning notes into PRDs, and code review.
+  - I throw in scattered notes and requirements, then ask it to organize them into something I can actually work from.
+- **Coding agents (execution)**
+  - Only after the design or PRD is clear do I hand off the implementation of a specific endpoint or feature.
 
 **Sequence:**
-1. Confused thoughts & requirements → Let LLM "Organize Thoughts" first.
-2. Only after a PRD/Design exists → Ask the Coding Agent for actual code.
+1. Confused thoughts and rough requirements, let an LLM organize them first.
+2. Once a PRD or design exists, ask the coding agent for actual code.
 
-As LLMs become more powerful, the **"time spent organizing what to order"** feels increasingly important.
-
----
-
-## 4. Humans & LLMs Both Make Mistakes (Why Prompting & Verification Matter)
-
-No matter how good the models get, they eventually **make mistakes, just like humans**.
-
-- They still occasionally bring up outdated syntax.
-  - Example: Using `from typing import List` (old style) instead of `list`, or using deprecated APIs.
-- They sometimes reference legacy code or old examples, bringing along **anti-patterns** embedded in them.
-
-Risks increase when **Agents/Tools** are involved.
-- In environments like MCP or Antigravity, the AI becomes an entity that **directly executes commands**.
-- A wrong command can cause significant damage. (There are cases where automated execution modes wiped out a developer's drive).
-
-**My Principles:**
-
-1. **Prompting Still Matters.**
-   - "Write based on the latest Python version."
-   - "Use `list[int]` style instead of old generic syntax where possible."
-   - "Follow the existing code style of this project."
-2. **Execute Critical Commands Myself.**
-   - I never let agents automatically execute `rm`, `DROP TABLE`, or expensive batch jobs.
-   - I allow agents to **propose** commands, but I stick to the rule that **I press the Enter key**.
-3. **rust Tools, But Don't Blindly Faith.**
-   - Even if I put the whole codebase in context or read real-time info via MCP, I always double-check: *"Did this tool work exactly as I intended?"*
-
-As models improve, the **temptation to skip verification** grows. Overcoming that temptation is ultimately the human's job.
+As models get stronger, the time spent deciding **what to ask for** matters more, not less.
 
 ---
 
-## 5. LLMs Are Better at "New Generation" Than "Massive Refactoring"
+## 4. Humans and LLMs Both Make Mistakes, So Prompting and Verification Still Matter
 
-Using LLMs, there's a strong temptation to say:
+No matter how capable the models get, they still **make mistakes, just like people do**.
 
-> "Refactor this entire repo structure into a new pattern."
+- They still bring up outdated syntax from time to time.
+  - Example: using `from typing import List` instead of `list`, or reaching for deprecated APIs.
+- They also pull in legacy code and old examples, including the **anti-patterns** buried inside them.
 
-Modern models can actually do this to some extent.
-The problem is: **Can the human keep up with that change?**
+The risk gets higher once **agents and tools** enter the picture.
+- In setups like MCP or Antigravity, the AI is no longer just suggesting code, it can **run commands directly**.
+- One bad command can do real damage. There are already cases where automated execution modes wiped out a developer's drive.
 
-- When multiple files change at once:
-  - Some context is missed.
-  - Some files remain with old premises.
-  - It looks clean on the surface but often loses internal consistency.
-- Massive changes are nightmares to review. You end up merging with a "Looks okay..." attitude and get hit by the aftermath later.
+**My principles:**
 
-**My Approach:**
-- LLMs are stronger at **creating small, fresh tasks** than **massive file/folder updates**.
-- So I assign tasks in **small, broken-down units**:
-  - One Service
-  - One Endpoint
-  - One Test File
-- Thoroughly reviewing and testing these small units is much better for mental health.
+1. **Prompting still matters.**
+   - "Write this against the latest Python version."
+   - "Use `list[int]` style instead of the older generic syntax when possible."
+   - "Follow the existing code style in this project."
+2. **I execute critical commands myself.**
+   - I do not let agents auto-run `rm`, `DROP TABLE`, or expensive batch jobs.
+   - Agents can suggest commands, but I keep the rule that **I press Enter myself**.
+3. **Use tools, but do not trust them blindly.**
+   - Even when I load the full codebase into context or use MCP for live data, I still double-check whether the tool actually did what I meant.
 
-I've come to feel that the true strength of LLMs is:
-> Not "Perfect result in one shot,"
-> But "Quickly creating multiple drafts for the human to choose and modify."
+As models improve, the temptation to skip verification gets stronger. Resisting that temptation is still the human part of the job.
+
+---
+
+## 5. LLMs Are Better at Fresh Generation Than Massive Refactoring
+
+Once you get used to LLMs, it is very tempting to say:
+
+> "Refactor this whole repo into a new pattern."
+
+Modern models can sometimes pull that off.
+The real question is different: **can the human reviewing it keep up?**
+
+- When many files change at once:
+  - Context gets dropped.
+  - Some files keep old assumptions.
+  - Things look clean on the surface, but the internal logic often stops lining up.
+- Huge changes are miserable to review. You end up merging with a vague "looks fine" feeling, then pay for it later.
+
+**My approach:**
+- LLMs are better at **small, new tasks** than at **sweeping repo-wide rewrites**.
+- So I break work into smaller units:
+  - One service
+  - One endpoint
+  - One test file
+- Reviewing and testing those small units thoroughly is much better for my sanity.
+
+At this point, I think the real strength of LLMs is this:
+> Not "a perfect result in one shot,"
+> But "several fast drafts that a human can choose from and reshape."
 
 ---
 
 ## Bonus: My Current LLM Setup (Late 2025)
 
-I tend to move around tools like a nomad, so this might not be permanent. But here is my setup as of late 2025—what I actually pay for and how I use it.
+I move between tools pretty often, so this setup will probably change. Still, this is what I was actually paying for and using in late 2025.
 
 ### Paid Subscriptions
 - **ChatGPT Plus (~$20/mo):**
-  - **Role:** Knowledge Partner, Language Tutor.
-  - Used for reading/understanding dev docs, creating interview questions, and correcting English phrasing.
+  - **Role:** Knowledge partner, language tutor.
+  - I use it for reading docs, preparing interview questions, and cleaning up English phrasing.
 - **Google AI One / Pro (~$20/mo range):**
-  - Includes Gemini App, NotebookLM, media generation.
-  - Main access to **Gemini 3 Pro**, used in combination with tools like Antigravity.
+  - Includes the Gemini app, NotebookLM, and media generation.
+  - This is my main way into **Gemini 3 Pro**, usually alongside tools like Antigravity.
 
 ### IDE / Agent Environment
 - **Antigravity (IDE):**
-  - Google subscriptions (Pro/Ultra) open up higher rate limits.
-  - **Feel:** I rarely feel "quota anxiety" while coding. Great for batching Search + Edit + Refactor requests with local codebase context.
-  - **Caution:** Powerful, so I am careful with the **auto-command execution mode**.
+  - Google subscriptions like Pro or Ultra open up higher rate limits.
+  - **Feel:** I rarely feel quota anxiety there. It is good for batching search, edit, and refactor requests against a local codebase.
+  - **Caution:** It is powerful, so I am careful with auto-command execution.
 - **Codex Family (ChatGPT / GPT Agents):**
-  - Strong at **deterministic and complex tasks**.
-  - Huge help in Excel generation or strict spreadsheet formatting jobs ("Equation X in exact Cell Y").
+  - Strong at **deterministic and detail-heavy tasks**.
+  - Especially helpful for Excel generation or spreadsheet formatting jobs where details have to land in exact cells.
 - **Gemini 3 Pro (via Antigravity):**
-  - Best for **emergent tasks**, design, structural understanding, and code review.
-  - My go-to for structuring scattered ideas into PRDs.
+  - Best for **emergent work**, design, structural understanding, and code review.
+  - It is usually my first pick when I need to turn scattered ideas into a PRD.
 - **Claude 4.5 Family (via Antigravity):**
-  - Good balance of speed/cost/performance for standard tasks (refactoring, docs, simple code gen).
-  - The "helper I can use without overthinking" vibe.
+  - A good speed, cost, and performance balance for standard work like refactoring, docs, and straightforward code generation.
+  - It feels like the helper I can reach for without overthinking it.
 
 ### ChatGPT Plus Position
-- It's my **"Thinking Partner"** rather than just a coder.
-- Learning new tech, refining blog drafts, discussing architecture tradeoffs.
-- It clarifies *me* more than it writes code.
+- It is more of a **thinking partner** than just a coding tool for me.
+- I use it when learning new tech, refining blog drafts, or talking through architecture tradeoffs.
+- It often helps me clarify my own thinking more than it writes production code.
 
 ---
 
 ## Conclusion
 
-It took burning $1,000 to see these clearly:
+It took burning $1,000 for these to really sink in:
 
-1. **Split issues into smaller chunks.** (Design/Implement/Test).
-2. **Pretending to know what you don't will haunt you.** (Convenience vs. Responsibility).
-3. **Organize thoughts first.** (PRD first, Code second).
-4. **Everyone mistakes.** (Prompt carefully, verify execution).
-5. **generate Fresh > Massive Update.** (Small tasks + Thorough Review).
+1. **Split the work into smaller chunks.** Design, implement, test.
+2. **Pretending to understand what you do not understand will come back to bite you.**
+3. **Organize your thoughts first.** PRD first, code second.
+4. **Everyone makes mistakes.** Prompt carefully, verify carefully.
+5. **Small, fresh work beats giant refactors.**
 
-Thanks to LLM agents, I can definitely build **more things, faster**.
-But that requires me to uphold **stronger principles and attitudes**.
+LLM agents absolutely let me build **more, faster**.
+But that only works if I hold myself to **stricter standards**.
 
-> Even if an outage happens or a PR is reverted,
-> **The responsibility always lies with the human.**
+> Even if there is an outage or a PR gets reverted,
+> **the responsibility still sits with the human.**
 
-Keeping that in mind, I plan to happily keep burning money on coding agents while updating my principles.
+That part is not changing, so I will probably keep burning money on coding agents while updating my rules as I go.

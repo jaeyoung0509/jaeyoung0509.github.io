@@ -1,24 +1,24 @@
 ---
 title: Building a Static Site Generator with Go & Templ
 date: 2025-11-25T21:00:00Z
-description: A complete technical guide to building a static blog from scratch using Go, Templ, Goldmark, and GitHub Actions.
+description: How I built a simple static blog with Go, Templ, Goldmark, and GitHub Actions.
 tags: [go, templ, tutorial, github-pages, static-site-generator]
 ---
 
 # Building a Static Site Generator with Go & Templ
 
-In this guide, I'll walk you through building a fully-functional static site generator from scratch. We'll cover every feature in detail, from Markdown parsing to automated deployment.
+This post walks through the small static site generator behind this blog. The stack is simple on purpose: Go handles the build step, Templ renders HTML, and GitHub Actions takes care of deployment.
 
 ## Tech Stack
 
-- **Go**: Fast, statically-typed language perfect for build tools
-- **Templ**: Type-safe HTML templating that compiles to Go code
-- **Goldmark**: Markdown parser with extensibility
-- **GitHub Actions**: CI/CD for automated deployment
+- **Go**: A good fit for a small build tool, fast to compile and easy to ship as one binary
+- **Templ**: HTML templates that compile to Go, which keeps rendering explicit and typed
+- **Goldmark**: A Markdown parser that is straightforward to extend when needed
+- **GitHub Actions**: Enough CI/CD to build and publish the site without extra moving parts
 
 ## 1. Markdown Parsing with Goldmark
 
-Our blog posts are written in Markdown with YAML frontmatter. Here's how we parse them:
+Posts live in Markdown files with YAML frontmatter. Here is the shape of the parser:
 
 ### Post Structure
 
@@ -91,15 +91,15 @@ func ParsePosts(dir string) ([]Post, error) {
 }
 ```
 
-**Key Features:**
-- Supports YAML frontmatter for metadata
-- Uses `html.WithUnsafe()` to allow raw HTML/iframes for YouTube embeds
-- Automatically generates slug from filename
-- Sorts posts by date
+**What this gives us:**
+- YAML frontmatter for metadata
+- `html.WithUnsafe()` so raw HTML and embeds still work
+- Slugs generated from filenames
+- Posts sorted by date
 
 ## 2. Templ Templates
 
-Templ provides type-safe HTML generation. Here are our three main templates:
+Templ handles HTML generation. The templates are small enough that the rendering logic stays easy to follow.
 
 ### Layout Template
 
@@ -164,14 +164,14 @@ templ Post(post content.Post) {
 }
 ```
 
-**Key Features:**
+**What matters here:**
 - Tags are clickable links that filter the home page
-- Uses `templ.Raw()` to render HTML content from Goldmark
-- Type-safe: compiler catches errors like missing fields
+- `templ.Raw()` renders the HTML produced by Goldmark
+- Template mistakes show up at compile time instead of at runtime
 
 ## 3. Build System
 
-The builder orchestrates the entire site generation:
+The builder ties the whole pipeline together:
 
 ```go
 // internal/builder/builder.go
@@ -242,7 +242,7 @@ func generateSearchIndex(posts []content.Post) error {
 
 ## 4. Client-Side Search
 
-We implement instant search using vanilla JavaScript:
+Search is handled with a small bit of vanilla JavaScript:
 
 ```javascript
 // static/search.js
@@ -284,15 +284,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-**Key Features:**
-- Real-time filtering as you type
-- Searches both title and tags
-- URL-based filtering: clicking a tag adds `?q=tagname` to URL
-- No backend required - pure client-side
+**What it does:**
+- Filters as you type
+- Searches both titles and tags
+- Supports URL-based filtering, so clicking a tag adds `?q=tagname`
+- Needs no backend, everything runs client-side
 
 ## 5. Tag System
 
-Tags are implemented as clickable links that filter posts:
+Tags are just links that feed back into the same client-side filtering:
 
 ### In Templates
 
@@ -313,14 +313,14 @@ Tags are implemented as clickable links that filter posts:
 </article>
 ```
 
-**How it works:**
+**Flow:**
 1. Each tag is a link to `/?q=tagname`
 2. The search script reads the `?q` parameter
 3. Posts are filtered to show only those with matching tags
 
 ## 6. Copy Button for Code Blocks
 
-We dynamically inject copy buttons into all code blocks:
+I also inject copy buttons into code blocks:
 
 ```javascript
 // In templates/layout.templ <script> tag
@@ -347,15 +347,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
-**Features:**
-- Button appears on hover
-- Uses Clipboard API
-- Visual feedback ("Copied!") for 2 seconds
-- No copy-paste library needed
+**What it gives us:**
+- A button that shows up on hover
+- Clipboard API support without an extra library
+- Small visual feedback for two seconds after copying
 
 ## 7. Development Workflow
 
-We use Air for live reloading during development:
+For local development, I use Air for live reloading:
 
 ```toml
 # .air.toml
@@ -387,11 +386,11 @@ func main() {
 1. `air` watches for file changes
 2. Runs `templ generate` to compile templates
 3. Rebuilds and restarts dev server
-4. Browser auto-refreshes
+4. The browser refreshes with the rebuilt output
 
 ## 8. GitHub Actions Deployment
 
-Automated deployment to GitHub Pages:
+Deployment is handled with GitHub Actions:
 
 ```yaml
 # .github/workflows/deploy.yml
@@ -433,16 +432,14 @@ jobs:
 1. Create repository as `username.github.io`
 2. Push code to `main` branch
 3. Go to Settings → Pages → Source → GitHub Actions
-4. Done! Every push auto-deploys
+4. From there, every push deploys automatically
 
 ## Conclusion
 
-This blog system demonstrates:
-- **Type Safety**: Templ catches template errors at compile time
-- **Performance**: Go builds are blazing fast
-- **Simplicity**: No JavaScript framework needed
-- **Extensibility**: Easy to add features like comments, dark mode, etc.
+This setup works well for me because:
+- **Type safety:** Templ catches template mistakes at compile time
+- **Fast builds:** Go keeps the generation step quick
+- **Simplicity:** The site works without a frontend framework
+- **Room to grow:** It is easy to add comments, dark mode, or other extras later
 
-The entire codebase is simple, maintainable, and completely yours to customize.
-
-Happy blogging! 🚀
+More than anything, I like that the whole codebase is easy to read and easy to own.

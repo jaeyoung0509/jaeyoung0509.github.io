@@ -8,7 +8,7 @@ stylesheet: resume.css
 
 # Jaeyoung Lee
 
-**Software Engineer — Python / Go / TypeScript | FinTech Payments & BNPL**
+**Software Engineer, Python / Go / TypeScript | FinTech Payments & BNPL**
 
 London, UK &nbsp;·&nbsp; UK Youth Mobility Visa, expires Oct 2027 &nbsp;·&nbsp; No sponsorship required
 
@@ -20,9 +20,9 @@ Email: [ejaebbang@gmail.com](mailto:ejaebbang@gmail.com)
 
 ## About
 
-Software Engineer with 3+ years of experience in FinTech (BNPL/Payments). Working in an early-stage startup environment, I have developed a self-driven, agile approach to engineering — balancing the need to rapidly adapt to shifting business requirements with the strict reliability and compliance standards required in the financial domain.
+Software engineer with 3+ years of experience in FinTech, mainly around BNPL and payments. Working in an early-stage startup environment taught me how to move quickly while still respecting the reliability and compliance standards that financial products require.
 
-My primary toolchain includes **Python** and **Go**. I specialize in building scalable, event-driven AWS serverless microservices and designing resilient async workflows via EventBridge, SQS, and DynamoDB Streams. I strongly advocate for Domain-Driven Design (DDD) and Hexagonal Architecture to isolate core domain logic from infrastructural constraints. I am also comfortable working cross-functionally with product, operations, and business stakeholders, contributing through code review and sprint-based delivery in fast-moving teams.
+My primary toolchain is **Python** and **Go**. I mainly build event-driven AWS serverless services and async workflows around EventBridge, SQS, and DynamoDB Streams. I tend to use Domain-Driven Design (DDD) and Hexagonal Architecture to keep core domain logic clean as infrastructure changes. I also work closely with product, operations, and business stakeholders, contributing through code review and sprint-based delivery.
 
 ---
 
@@ -37,7 +37,7 @@ My primary toolchain includes **Python** and **Go**. I specialize in building sc
 
 ## Experience
 
-### Software Engineer — Finovuslab (FinTech BNPL)
+### Software Engineer, Finovuslab (FinTech BNPL)
 
 *Apr 2022 – Nov 2025 · Seoul, South Korea*
 
@@ -51,38 +51,38 @@ My primary toolchain includes **Python** and **Go**. I specialize in building sc
 
 ## Projects
 
-### Moonberg — FinTech Ops Automation
+### Moonberg, FinTech Ops Automation
 
 *Go, Python, PostgreSQL, Vue.js* · https://moonberg.co.kr/
 
-An automation pipeline actively deployed and utilized in a real accounting firm to capture, parse, and normalise complex Bloomberg Terminal data.
+An automation pipeline used by a real accounting firm to capture, parse, and normalise complex Bloomberg Terminal data.
 
-- **Business Impact:** Reduced manual data entry and reconciliation workloads by 60–80%, minimizing human error in financial reporting.
-- **Architecture:** Python micro-workers for async data capture; Go backend for concurrent core integrations; Vue (TypeScript) for the front-end UI.
+- **Business Impact:** Reduced manual data entry and reconciliation workloads by 60–80%, while cutting down reporting mistakes.
+- **Architecture:** Python micro-workers handle async data capture, the Go backend manages concurrent core integrations, and Vue with TypeScript powers the UI.
 
-### alembic-dump — Open Source Ops Tool
+### alembic-dump, Open Source Ops Tool
 
 *Python, Alembic, PostgreSQL, AWS* · https://github.com/jaeyoung0509/alembic-dump
 
-A data consistency and migration operations tool for resolving conflicting schema updates in parallel delivery environments.
+A data consistency and migration operations tool built to resolve conflicting schema updates in parallel delivery environments.
 
 - Engineered a secure workflow to pull staging DB states into local environments via AWS Secrets Manager and bastion tunneling.
 - Implemented CI/CD guardrails validating downgrade paths to prevent migration hygiene degradation.
 
-### work-bridge — Multi-Agent Workflow Router
+### work-bridge, Multi-Agent Workflow Router
 
 *Go, AI/LLM Tooling, MCP* · https://github.com/jaeyoung0509/work-bridge
 
-A workflow tool for developers using multiple coding agents (Codex, Claude Code, Gemini CLI, OpenCode) to manage costs.
+A workflow tool for developers who move between coding agents like Codex, Claude Code, Gemini CLI, and OpenCode to manage cost and capability tradeoffs.
 
-- Enables seamless import/export for MCP, skills, and project-specific sessions across agents.
-- Streamlines context sharing across discrete agent CLI tools to maintain velocity when switching engines.
+- Supports import and export for MCP, skills, and project-specific sessions across agents.
+- Makes it easier to carry context between agent CLIs without rebuilding the same setup every time.
 
 ---
 
 ## Education
 
-**BEng, Computer Engineering** — Dongyang Mirae University, South Korea (2015 – 2021)
+**BEng, Computer Engineering**, Dongyang Mirae University, South Korea (2015 – 2021)
 *(Excl. mandatory national military service 2016–2018)*
 
-**Engineer Information Processing** — National Professional Certification (South Korea)
+**Engineer Information Processing**, National Professional Certification (South Korea)
