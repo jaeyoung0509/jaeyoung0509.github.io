@@ -9,16 +9,16 @@
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 10pt;
-  line-height: 1.5;
+  line-height: 1.45;
   color: #1a1a1a;
   -webkit-font-smoothing: antialiased;
 }
 
 h1 {
-  font-size: 22pt;
+  font-size: 20pt;
   font-weight: 700;
   letter-spacing: -0.5px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   color: #000;
 }
 
@@ -28,16 +28,16 @@ h2 {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: #555;
-  margin-top: 18px;
-  margin-bottom: 8px;
-  padding-bottom: 4px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  padding-bottom: 2px;
   border-bottom: 1px solid #ddd;
 }
 
 h3 {
   font-size: 11pt;
   font-weight: 600;
-  margin-top: 10px;
+  margin-top: 8px;
   margin-bottom: 2px;
   color: #1a1a1a;
   page-break-after: avoid;
@@ -64,7 +64,7 @@ ul, li {
 }
 
 p {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: #333;
 }
 
@@ -87,17 +87,17 @@ em {
 hr {
   border: none;
   border-top: 1px solid #e0e0e0;
-  margin: 14px 0;
+  margin: 10px 0;
 }
 
 ul {
   padding-left: 18px;
-  margin-top: 4px;
-  margin-bottom: 6px;
+  margin-top: 2px;
+  margin-bottom: 4px;
 }
 
 li {
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   color: #333;
 }
 

@@ -1,7 +1,7 @@
 ---
 pdf_options:
   format: A4
-  margin: 20mm 20mm 20mm 20mm
+  margin: 15mm 15mm 15mm 15mm
   printBackground: true
 stylesheet: resume.css
 ---
@@ -48,10 +48,6 @@ My primary toolchain includes **Python** and **Go**. I specialize in building sc
 - Worked closely with product, operations, and business stakeholders to translate shifting requirements into production-ready payment workflows.
 - Integrated external APIs across diverse partner industries, incorporating third-party services for identity verification and credit scoring into the core workflow.
 - Mitigated Lambda cold-start impact on critical payment paths by implementing shared Lambda Layers and intelligent traffic-warming schedules.
-
----
-
-<div style="page-break-before: always;"></div>
 
 ## Projects
 
