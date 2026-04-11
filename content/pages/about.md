@@ -23,7 +23,7 @@ description: "Software Engineer with 3+ years in FinTech (BNPL/Payments)"
 
 I am a Software Engineer with 3+ years of experience in FinTech (BNPL/Payments). Working in an early-stage startup environment, I have developed a self-driven, agile approach to engineering&mdash;balancing the need to rapidly adapt to shifting business requirements with the strict reliability and compliance standards required in the financial domain.
 
-My primary toolchain includes **Python** and **Go**. I specialize in building scalable, event-driven AWS serverless microservices and designing resilient async workflows via EventBridge, SQS, and DynamoDB Streams. I strongly advocate for Domain-Driven Design (DDD) and Hexagonal (Ports & Adapters) Architecture to isolate core domain logic from infrastructural constraints, ensuring systems remain adaptable yet robust.
+My primary toolchain includes **Python** and **Go**. I specialize in building scalable, event-driven AWS serverless microservices and designing resilient async workflows via EventBridge, SQS, and DynamoDB Streams. I strongly advocate for Domain-Driven Design (DDD) and Hexagonal (Ports & Adapters) Architecture to isolate core domain logic from infrastructural constraints, ensuring systems remain adaptable yet robust. I am also comfortable working cross-functionally with product, operations, and business stakeholders, contributing through code review and sprint-based delivery in fast-moving teams.
 
 ---
 
@@ -60,9 +60,10 @@ My primary toolchain includes **Python** and **Go**. I specialize in building sc
   </div>
   <ul>
     <li>Operated 13 AWS serverless microservices, leveraging EventBridge &rarr; SQS and DynamoDB Streams to decouple domains and orchestrate async workflows.</li>
-    <li>Standardised Chalice-based services (API + event handlers) as the primary runtime across cross-functional engineering teams.</li>
+    <li>Standardised Chalice-based services (API + event handlers) as the primary runtime across engineering teams, helping keep sprint delivery and code review conventions consistent.</li>
     <li>Maintained robust operational hygiene for PostgreSQL and DynamoDB, optimizing single-table designs strictly against access patterns.</li>
     <li>Re-architected legacy services into Hexagonal Architecture, significantly reducing blast radius and improving unit testability.</li>
+    <li>Worked closely with product, operations, and business stakeholders to translate shifting requirements into production-ready payment workflows.</li>
     <li>Integrated external APIs across diverse partner industries, seamlessly incorporating third-party services for identity verification and credit scoring into the core workflow.</li>
     <li>Mitigated Lambda cold-start impact on critical payment paths by implementing shared Lambda Layers and intelligent traffic-warming schedules.</li>
   </ul>
