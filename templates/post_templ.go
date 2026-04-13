@@ -139,13 +139,13 @@ func Post(post content.Post) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><!-- Table of Contents Sidebar --><aside class=\"hidden xl:block absolute left-full top-0 w-64 pl-12 h-full z-10\" style=\"margin-top: 10rem;\"><div class=\"sticky top-24\"><h3 class=\"font-semibold text-sm uppercase tracking-wider text-brand-sub mb-4\">Table of Contents</h3><nav id=\"toc\" class=\"text-sm flex flex-col gap-2.5 text-brand-sub max-h-[80vh] overflow-y-auto pr-4\"></nav></div></aside></article><script src=\"/static/post.js\" defer></script>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div><!-- Table of Contents Sidebar --><aside class=\"hidden xl:block absolute left-full top-0 w-64 pl-12 h-full z-10\" style=\"margin-top: 10rem;\"><div class=\"sticky top-24\"><h3 class=\"font-semibold text-sm uppercase tracking-wider text-brand-sub mb-4\">Table of Contents</h3><nav id=\"toc\" class=\"text-sm flex flex-col gap-2.5 text-brand-sub max-h-[80vh] overflow-y-auto pr-4\"></nav></div></aside></article><script src=\"https://unpkg.com/medium-zoom/dist/medium-zoom.min.js\"></script> <script src=\"/static/post.js\" defer></script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout(post.Title).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout(post.Title, post.Description, "/posts/"+post.Slug+"/").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

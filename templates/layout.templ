@@ -1,13 +1,23 @@
 package templates
 
-templ Layout(title string) {
+templ Layout(title, desc, path string) {
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="view-transition" content="same-origin" />
 	<title>{ title }</title>
+	if desc != "" {
+		<meta name="description" content={ desc } />
+		<meta property="og:description" content={ desc } />
+	}
+	<meta property="og:title" content={ title } />
+	<meta property="og:type" content="website" />
+	if path != "" {
+		<meta property="og:url" content={ "https://jaeyoung0509.github.io" + path } />
+	}
 	<link rel="stylesheet" href="/static/style.css" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
@@ -39,6 +49,7 @@ templ Layout(title string) {
 </head>
 
 <body class="bg-brand-bg text-brand-text font-sans antialiased leading-relaxed overflow-x-hidden">
+	<div id="progress-bar" class="fixed top-0 left-0 h-1 bg-brand-accent z-50 transition-all duration-150" style="width: 0%"></div>
 	<div class="max-w-3xl mx-auto px-6 py-16 relative">
 		<header class="flex justify-between items-center mb-16">
 			<div class="flex gap-6 items-center">
@@ -64,6 +75,17 @@ templ Layout(title string) {
 	<script>
 		AOS.init({ once: true });
 		lucide.createIcons();
+
+		// Reading Progress Bar
+		window.addEventListener('scroll', () => {
+			const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+			const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+			const scrolled = (winScroll / height) * 100;
+			const progressBar = document.getElementById('progress-bar');
+			if (progressBar) {
+				progressBar.style.width = scrolled + '%';
+			}
+		});
 	</script>
 </body>
 

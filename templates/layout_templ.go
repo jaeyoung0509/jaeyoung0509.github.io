@@ -8,7 +8,7 @@ package templates
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-func Layout(title string) templ.Component {
+func Layout(title, desc, path string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -29,20 +29,92 @@ func Layout(title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta name=\"view-transition\" content=\"same-origin\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layout.templ`, Line: 10, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layout.templ`, Line: 11, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"stylesheet\" href=\"/static/style.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin=\"anonymous\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap\" rel=\"stylesheet\"><link rel=\"stylesheet\" as=\"style\" crossorigin href=\"https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css\"><link href=\"https://unpkg.com/aos@2.3.1/dist/aos.css\" rel=\"stylesheet\"><script src=\"https://cdn.tailwindcss.com\"></script><script src=\"https://cdn.tailwindcss.com?plugins=typography\"></script><script>\n\t\ttailwind.config = {\n\t\t\ttheme: {\n\t\t\t\textend: {\n\t\t\t\t\tfontFamily: {\n\t\t\t\t\t\tsans: ['Pretendard', 'Inter', 'sans-serif'],\n\t\t\t\t\t},\n\t\t\t\t\tcolors: {\n\t\t\t\t\t\tbrand: {\n\t\t\t\t\t\t\tbg: '#FAF9F6',\n\t\t\t\t\t\t\ttext: '#2D2A26',\n\t\t\t\t\t\t\tsub: '#66635F',\n\t\t\t\t\t\t\taccent: '#D35400',\n\t\t\t\t\t\t\tborder: '#E8E5DF'\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t</script></head><body class=\"bg-brand-bg text-brand-text font-sans antialiased leading-relaxed overflow-x-hidden\"><div class=\"max-w-3xl mx-auto px-6 py-16 relative\"><header class=\"flex justify-between items-center mb-16\"><div class=\"flex gap-6 items-center\"><a href=\"/\" class=\"flex items-center gap-1.5 font-medium text-brand-sub hover:text-brand-accent transition-colors text-[0.95rem]\"><i data-lucide=\"user\" class=\"w-4 h-4\"></i> <span>About</span></a> <a href=\"/blog/\" class=\"flex items-center gap-1.5 font-medium text-brand-sub hover:text-brand-accent transition-colors text-[0.95rem]\"><i data-lucide=\"book-open\" class=\"w-4 h-4\"></i> <span>Blog</span></a></div></header><main data-aos=\"fade-up\" data-aos-duration=\"800\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if desc != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<meta name=\"description\" content=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(desc)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layout.templ`, Line: 13, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"><meta property=\"og:description\" content=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(desc)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layout.templ`, Line: 14, Col: 48}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<meta property=\"og:title\" content=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 string
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layout.templ`, Line: 16, Col: 42}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\"><meta property=\"og:type\" content=\"website\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if path != "" {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<meta property=\"og:url\" content=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("https://jaeyoung0509.github.io" + path)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/layout.templ`, Line: 19, Col: 75}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<link rel=\"stylesheet\" href=\"/static/style.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin=\"anonymous\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap\" rel=\"stylesheet\"><link rel=\"stylesheet\" as=\"style\" crossorigin href=\"https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css\"><link href=\"https://unpkg.com/aos@2.3.1/dist/aos.css\" rel=\"stylesheet\"><script src=\"https://cdn.tailwindcss.com\"></script><script src=\"https://cdn.tailwindcss.com?plugins=typography\"></script><script>\n\t\ttailwind.config = {\n\t\t\ttheme: {\n\t\t\t\textend: {\n\t\t\t\t\tfontFamily: {\n\t\t\t\t\t\tsans: ['Pretendard', 'Inter', 'sans-serif'],\n\t\t\t\t\t},\n\t\t\t\t\tcolors: {\n\t\t\t\t\t\tbrand: {\n\t\t\t\t\t\t\tbg: '#FAF9F6',\n\t\t\t\t\t\t\ttext: '#2D2A26',\n\t\t\t\t\t\t\tsub: '#66635F',\n\t\t\t\t\t\t\taccent: '#D35400',\n\t\t\t\t\t\t\tborder: '#E8E5DF'\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t</script></head><body class=\"bg-brand-bg text-brand-text font-sans antialiased leading-relaxed overflow-x-hidden\"><div id=\"progress-bar\" class=\"fixed top-0 left-0 h-1 bg-brand-accent z-50 transition-all duration-150\" style=\"width: 0%\"></div><div class=\"max-w-3xl mx-auto px-6 py-16 relative\"><header class=\"flex justify-between items-center mb-16\"><div class=\"flex gap-6 items-center\"><a href=\"/\" class=\"flex items-center gap-1.5 font-medium text-brand-sub hover:text-brand-accent transition-colors text-[0.95rem]\"><i data-lucide=\"user\" class=\"w-4 h-4\"></i> <span>About</span></a> <a href=\"/blog/\" class=\"flex items-center gap-1.5 font-medium text-brand-sub hover:text-brand-accent transition-colors text-[0.95rem]\"><i data-lucide=\"book-open\" class=\"w-4 h-4\"></i> <span>Blog</span></a></div></header><main data-aos=\"fade-up\" data-aos-duration=\"800\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +122,7 @@ func Layout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</main><footer class=\"mt-24 pt-8 border-t border-brand-border text-brand-sub text-sm\"><p>&copy; 2026 jaeyoung0509.</p></footer></div><script src=\"https://unpkg.com/aos@2.3.1/dist/aos.js\"></script><script src=\"https://unpkg.com/lucide@latest\"></script><script>\n\t\tAOS.init({ once: true });\n\t\tlucide.createIcons();\n\t</script></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</main><footer class=\"mt-24 pt-8 border-t border-brand-border text-brand-sub text-sm\"><p>&copy; 2026 jaeyoung0509.</p></footer></div><script src=\"https://unpkg.com/aos@2.3.1/dist/aos.js\"></script><script src=\"https://unpkg.com/lucide@latest\"></script><script>\n\t\tAOS.init({ once: true });\n\t\tlucide.createIcons();\n\n\t\t// Reading Progress Bar\n\t\twindow.addEventListener('scroll', () => {\n\t\t\tconst winScroll = document.body.scrollTop || document.documentElement.scrollTop;\n\t\t\tconst height = document.documentElement.scrollHeight - document.documentElement.clientHeight;\n\t\t\tconst scrolled = (winScroll / height) * 100;\n\t\t\tconst progressBar = document.getElementById('progress-bar');\n\t\t\tif (progressBar) {\n\t\t\t\tprogressBar.style.width = scrolled + '%';\n\t\t\t}\n\t\t});\n\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
