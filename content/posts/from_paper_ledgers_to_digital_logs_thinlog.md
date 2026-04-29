@@ -112,8 +112,10 @@ I would also keep tuning the deployment workflow. The current setup was enough t
 
 ## 9. What I Took Away
 
-ThinLog was not a big architecture project. It was a small product experiment built from a news headline, a beta invite, and a real annoyance I kept seeing in the UK.
+ThinLog is still an early side project, so I do not want to overstate what it proves. It is not a validated product yet. But building it gave me a concrete problem to design around: making record capture feel light enough on a phone.
 
-The main lesson for me was simple: the first interaction matters more than the clever part. If the app feels easy to start with, people will try it. If it feels smart but unreliable, they will stop trusting it.
+The biggest takeaway was that the most interesting feature is not always the most useful one. OCR sounded like the obvious centrepiece at first, but real receipts made the trade-off clearer. If the extraction is wrong, the user still has to check everything. That pushed me toward a more manual, review-first flow instead of a fully automated one.
+
+It also reminded me that a small stack can be a product decision, not just a technical one. By keeping the infrastructure simple, I could spend more time on the capture flow, deployment, and the parts of the app that actually shaped the experience.
 
 ThinLog is at [app.thinlog.uk](https://app.thinlog.uk/) if you want to see where it ended up.
