@@ -78,6 +78,15 @@ A workflow tool for developers who move between coding agents like Codex, Claude
 - Supports import and export for MCP, skills, and project-specific sessions across agents.
 - Makes it easier to carry context between agent CLIs without rebuilding the same setup every time.
 
+### ThinLog, Field-First Logging App
+
+*Vue 3, FastAPI, Cloudflare Pages, Cloudflare AI OCR* · https://app.thinlog.uk/
+
+A lightweight mobile-first logging app for UK sole traders, built around MTD-era record capture and rough, on-the-go usage.
+
+- Designed a copy-first OCR flow after real receipt scans proved less reliable than direct auto-fill.
+- Added client-side idempotency keys in `localStorage` to avoid duplicate submissions on unstable mobile connections.
+
 ---
 
 ## Education

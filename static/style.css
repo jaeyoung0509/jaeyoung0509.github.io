@@ -1,3 +1,11 @@
+/* Post media */
+.post-full .prose img,
+.post-full .prose video {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
 /* Print / PDF Generation Styles */
 @media print {
 	body {

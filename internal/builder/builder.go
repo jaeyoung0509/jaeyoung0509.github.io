@@ -25,6 +25,9 @@ func Build() error {
 	if err := copyDir("static", "dist/static"); err != nil {
 		return fmt.Errorf("failed to copy static: %w", err)
 	}
+	if err := copyDirIfExists("content/static", "dist/static"); err != nil {
+		return fmt.Errorf("failed to copy content static: %w", err)
+	}
 
 	// 3. Parse posts and pages
 	posts, err := content.ParsePosts("content/posts")
@@ -127,6 +130,17 @@ func copyDir(src, dst string) error {
 		_, err = io.Copy(dstFile, srcFile)
 		return err
 	})
+}
+
+func copyDirIfExists(src, dst string) error {
+	if _, err := os.Stat(src); err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+
+	return copyDir(src, dst)
 }
 
 func generateSearchIndex(posts []content.Post) error {

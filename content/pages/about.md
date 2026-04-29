@@ -73,7 +73,7 @@ My primary toolchain is **Python** and **Go**. I spend most of my time building 
 
 ---
 
-## Portfolio Showcase
+## Projects
 
 <div class="flex flex-col gap-12 not-prose mt-6">
   <div>
@@ -103,6 +103,16 @@ My primary toolchain is **Python** and **Go**. I spend most of my time building 
     <ul class="list-disc pl-5 text-[0.95rem] text-brand-sub space-y-2.5">
       <li>Supports <strong class="text-brand-text font-semibold">import and export</strong> for MCP (Model Context Protocol), skills, and project-specific sessions, which helps avoid vendor and tool lock-in.</li>
       <li>Makes it easier to carry context between agent CLIs without rebuilding the same setup every time.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h3 class="text-xl font-semibold m-0 mb-2 flex items-center gap-1.5"><a href="https://app.thinlog.uk/" target="_blank" rel="noopener" class="text-brand-text hover:text-brand-accent transition-colors no-underline">ThinLog ↗</a><span class="font-normal text-brand-sub text-[1.05rem]">, Field-First Logging App</span></h3>
+    <p class="text-sm font-medium text-brand-sub uppercase tracking-wide mb-4 mt-0">Vue 3, FastAPI, Cloudflare Pages, Cloudflare AI OCR</p>
+    <p class="text-[0.95rem] text-brand-sub mb-4 leading-relaxed">A small mobile-first logging app for UK sole traders, built around MTD-era record capture and rough, on-the-go usage.</p>
+    <ul class="list-disc pl-5 text-[0.95rem] text-brand-sub space-y-2.5">
+      <li>Designed a copy-first OCR flow after real receipt scans proved less reliable than direct auto-fill.</li>
+      <li>Added client-side idempotency keys in <code>localStorage</code> to avoid duplicate submissions on unstable mobile connections.</li>
     </ul>
   </div>
 </div>
