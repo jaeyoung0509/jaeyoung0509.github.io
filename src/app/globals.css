@@ -8,19 +8,19 @@
 
 :root {
   color-scheme: light;
-  --ink: #20201d;
-  --muted: #65645e;
-  --faint: #929089;
-  --line: #dedbd3;
-  --line-strong: #c7c3ba;
-  --surface: #f5f3ee;
-  --surface-strong: #ebe8e0;
-  --page: #fdfcf9;
+  --ink: #1f2421;
+  --muted: #5f6762;
+  --faint: #87908a;
+  --line: #e1e5e2;
+  --line-strong: #c9cfcb;
+  --surface: #f6f8f7;
+  --surface-strong: #ecefed;
+  --page: #ffffff;
   --accent: #176b51;
   --accent-strong: #0f513e;
   --link: #1a5e78;
   --code: #202522;
-  --code-ink: #f2f0e9;
+  --code-ink: #f3f6f4;
   --code-border: #343a36;
   --code-control: #2b312d;
   --code-control-border: #4b554f;

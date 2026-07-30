@@ -37,7 +37,10 @@ export const metadata: Metadata = {
     images: ["/images/editorial-backend-desk.jpg"],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: {
+      url: "/icon.svg",
+      type: "image/svg+xml",
+    },
   },
 };
 

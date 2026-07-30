@@ -17,8 +17,8 @@ Blog's design DNA without copying its page.
 
 ## Theme
 
-- Paper: warm off-white, never pure white.
-- Ink: softened charcoal, never pure black.
+- Paper: clean neutral white with cool-grey secondary surfaces.
+- Ink: high-contrast softened charcoal, never pure black.
 - Accent: deep green used for navigation and small labels only.
 - Rules: hairlines separate sections; cards and decorative containers are avoided.
 
