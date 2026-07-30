@@ -225,7 +225,7 @@ summary {
 
 .header-inner {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   width: min(calc(100% - 40px), var(--max));
   min-height: 78px;
@@ -243,72 +243,17 @@ summary {
   text-decoration: none;
 }
 
-.desktop-nav {
+.header-nav {
   display: flex;
+  justify-content: end;
   gap: 28px;
 }
 
-.desktop-nav a {
+.header-nav a {
   color: var(--muted);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: end;
-  gap: 6px;
-}
-
-.icon-button {
-  display: grid;
-  width: 38px;
-  height: 38px;
-  padding: 0;
-  place-items: center;
-  border: 0;
-  border-radius: 2px;
-  background: transparent;
-  color: var(--muted);
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.icon-button:hover {
-  background: var(--surface);
-  color: var(--ink);
-}
-
-.icon-button:disabled {
-  cursor: default;
-  opacity: 0.6;
-}
-
-.resume-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 38px;
-  padding: 0 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 2px;
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.mobile-menu {
-  display: none;
-}
-
-.mobile-menu summary {
-  list-style: none;
-}
-
-.mobile-menu summary::-webkit-details-marker {
-  display: none;
 }
 
 /* Footer */
@@ -1073,6 +1018,7 @@ summary {
 
 .contact {
   display: flex;
+  flex-wrap: wrap;
   gap: 18px;
   padding-top: 20px;
 }
@@ -1174,7 +1120,7 @@ summary {
   }
 
   .header-inner {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr);
     width: min(calc(100% - 28px), var(--max));
     min-height: 64px;
   }
@@ -1183,44 +1129,8 @@ summary {
     font-size: 20px;
   }
 
-  .desktop-nav,
-  .header-actions > a.icon-button,
-  .resume-link {
-    display: none;
-  }
-
-  .mobile-menu {
-    position: relative;
-    display: block;
-  }
-
-  .mobile-menu nav {
-    position: absolute;
-    top: 48px;
-    right: 0;
-    display: none;
-    width: 190px;
-    padding: 6px 14px;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    background: var(--page);
-    box-shadow: 0 14px 32px var(--shadow);
-  }
-
-  .mobile-menu[open] nav {
-    display: grid;
-  }
-
-  .mobile-menu nav a {
-    padding: 11px 2px;
-    border-bottom: 1px solid var(--line);
-    font-size: 14px;
-    font-weight: 650;
-    text-decoration: none;
-  }
-
-  .mobile-menu nav a:last-child {
-    border: 0;
+  .header-nav {
+    gap: 18px;
   }
 
   .footer-inner {

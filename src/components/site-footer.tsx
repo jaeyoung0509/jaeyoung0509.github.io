@@ -1,5 +1,4 @@
-import { ArrowUpRight, Rss } from "lucide-react";
-import { FaGithub } from "react-icons/fa6";
+import { Rss } from "lucide-react";
 
 export function SiteFooter() {
   return (
@@ -7,9 +6,6 @@ export function SiteFooter() {
       <div className="footer-inner">
         <small>© {new Date().getFullYear()} Jaeyoung Lee</small>
         <div className="footer-links">
-          <a href="https://github.com/jaeyoung0509">
-            <FaGithub size={16} /> GitHub <ArrowUpRight size={13} />
-          </a>
           <a href="/feed.xml">
             <Rss size={16} /> RSS
           </a>

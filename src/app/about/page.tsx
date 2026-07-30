@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, Mail } from "lucide-react";
+import { ArrowUpRight, FileText, Mail } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 
 export const metadata: Metadata = {
@@ -65,10 +65,14 @@ export default function AboutPage() {
           </p>
           <div className="contact">
             <a href="mailto:ejaebbang@gmail.com">
-              <Mail size={17} /> Email <ArrowUpRight size={14} />
+              <Mail size={17} /> ejaebbang@gmail.com
             </a>
             <a href="https://github.com/jaeyoung0509">
-              <FaGithub size={17} /> GitHub <ArrowUpRight size={14} />
+              <FaGithub size={17} /> github.com/jaeyoung0509
+              <ArrowUpRight size={14} />
+            </a>
+            <a href="/files/cv_jaeyoung_lee.pdf">
+              <FileText size={17} /> English CV
             </a>
           </div>
         </div>
