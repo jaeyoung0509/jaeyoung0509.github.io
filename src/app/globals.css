@@ -699,6 +699,13 @@ summary {
   margin: 64px auto 0;
 }
 
+@media (min-width: 1051px) {
+  .article-grid {
+    justify-content: space-between;
+    padding-left: var(--space-2xl);
+  }
+}
+
 .article-toc {
   position: sticky;
   top: var(--space-lg);
@@ -733,16 +740,34 @@ summary {
 }
 
 .article-toc a {
+  position: relative;
   display: block;
   padding: 7px 0 7px 14px;
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
   text-decoration: none;
+  transition: color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
 }
 
 .article-toc a:hover {
   color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.article-toc a.is-active {
+  color: var(--accent-strong);
+  font-weight: 750;
+}
+
+.article-toc a.is-active::before {
+  position: absolute;
+  top: 7px;
+  bottom: 7px;
+  left: -1px;
+  width: 2px;
+  background: var(--accent);
+  content: "";
 }
 
 .article-toc .toc-depth-3 a {
@@ -888,6 +913,35 @@ summary {
   margin: 34px auto;
   border: 1px solid var(--line);
   border-radius: 5px;
+}
+
+.mermaid-diagram {
+  display: grid;
+  place-items: center;
+  margin: 34px 0;
+  padding: var(--space-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.mermaid-diagram > div {
+  width: 100%;
+}
+
+.mermaid-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 680px;
+}
+
+.mermaid-loading {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.mermaid-fallback {
+  margin: 34px 0;
 }
 
 .prose hr {
@@ -1249,6 +1303,10 @@ summary {
 
   .article-grid {
     margin-top: 42px;
+  }
+
+  .mermaid-diagram {
+    padding: var(--space-sm);
   }
 
   .prose {

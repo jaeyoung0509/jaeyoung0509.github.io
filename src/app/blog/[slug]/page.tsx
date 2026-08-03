@@ -13,9 +13,12 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { CodeCopyEnhancer } from "@/components/code-copy-enhancer";
+import { ArticleToc } from "@/components/article-toc";
 import { GiscusComments } from "@/components/giscus-comments";
+import { MermaidDiagram } from "@/components/mermaid-diagram";
 import { getAllPosts, getPost } from "@/lib/posts";
 import { formatDate } from "@/lib/post-shared";
+import { remarkMermaid } from "@/lib/remark-mermaid";
 import { siteConfig } from "@/lib/site";
 
 type PageProps = {
@@ -84,9 +87,10 @@ export default async function PostPage({ params }: PageProps) {
 
   const { content } = await compileMDX({
     source: post.content,
+    components: { MermaidDiagram },
     options: {
       mdxOptions: {
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkGfm, remarkMermaid],
         rehypePlugins: [
           rehypeSlug,
           [rehypeAutolinkHeadings, { behavior: "wrap" }],
@@ -174,23 +178,7 @@ export default async function PostPage({ params }: PageProps) {
 
         <div className="article-grid">
           {post.headings.length > 0 && (
-            <aside className="article-toc">
-              <details open>
-                <summary>이 글의 목차</summary>
-                <nav aria-label="이 글의 목차">
-                  <ol>
-                    {post.headings.map((heading) => (
-                      <li
-                        className={`toc-depth-${heading.depth}`}
-                        key={heading.id}
-                      >
-                        <a href={`#${heading.id}`}>{heading.text}</a>
-                      </li>
-                    ))}
-                  </ol>
-                </nav>
-              </details>
-            </aside>
+            <ArticleToc headings={post.headings} />
           )}
           <div className="prose">{content}</div>
         </div>

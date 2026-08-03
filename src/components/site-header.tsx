@@ -10,7 +10,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="header-inner">
         <Link className="brand" href="/" aria-label="홈">
-          jaeyoung0509
+          jaeyoung lee
         </Link>
 
         <nav className="header-nav" aria-label="주요 메뉴">
