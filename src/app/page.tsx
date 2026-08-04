@@ -1,4 +1,5 @@
 import { PostSearch } from "@/components/post-search";
+import { PageTitle } from "@/components/page-title";
 import { getAllPosts } from "@/lib/posts";
 
 export default function Home() {
@@ -6,9 +7,7 @@ export default function Home() {
 
   return (
     <>
-      <header className="page-header home-header container">
-        <h1>Blog</h1>
-      </header>
+      <PageTitle>Blog</PageTitle>
       <PostSearch posts={posts} />
     </>
   );

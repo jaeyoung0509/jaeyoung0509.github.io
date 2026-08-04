@@ -502,10 +502,6 @@ summary {
   padding: 88px 0 var(--space-lg);
 }
 
-.home-header {
-  padding-bottom: var(--space-md);
-}
-
 .page-header h1 {
   margin: 0;
   font-family: var(--font-display);

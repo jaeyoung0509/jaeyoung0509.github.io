@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PostSearch } from "@/components/post-search";
+import { PageTitle } from "@/components/page-title";
 import { getAllPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -16,9 +17,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <header className="page-header container">
-        <h1>Blog</h1>
-      </header>
+      <PageTitle>Blog</PageTitle>
       <PostSearch posts={posts} />
     </>
   );
