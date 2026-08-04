@@ -17,12 +17,7 @@ export default function BlogPage() {
   return (
     <>
       <header className="page-header container">
-        <p className="eyebrow">Writing</p>
         <h1>Blog</h1>
-        <p>
-          구현 방법만이 아니라 선택의 맥락과 운영 이후의 결과를 함께
-          기록합니다.
-        </p>
       </header>
       <PostSearch posts={posts} />
     </>
