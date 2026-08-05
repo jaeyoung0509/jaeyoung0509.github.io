@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
+    "test": "npm run lint && npm run build && node --test tests/content-rendering.test.mjs",
     "start": "next start",
     "lint": "eslint"
   },

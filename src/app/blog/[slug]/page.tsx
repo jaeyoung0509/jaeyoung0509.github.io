@@ -15,7 +15,8 @@ import remarkGfm from "remark-gfm";
 import { CodeCopyEnhancer } from "@/components/code-copy-enhancer";
 import { ArticleToc } from "@/components/article-toc";
 import { GiscusComments } from "@/components/giscus-comments";
-import { MermaidDiagram } from "@/components/mermaid-diagram";
+import { mdxComponents } from "@/components/mdx-components";
+import { YouTubeEmbed } from "@/components/youtube-embed";
 import { getAllPosts, getPost } from "@/lib/posts";
 import { formatDate } from "@/lib/post-shared";
 import { remarkMermaid } from "@/lib/remark-mermaid";
@@ -43,7 +44,9 @@ export async function generateMetadata({
   const post = getPost(slug);
   if (!post) return {};
 
-  const image = post.cover ?? "/images/editorial-backend-desk.jpg";
+  const image = post.coverYoutubeId
+    ? `https://i.ytimg.com/vi/${post.coverYoutubeId}/hqdefault.jpg`
+    : (post.cover ?? "/images/editorial-backend-desk.jpg");
 
   return {
     title: post.title,
@@ -87,7 +90,7 @@ export default async function PostPage({ params }: PageProps) {
 
   const { content } = await compileMDX({
     source: post.content,
-    components: { MermaidDiagram },
+    components: mdxComponents,
     options: {
       mdxOptions: {
         remarkPlugins: [remarkGfm, remarkMermaid],
@@ -106,7 +109,9 @@ export default async function PostPage({ params }: PageProps) {
     },
   });
 
-  const image = post.cover ?? "/images/editorial-backend-desk.jpg";
+  const image = post.coverYoutubeId
+    ? `https://i.ytimg.com/vi/${post.coverYoutubeId}/hqdefault.jpg`
+    : (post.cover ?? "/images/editorial-backend-desk.jpg");
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -163,7 +168,14 @@ export default async function PostPage({ params }: PageProps) {
           </div>
         </header>
 
-        {post.cover && (
+        {post.coverYoutubeId ? (
+          <div className="article-cover article-video-cover">
+            <YouTubeEmbed
+              videoId={post.coverYoutubeId}
+              title={post.coverYoutubeTitle ?? post.title}
+            />
+          </div>
+        ) : post.cover ? (
           <figure className="article-cover">
             <Image
               src={post.cover}
@@ -174,7 +186,7 @@ export default async function PostPage({ params }: PageProps) {
             />
             {post.coverAlt && <figcaption>{post.coverAlt}</figcaption>}
           </figure>
-        )}
+        ) : null}
 
         <div className="article-grid">
           {post.headings.length > 0 && (

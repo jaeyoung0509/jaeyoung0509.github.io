@@ -93,8 +93,8 @@ export function PostSearch({ posts }: { posts: PostMeta[] }) {
 
       <section className="post-list container" aria-live="polite">
         <p className="result-count">{filtered.length}개의 글</p>
-        {filtered.map((post) => (
-          <PostRow post={post} key={post.slug} />
+        {filtered.map((post, index) => (
+          <PostRow post={post} eager={index < 3} key={post.slug} />
         ))}
         {filtered.length === 0 && (
           <p className="empty-state">검색 조건에 맞는 글이 없습니다.</p>
