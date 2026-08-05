@@ -69,6 +69,12 @@ function toPost(slug: string): Post {
     draft: Boolean(data.draft),
     cover: data.cover ? String(data.cover) : undefined,
     coverAlt: data.coverAlt ? String(data.coverAlt) : undefined,
+    coverYoutubeId: data.coverYoutubeId
+      ? String(data.coverYoutubeId)
+      : undefined,
+    coverYoutubeTitle: data.coverYoutubeTitle
+      ? String(data.coverYoutubeTitle)
+      : undefined,
     readingMinutes: calculateReadingMinutes(content),
     headings: extractHeadings(content),
     content,

@@ -10,6 +10,8 @@ export type PostMeta = {
   draft: boolean;
   cover?: string;
   coverAlt?: string;
+  coverYoutubeId?: string;
+  coverYoutubeTitle?: string;
   readingMinutes: number;
 };
 

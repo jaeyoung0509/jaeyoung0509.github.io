@@ -3,7 +3,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatDate, type PostMeta } from "@/lib/post-shared";
 
-export function PostRow({ post }: { post: PostMeta }) {
+export function PostRow({
+  post,
+  eager = false,
+}: {
+  post: PostMeta;
+  eager?: boolean;
+}) {
+  const coverImage = post.coverYoutubeId
+    ? `https://i.ytimg.com/vi/${post.coverYoutubeId}/hqdefault.jpg`
+    : (post.cover ?? "/images/editorial-backend-desk.jpg");
+
   return (
     <article className="post-row">
       <Link
@@ -12,10 +22,11 @@ export function PostRow({ post }: { post: PostMeta }) {
         aria-label={`${post.title} 읽기`}
       >
         <Image
-          src={post.cover ?? "/images/editorial-backend-desk.jpg"}
-          alt={post.coverAlt ?? ""}
+          src={coverImage}
+          alt={post.coverYoutubeTitle ?? post.coverAlt ?? ""}
           width={1800}
           height={1029}
+          loading={eager ? "eager" : "lazy"}
         />
       </Link>
       <div className="post-date">

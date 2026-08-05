@@ -1,0 +1,337 @@
+---
+title: "Temporal을 활용해 Durable AI Workflow 구현하기"
+description: "단일 프로세스의 Agent loop를 Temporal Workflow로 옮기면 이미 지불한 모델·도구 호출을 어떻게 보존할 수 있는지, 투자 리서치 예제 코드와 함께 살펴봅니다."
+publishedAt: "2026-08-05"
+updatedAt: "2026-08-05"
+tags: ["Temporal", "OpenAI Agents SDK", "AI Agent", "Python", "Durable Execution"]
+locale: "ko"
+featured: true
+draft: false
+coverYoutubeId: "k8cnVCMYmNc"
+coverYoutubeTitle: "OpenAI와 Temporal로 Durable Agent 만들기"
+---
+
+# Temporal을 활용해 Durable AI Workflow 구현하기
+
+OpenAI Agents SDK로 에이전트를 만드는 일은 생각보다 간단합니다. Agent에 instructions와 tools를 넣고 `Runner.run()`을 호출하면 모델 호출, Tool 실행, Handoff가 하나의 Agent loop 안에서 이어집니다.
+
+```python
+result = await Runner.run(
+    starting_agent=orchestrator,
+    input="OpenAI의 투자 정보를 조사해 주세요.",
+)
+
+return result.final_output
+```
+
+프로토타입에서는 이 정도면 충분합니다. 문제는 이 코드가 실제 서비스에서 수천, 수만 개의 장기 실행으로 늘어났을 때입니다.
+
+```text
+모델 호출 1 완료
+→ 검색 API 호출 완료
+→ 모델 호출 2 완료
+→ 문서 3개 수집 완료
+→ 모델 호출 3 완료
+→ 최종 결과를 저장하기 직전에 Worker 종료
+```
+
+마지막 줄에서 실패했지만 비용은 마지막 한 줄에만 들지 않았습니다. 모델 토큰, 검색 API 요금, 외부 서비스의 rate limit, 네트워크 시간, 사용자가 기다린 시간이 모두 앞 단계에 쌓여 있습니다. 프로세스를 처음부터 다시 실행하면 그 비용을 다시 지불해야 하고, 비결정적인 모델과 검색 결과가 이전 실행과 같으리라는 보장도 없습니다.
+
+그래서 프로덕션 Agent에서 신뢰성은 단순히 “재시도한다”는 뜻으로 끝나지 않습니다.
+
+> 실패했을 때 어디부터 다시 시작하며, 이미 성공한 비싼 계산을 얼마나 보존할 수 있는가?
+
+이 글에서는 직접 만든 투자 정보 리서치 예제를 기준으로 OpenAI Agents SDK와 Temporal을 함께 사용하면 이 질문에 어떻게 답할 수 있는지 살펴봅니다. 먼저 공식 Cookbook과 이 글에서 다룰 전체 코드를 함께 열어두면 좋습니다.
+
+<LinkPreview
+  href="https://docs.temporal.io/ai-cookbook/openai-agents-sdk-python"
+  site="Temporal Docs"
+  title="Durable agent with tools using the OpenAI Agents SDK"
+  description="OpenAIAgentsPlugin과 activity_as_tool을 이용해 모델 호출과 Tool 실행을 durable하게 만드는 공식 Python Cookbook입니다."
+/>
+
+<LinkPreview
+  href="https://github.com/jaeyoung0509/temporal-examples/tree/main/react-agents"
+  site="GitHub"
+  title="jaeyoung0509/temporal-examples · react-agents"
+  description="이 글에서 살펴보는 투자 리서치 Agent의 Workflow, Activity, FastAPI, 테스트 전체 코드입니다."
+/>
+
+> **이 글에서 OpenAI가 의미하는 것**
+>
+> 예제는 OpenAI **Agents SDK**의 Agent, Handoff, Runner, tracing 인터페이스를 사용합니다. 실제 모델 호출은 OpenAI 호환 API를 통해 Gemini로 보냅니다. 즉, 에이전트 프레임워크와 모델 제공자는 서로 교체 가능한 별도 경계입니다.
+
+## Agent는 똑똑해졌고, 실행은 길어졌습니다
+
+처음의 LLM 애플리케이션은 prompt 하나를 보내 completion 하나를 받는 짧은 요청에 가까웠습니다. 이후 reasoning과 tools가 붙었고, 이제는 여러 Agent가 Handoff하며 목적을 달성하는 multi-step workflow로 확장되고 있습니다.
+
+OpenAI Agents SDK는 이 구조를 `Agent`, `Handoff`, `Guardrail`, `Session` 같은 작은 primitive로 표현하고 Agent loop의 생명주기를 관리합니다. [OpenAI 공식 문서](https://developers.openai.com/api/docs/guides/agents#compare-the-responses-api-and-agents-sdk)에 따르면 SDK는 Agent loop, multi-agent Handoff, resumable run state, guardrail과 tracing을 제공합니다.
+
+이 추상화 덕분에 Agent를 정의하는 일은 쉬워졌습니다. 하지만 `Runner.run()`을 실행하는 Python 프로세스 자체가 죽지 않는다는 보장은 SDK의 책임이 아닙니다. Agent의 추론이 길어지고 Tool이 늘어날수록 애플리케이션은 모델 하나를 호출하는 코드가 아니라 여러 외부 시스템을 엮는 분산 시스템에 가까워집니다.
+
+여기서 Temporal의 역할이 생깁니다. Temporal은 Agent를 더 영리하게 만들지 않습니다. 대신 실행의 진행 상태를 Event History에 남기고, Worker가 중단되면 그 기록을 replay해 완료된 결과를 재사용하면서 실행을 이어갑니다.
+
+2025년 처음 발표된 Temporal의 OpenAI Agents SDK 통합은 2026년 3월 23일 기준 GA가 되었습니다. 발표 당시 설명과 현재 상태는 [Temporal 공식 발표 글](https://temporal.io/blog/announcing-openai-agents-sdk-integration)에서 함께 확인할 수 있습니다.
+
+<YouTube
+  videoId="k8cnVCMYmNc"
+  title="OpenAI and Temporal: Building Durable, Production Ready Agents"
+  caption="AI Engineer World's Fair — OpenAI Agents SDK 실행을 Temporal Activity로 바꾸는 통합의 배경과 데모입니다."
+/>
+
+## 이번 예제: 투자 정보를 조사하는 ReAct Agent
+
+예제는 회사 이름, 웹사이트, 국가 같은 정보를 받아 투자 내역을 조사합니다. Orchestrator가 회사 식별이 충분한지 판단하고, 모호하면 Clarifier로, 충분하면 Researcher로 Handoff합니다. Researcher는 Firecrawl 검색 Tool을 반복 호출한 뒤 출처가 포함된 `InvestmentSnapshot`을 반환합니다.
+
+```mermaid
+flowchart TD
+    A[POST /investment-research] --> B[Temporal Workflow 시작]
+    B --> C[InvestmentResearchWorkflow]
+    C --> D[OpenAI Agents Runner]
+    D --> E{회사 식별이 명확한가?}
+    E -->|아니요| F[Clarifier로 Handoff]
+    F --> G[needs_clarification]
+    E -->|예| H[Researcher로 Handoff]
+    H --> I[Firecrawl Activity Tool]
+    I --> H
+    H --> J[Structured ResearchOutcome]
+    G --> K[Temporal State]
+    J --> K
+    K --> L[GET으로 상태 조회]
+```
+
+코드의 책임은 다음처럼 나뉩니다.
+
+| 컴포넌트 | 책임 |
+| --- | --- |
+| FastAPI | Workflow를 시작하고 `workflow_id` 반환, 상태 조회 |
+| Temporal Workflow | 실행 상태와 분기, 복구 가능한 orchestration |
+| OpenAI Agents SDK | Agent loop, Tool 선택, Handoff, structured output |
+| Firecrawl Activity | 검색과 문서 수집이라는 비결정적 I/O |
+| Pydantic models | API, Workflow, Tool, 모델 출력 사이의 계약 |
+
+중요한 점은 모든 것을 작은 Activity로 쪼갠 것이 아니라, **다시 실행할 때 비용이 들거나 결과가 달라지는 경계**를 durable하게 만들었다는 것입니다.
+
+## 코드에서 내구성이 생기는 세 지점
+
+### 1. `Runner.run()`은 그대로 Workflow 안에 둡니다
+
+Workflow 코드는 예상보다 작습니다.
+
+```python
+@workflow.defn
+class InvestmentResearchWorkflow:
+    @workflow.run
+    async def run(self, input: ResearchWorkflowInput) -> ResearchJobState:
+        self._set_state(ResearchStatus.RUNNING, ResearchStage.ORCHESTRATING)
+
+        result = await Runner.run(
+            build_orchestrator_agent(input.model),
+            input=_research_prompt(input),
+        )
+
+        outcome = result.final_output_as(
+            ResearchOutcome,
+            raise_if_incorrect_type=True,
+        ).root
+        # clarification 또는 completed 상태 저장
+```
+
+기존 Agents SDK의 프로그래밍 모델을 버리고 별도의 그래프 DSL로 다시 작성하지 않습니다. `OpenAIAgentsPlugin`이 Agents SDK의 모델 호출을 Temporal Activity로 실행하도록 연결합니다.
+
+```python
+def openai_agents_plugin() -> OpenAIAgentsPlugin:
+    return OpenAIAgentsPlugin(
+        model_params=ModelActivityParameters(
+            start_to_close_timeout=timedelta(minutes=2),
+        )
+    )
+```
+
+같은 plugin 설정을 API의 Temporal Client와 Worker 양쪽에 등록합니다. 모델 호출이 Activity 경계를 가지므로 완료된 응답은 Workflow History와 연결되고, Workflow replay 중에는 모델을 무조건 다시 호출하는 대신 기록된 완료 결과를 사용합니다.
+
+### 2. 외부 검색은 `activity_as_tool`로 감쌉니다
+
+Research Agent가 사용하는 Firecrawl은 네트워크 I/O이고 요금과 rate limit이 있는 외부 서비스입니다. 따라서 일반 `@function_tool`이 아니라 Temporal Activity로 정의한 뒤 Agent Tool로 노출합니다.
+
+```python
+def _search_tool() -> Tool:
+    return activity_as_tool(
+        firecrawl_search_activity,
+        start_to_close_timeout=timedelta(minutes=3),
+        summary=(
+            "Search the web with Firecrawl and return "
+            "source-backed markdown documents."
+        ),
+    )
+```
+
+```python
+@activity.defn(name="firecrawl_search")
+def firecrawl_search(request: FirecrawlSearchRequest) -> FirecrawlSearchResult:
+    pages = client.search(
+        request.query,
+        limit=request.limit,
+        scrape_limit=request.scrape_limit,
+    )
+    return build_firecrawl_search_result(
+        request,
+        pages,
+        retrieved_at=datetime.now(UTC),
+    )
+```
+
+`datetime.now()`와 HTTP 호출은 replay되어야 하는 Workflow 안이 아니라 Activity 안에 있습니다. 반대로 Workflow에서 필요한 시간은 `workflow.now()`를 사용합니다. 이 구분은 취향이 아니라 Temporal의 replay가 동일한 Command 순서를 만들어야 한다는 결정성 규칙 때문입니다.
+
+### 3. 경계의 입출력을 Pydantic으로 닫습니다
+
+모델 출력은 `completed`와 `needs_clarification`의 discriminated union입니다.
+
+```python
+ResearchOutcomeValue = Annotated[
+    CompletedResearchOutcome | ClarificationResearchOutcome,
+    Field(discriminator="status"),
+]
+
+class ResearchOutcome(RootModel[ResearchOutcomeValue]):
+    pass
+```
+
+Firecrawl 역시 `FirecrawlSearchRequest`와 `FirecrawlSearchResult`를 사용합니다. 타입이 있다고 사실성이 자동으로 보장되지는 않지만, 최소한 완료된 단계의 결과가 어떤 모양인지, 다음 단계가 무엇을 받을지, replay할 때 어떤 값을 복원해야 하는지가 명확해집니다.
+
+## 실제로 실패하면 어디서 재개될까요?
+
+“Temporal을 붙이면 실패 지점부터 재개한다”는 표현은 편리하지만 조금 더 정확할 필요가 있습니다. Temporal의 복구 단위는 임의의 Python 한 줄이 아니라 **Workflow History에 완료가 기록된 durable boundary**입니다.
+
+| 실패 시점 | 이 예제에서 일어나는 일 |
+| --- | --- |
+| Firecrawl Activity가 완료된 뒤 Worker 종료 | 완료 결과를 History에서 읽으므로 같은 Tool 호출을 다시 실행하지 않고 다음 Agent turn을 이어감 |
+| Firecrawl Activity 실행 도중 Worker 종료 | 완료 기록이 없으므로 Activity가 다시 시도될 수 있음. 현재 Activity가 검색과 scrape를 함께 하므로 둘 다 재실행될 수 있음 |
+| 모델 Activity 완료 뒤 Workflow Worker 종료 | 저장된 모델 결과를 replay하고 다음 분기부터 계속 진행 |
+| 모델 호출 도중 timeout 또는 rate limit | Activity retry 정책의 범위에서 모델 호출을 다시 시도. 실패한 요청의 과금 여부는 모델 제공자 정책에 따름 |
+| 최종 결과의 schema 검증이 계속 실패 | 해당 Agent/모델 Activity가 성공하지 못한 것이므로 무한히 공짜로 복구되는 것이 아님. 재시도 상한과 fallback이 필요 |
+
+핵심은 “어떤 실패도 정확히 한 줄 뒤에서 재개된다”가 아닙니다.
+
+> 이미 성공했다고 기록된 모델·Tool 호출은 재사용하고, 완료되지 않은 Activity만 정책에 따라 다시 실행할 수 있다는 것이 정확한 설명입니다.
+
+이 차이를 알고 Activity 크기를 정해야 합니다. Firecrawl 검색과 각 문서 scrape를 서로 다른 비용·복구 단위로 운영하고 싶다면 현재 하나인 Activity를 더 나눌 수 있습니다. 반대로 너무 잘게 나누면 History와 운영 복잡성이 커집니다. Activity는 함수 크기가 아니라 **retry와 비용을 함께 묶어도 되는 업무 단위**여야 합니다.
+
+## 실행 하나가 사라지지 않는 작업이 됩니다
+
+API는 리서치가 끝날 때까지 HTTP 연결을 붙잡지 않습니다. Workflow를 시작하고 `202 Accepted`와 ID를 반환합니다.
+
+```python
+workflow_id = f"investment-research-{uuid4()}"
+
+await temporal_client.start_workflow(
+    InvestmentResearchWorkflow.run,
+    workflow_input,
+    id=workflow_id,
+    task_queue=settings.temporal_task_queue,
+)
+
+return ResearchJobResponse(
+    workflow_id=workflow_id,
+    status=ResearchStatus.QUEUED,
+)
+```
+
+클라이언트는 ID로 상태를 조회합니다. Workflow의 local state는 Query로 외부에 노출됩니다.
+
+```python
+@workflow.query
+def get_state(self) -> ResearchJobState:
+    return self._state
+```
+
+이렇게 되면 Agent 실행은 한 번의 함수 호출이 아니라 이름을 가진 작업이 됩니다. Worker를 여러 개 띄우면 같은 Task Queue의 작업을 나눠 처리할 수 있고, 특정 Worker가 죽어도 실행의 소유권이 그 프로세스와 함께 사라지지 않습니다.
+
+다만 “수천, 수만 개로 확장된다”는 말에는 조건이 붙습니다. Worker 수, Task Queue backlog, provider rate limit, Temporal Namespace 용량, payload 크기와 비용 예산을 함께 설계해야 합니다. multi-tenant 환경이라면 큰 고객의 작업이 Queue를 독점하지 않도록 Task Queue Fairness 같은 운영 정책도 검토해야 합니다.
+
+## Temporal을 붙여도 아직 부족한 것들
+
+이 예제는 durable한 실행의 뼈대를 보여주지만, 그대로 프로덕션 완성품이라고 부르기는 어렵습니다.
+
+### API 요청 자체는 아직 멱등하지 않습니다
+
+`POST`마다 서버가 새 UUID를 만들기 때문에 클라이언트가 응답을 받지 못해 같은 요청을 재전송하면 Workflow가 두 개 생길 수 있습니다. 클라이언트의 idempotency key나 비즈니스 request ID를 Workflow ID로 사용하고, 중복 시작 정책을 명시해야 합니다.
+
+### Tool의 side effect는 여전히 애플리케이션 책임입니다
+
+현재 Firecrawl 검색은 읽기 작업이라 중복 실행의 위험이 비교적 작습니다. 하지만 결제, 이메일 발송, 티켓 생성 같은 Tool은 Activity가 재시도되어도 중복 실행되지 않도록 외부 시스템의 idempotency key, deduplication table, reconciliation이 필요합니다. Temporal이 외부 시스템의 exactly-once side effect까지 만들어 주지는 않습니다.
+
+### Agent 비용의 상한이 없습니다
+
+예제에는 요청당 `max_turns`, 최대 검색 횟수, token budget, 최대 비용이 명시되어 있지 않습니다. timeout은 느리거나 멈춘 호출을 제한할 뿐, Agent가 정상적으로 너무 오래 탐색하는 문제를 막지 못합니다.
+
+```text
+max_turns
+max_searches
+max_sources
+max_source_chars
+token / cost budget
+workflow execution timeout
+```
+
+이 값들은 단순 설정이 아니라 제품 정책에 가깝습니다. 예산을 넘기기 전에 축약 결과를 반환할지, 사람에게 승인을 요청할지, 실패로 끝낼지를 정해야 합니다.
+
+### History와 payload는 무한하지 않습니다
+
+`SourceDocument.markdown`은 문서마다 최대 12,000자를 담습니다. 검색이 반복되면 모델 입력과 Activity 결과가 Workflow History에 빠르게 쌓일 수 있습니다. 큰 원문은 object storage에 저장하고 Workflow에는 `source_id`, object key, hash, 짧은 excerpt만 남기는 편이 안전합니다. 긴 세션이라면 context trimming과 Continue-As-New도 필요합니다.
+
+### “추가 정보를 달라”에서 실행이 끝납니다
+
+현재 Clarifier가 질문을 반환하면 Workflow는 `needs_clarification` 상태로 종료됩니다. 사용자가 답한 뒤 같은 실행을 이어 가는 human-in-the-loop는 아직 없습니다. Temporal Update나 Signal을 받아 대기 중인 Workflow를 재개하는 흐름을 다음 실습에서 추가할 수 있습니다.
+
+### Structured output은 사실 검증이 아닙니다
+
+Pydantic schema는 필드 형태와 타입을 보장합니다. 투자 금액이 맞는지, 출처가 실제 주장을 뒷받침하는지까지 증명하지는 않습니다. 출처 ID 검증, 인용문과 주장 간 entailment 검사, 신뢰 가능한 도메인 정책, 충돌하는 자료의 처리, eval dataset이 별도로 필요합니다.
+
+### 관찰 가능성과 보안도 설계해야 합니다
+
+Temporal Web UI와 OpenAI Agents tracing은 서로 다른 질문에 답합니다. 전자는 Workflow/Activity의 진행과 retry를, 후자는 Agent/Handoff/Tool의 논리적 trace를 보는 데 유용합니다. 예제처럼 Gemini를 모델 제공자로 쓸 때 OpenAI tracing은 선택 사항이며 별도 OpenAI tracing key가 필요합니다.
+
+또한 prompt, 검색 원문, 모델 출력이 History와 trace에 남을 수 있으므로 개인정보와 영업 비밀을 그대로 저장해서는 안 됩니다. payload encryption, retention, redaction, 접근 제어를 배포 전에 정해야 합니다.
+
+## 다음 실습에서 확인할 것
+
+Durable Execution은 설명보다 장애를 직접 만들어 볼 때 훨씬 잘 이해됩니다. 이 글은 우선 초안으로 두고, 다음 실습 결과를 차례로 보강하려고 합니다.
+
+1. Firecrawl 완료 직후 Worker를 강제 종료하고, 재시작 뒤 검색 호출 횟수가 늘지 않는지 확인합니다.
+2. Firecrawl 실행 도중 Worker를 종료해 Activity 전체가 다시 실행되는지 확인합니다.
+3. 모델 호출에 일시 오류와 영구 오류를 주입하고 retry 간격, 최대 시도, 최종 상태를 기록합니다.
+4. Agent가 의도적으로 너무 많이 검색하게 만들고 `max_turns`와 비용 budget을 추가합니다.
+5. Clarifier 결과에서 Workflow를 끝내지 않고 Update로 사용자 답변을 받아 같은 실행을 이어갑니다.
+6. 큰 검색 원문을 object storage로 옮긴 뒤 History 크기를 전후 비교합니다.
+7. 같은 idempotency key로 `POST`를 두 번 보내도 Workflow가 하나만 생기는지 검증합니다.
+
+특히 다음 표를 실제 측정값으로 채우면 글의 신뢰성이 더 높아질 것입니다.
+
+| 실험 | 장애 주입 위치 | 모델 호출 수 | Tool 호출 수 | 복구 시간 | 중복 비용 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Worker crash A | Firecrawl 완료 직후 | TODO | TODO | TODO | TODO |
+| Worker crash B | Firecrawl 실행 중 | TODO | TODO | TODO | TODO |
+| Provider timeout | 모델 응답 전 | TODO | TODO | TODO | TODO |
+
+## 마치며
+
+OpenAI Agents SDK는 Agent를 만드는 복잡도를 크게 낮춥니다. Agent, Tool, Handoff, structured output을 조합하면 단일 프로세스에서 꽤 정교한 workflow를 빠르게 만들 수 있습니다.
+
+하지만 프로덕션에서 어려운 문제는 Agent loop를 작성하는 것만이 아닙니다. 수많은 실행이 동시에 돌고, 각 단계가 실제 비용이며, 외부 API와 Worker는 언젠가 실패합니다. 마지막 단계의 장애 때문에 앞에서 지불한 계산을 모두 버리는 구조는 규모가 커질수록 감당하기 어렵습니다.
+
+Temporal과의 결합이 주는 가장 큰 가치는 “재시도 옵션 하나”가 아닙니다.
+
+> 모델 호출과 Tool 호출을 복구 가능한 경계로 만들고, 실행의 소유권을 한 프로세스에서 durable Workflow로 옮기는 것.
+
+그 결과 완료된 계산을 보존하고, 실패한 경계만 다시 실행하며, 작업의 현재 위치를 조회할 수 있습니다. 동시에 Activity 멱등성, 비용 상한, History 크기, Workflow versioning, 보안, 사실 검증은 여전히 우리가 설계해야 합니다.
+
+Temporal은 Agent의 판단을 대신하지 않습니다. 다만 그 판단을 실행하는 시스템이 실패를 견디게 만드는 단단한 바닥이 될 수 있습니다.
+
+## 참고 자료
+
+- [예제 코드: jaeyoung0509/temporal-examples/react-agents](https://github.com/jaeyoung0509/temporal-examples/tree/main/react-agents)
+- [Temporal: Production-ready agents with the OpenAI Agents SDK + Temporal](https://temporal.io/blog/announcing-openai-agents-sdk-integration)
+- [Temporal Python SDK: OpenAI Agents integration](https://github.com/temporalio/sdk-python/tree/main/temporalio/contrib/openai_agents)
+- [OpenAI: Agents SDK guide](https://developers.openai.com/api/docs/guides/agents)
+- [OpenAI Agents SDK Python documentation](https://openai.github.io/openai-agents-python/)
