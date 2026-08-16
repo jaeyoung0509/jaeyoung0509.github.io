@@ -1,7 +1,8 @@
-import { getAllPosts } from "@/lib/posts";
-import { siteConfig } from "@/lib/site";
+import { getAllPosts } from "$lib/posts";
+import { siteConfig } from "$lib/site";
+import type { RequestHandler } from "./$types";
 
-export const dynamic = "force-static";
+export const prerender = true;
 
 function escapeXml(value: string) {
   return value
@@ -12,7 +13,7 @@ function escapeXml(value: string) {
     .replaceAll("'", "&apos;");
 }
 
-export function GET() {
+export const GET: RequestHandler = () => {
   const items = getAllPosts()
     .map(
       (post) => `
@@ -42,4 +43,4 @@ export function GET() {
       "Content-Type": "application/rss+xml; charset=utf-8",
     },
   });
-}
+};

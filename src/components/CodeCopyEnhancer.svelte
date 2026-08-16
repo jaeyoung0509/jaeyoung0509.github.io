@@ -1,9 +1,7 @@
-"use client";
+<script lang="ts">
+  $effect(() => {
+    if (typeof window === "undefined") return;
 
-import { useEffect } from "react";
-
-export function CodeCopyEnhancer() {
-  useEffect(() => {
     const blocks = document.querySelectorAll<HTMLElement>(".prose pre");
 
     blocks.forEach((block) => {
@@ -26,7 +24,5 @@ export function CodeCopyEnhancer() {
 
       block.append(button);
     });
-  }, []);
-
-  return null;
-}
+  });
+</script>

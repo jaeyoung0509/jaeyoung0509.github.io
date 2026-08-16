@@ -1,4 +1,4 @@
-name: Deploy Next.js blog to GitHub Pages
+name: Deploy SvelteKit blog to GitHub Pages
 
 on:
   push:
@@ -19,6 +19,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      PUBLIC_GISCUS_REPO: ${{ vars.GISCUS_REPO }}
+      PUBLIC_GISCUS_REPO_ID: ${{ vars.GISCUS_REPO_ID }}
+      PUBLIC_GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
+      PUBLIC_GISCUS_CATEGORY_ID: ${{ vars.GISCUS_CATEGORY_ID }}
       NEXT_PUBLIC_GISCUS_REPO: ${{ vars.GISCUS_REPO }}
       NEXT_PUBLIC_GISCUS_REPO_ID: ${{ vars.GISCUS_REPO_ID }}
       NEXT_PUBLIC_GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
@@ -36,11 +40,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Type check
+        run: npm run check
+
       - name: Lint
         run: npm run lint
 
       - name: Build static site
         run: npm run build
+
+      - name: Run rendering regression tests
+        run: node --test tests/content-rendering.test.mjs
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
