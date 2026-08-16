@@ -20,9 +20,6 @@ const config = {
 			handleHttpError: 'fail',
 			handleMissingId: 'warn'
 		},
-		files: {
-			assets: 'public'
-		},
 		alias: {
 			$components: 'src/components',
 			$lib: 'src/lib',
