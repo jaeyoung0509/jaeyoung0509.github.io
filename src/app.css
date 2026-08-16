@@ -233,14 +233,61 @@ summary {
 }
 
 .brand {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   width: fit-content;
   color: var(--ink);
   font-family: var(--font-mono);
   font-size: 22px;
   font-weight: 780;
   line-height: 1;
+  letter-spacing: -0.02em;
   text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-text {
+  display: inline-block;
+  min-height: 1em;
+}
+
+.brand-cursor {
+  display: inline-block;
+  width: 2.5px;
+  height: 1.1em;
+  margin-left: 2px;
+  background-color: var(--accent);
+  border-radius: 1px;
+  animation: blink-caret 0.9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes blink-caret {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .header-nav {
@@ -254,6 +301,11 @@ summary {
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
+  transition: color var(--dur-short) var(--ease-out);
+}
+
+.header-nav a:hover {
+  color: var(--ink);
 }
 
 /* Footer */
@@ -435,7 +487,16 @@ summary {
   min-width: 0;
   padding: 0;
   border: 0;
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  transition: transform var(--dur-short) var(--ease-out);
 }
+
+.post-row:nth-child(1) { animation-delay: 0.03s; }
+.post-row:nth-child(2) { animation-delay: 0.06s; }
+.post-row:nth-child(3) { animation-delay: 0.09s; }
+.post-row:nth-child(4) { animation-delay: 0.12s; }
+.post-row:nth-child(5) { animation-delay: 0.15s; }
+.post-row:nth-child(6) { animation-delay: 0.18s; }
 
 .post-row-link {
   display: flex;
@@ -583,9 +644,20 @@ summary {
   font-size: 12px;
   font-weight: 650;
   cursor: pointer;
+  transition: background-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out);
 }
 
-.tag-filters button:hover,
+.tag-filters button:hover {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--page);
+  transform: translateY(-1px);
+}
+
+.tag-filters button:active {
+  transform: translateY(0);
+}
+
 .tag-filters button.is-active {
   border-color: var(--ink);
   background: var(--ink);

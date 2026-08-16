@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowUpRight, FileText, Mail } from "lucide-svelte";
+  import { ArrowUpRight, Mail } from "lucide-svelte";
   import { siteConfig } from "$lib/site";
 
   const projects = [
@@ -80,9 +80,6 @@
         </svg>
         github.com/jaeyoung0509
         <ArrowUpRight size={14} />
-      </a>
-      <a href="/files/cv_jaeyoung_lee.pdf" target="_blank" rel="noreferrer">
-        <FileText size={17} /> English CV
       </a>
     </div>
   </div>
