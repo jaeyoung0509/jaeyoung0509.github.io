@@ -101,6 +101,11 @@ test("홈, 블로그 아카이브, 어바웃 정적 페이지를 올바르게 �
 
   assert.match(homeHtml, /jaeyoung lee/, "홈페이지 헤더 브랜드가 없습니다");
   assert.match(homeHtml, /class="post-row"/, "홈페이지 글 목록이 없습니다");
+  assert.match(
+    homeHtml,
+    /google-site-verification/,
+    "Google 소유권 확인 태그가 없습니다",
+  );
 
   assert.match(blogHtml, /class="search-field"/, "검색 필드가 없습니다");
   assert.match(blogHtml, /class="tag-filters"/, "태그 필터가 없습니다");

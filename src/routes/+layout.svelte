@@ -11,6 +11,10 @@
 <svelte:head>
   <title>{siteConfig.name}</title>
   <meta name="description" content={siteConfig.description} />
+  <meta
+    name="google-site-verification"
+    content="4_EJGx3CPu_ZI9q17mFqA8EwkRvsdTDulXGoGymjo3s"
+  />
   <meta property="og:site_name" content={siteConfig.name} />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="ko_KR" />
