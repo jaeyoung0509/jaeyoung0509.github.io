@@ -2,13 +2,14 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const outputPath = new URL(
-  "../out/blog/temporal-openai-agents-durable-workflow/index.html",
-  import.meta.url,
-);
-
 test("Temporal Agents 글의 대표 YouTube 영상과 MDX 요소를 정적으로 렌더링한다", async () => {
-  const html = await readFile(outputPath, "utf8");
+  const html = await readFile(
+    new URL(
+      "../out/blog/temporal-openai-agents-durable-workflow/index.html",
+      import.meta.url,
+    ),
+    "utf8",
+  );
   const coverStart = html.indexOf(
     'class="article-cover article-video-cover"',
   );
@@ -34,5 +35,115 @@ test("Temporal Agents 글의 대표 YouTube 영상과 MDX 요소를 정적으로
     html,
     /class="link-preview"[^>]*href="https:\/\/github\.com\/jaeyoung0509\/temporal-examples\/tree\/main\/react-agents"/,
     "예제 코드 링크 미리보기가 없습니다",
+  );
+  assert.match(html, /class="article-toc"/, "TOC가 렌더링되지 않았습니다");
+});
+
+test("Temporal 대출 신청 글의 다이어그램과 목차를 정적으로 렌더링한다", async () => {
+  const html = await readFile(
+    new URL(
+      "../out/blog/temporal-loan-application-workflow/index.html",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(
+    html,
+    /서버가 재시작돼도 업무는 계속됩니다/,
+    "포스트 제목이 올바르지 않습니다",
+  );
+  assert.match(html, /class="mermaid-diagram"/, "Mermaid 다이어그램이 없습니다");
+  assert.match(html, /class="article-toc"/, "TOC가 렌더링되지 않았습니다");
+  assert.match(html, /class="shiki/, "Shiki 코드 하이라이팅이 적용되지 않았습니다");
+});
+
+test("Go Mutex vs Atomic 벤치마크 글의 코드 및 벤치마크 결과를 정적으로 렌더링한다", async () => {
+  const html = await readFile(
+    new URL(
+      "../out/blog/go-mutex-atomic-cache-coherence-benchmark/index.html",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(
+    html,
+    /Mutex는 왜 atomic보다 느릴까/,
+    "포스트 제목이 올바르지 않습니다",
+  );
+  assert.match(
+    html,
+    /youtube-nocookie\.com\/embed\/tND-wBBZ8RY/,
+    "인라인 YouTube 영상이 올바르게 렌더링되지 않았습니다",
+  );
+  assert.match(
+    html,
+    /BenchmarkAtomicPerWorkerPadded-8/,
+    "실제 벤치마크 실행 결과가 렌더링되지 않았습니다",
+  );
+  assert.match(html, /class="article-toc"/, "TOC가 렌더링되지 않았습니다");
+});
+
+test("홈, 블로그 아카이브, 어바웃 정적 페이지를 올바르게 렌더링한다", async () => {
+  const homeHtml = await readFile(
+    new URL("../out/index.html", import.meta.url),
+    "utf8",
+  );
+  const blogHtml = await readFile(
+    new URL("../out/blog/index.html", import.meta.url),
+    "utf8",
+  );
+  const aboutHtml = await readFile(
+    new URL("../out/about/index.html", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(homeHtml, /jaeyoung lee/, "홈페이지 헤더 브랜드가 없습니다");
+  assert.match(homeHtml, /class="post-row"/, "홈페이지 글 목록이 없습니다");
+
+  assert.match(blogHtml, /class="search-field"/, "검색 필드가 없습니다");
+  assert.match(blogHtml, /class="tag-filters"/, "태그 필터가 없습니다");
+
+  assert.match(aboutHtml, /운영 가능한 시스템을 만드는 백엔드 엔지니어/, "소개 본문이 없습니다");
+  assert.match(aboutHtml, /class="project-list"/, "프로젝트 목록이 없습니다");
+});
+
+test("RSS 피드, 사이트맵, robots.txt, 404 페이지가 올바르게 생성된다", async () => {
+  const feedXml = await readFile(
+    new URL("../out/feed.xml", import.meta.url),
+    "utf8",
+  );
+  const sitemapXml = await readFile(
+    new URL("../out/sitemap.xml", import.meta.url),
+    "utf8",
+  );
+  const robotsTxt = await readFile(
+    new URL("../out/robots.txt", import.meta.url),
+    "utf8",
+  );
+  const notFoundHtml = await readFile(
+    new URL("../out/404.html", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(feedXml, /<rss version="2.0">/, "RSS 피드 XML 형식이 올바르지 않습니다");
+  assert.match(feedXml, /<title>jaeyoung0509<\/title>/, "RSS 피드 제목이 올바르지 않습니다");
+
+  assert.match(sitemapXml, /<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/, "Sitemap XML 형식이 올바르지 않습니다");
+  assert.match(sitemapXml, /https:\/\/jaeyoung0509.github.io\/blog\/go-mutex-atomic-cache-coherence-benchmark\//, "Sitemap에 포스트 URL이 없습니다");
+
+  assert.match(robotsTxt, /User-agent: \*/, "robots.txt 내용이 올바르지 않습니다");
+  assert.match(robotsTxt, /Sitemap: https:\/\/jaeyoung0509.github.io\/sitemap.xml/, "robots.txt sitemap 설정이 없습니다");
+
+  assert.match(
+    notFoundHtml,
+    /__sveltekit/,
+    "404 SPA fallback 페이지가 올바르지 않습니다",
+  );
+  assert.match(
+    notFoundHtml,
+    /\/_app\/immutable\/entry\/start\./,
+    "404 페이지에 SvelteKit 번들이 로드되지 않았습니다",
   );
 });

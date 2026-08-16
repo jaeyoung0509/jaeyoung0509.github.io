@@ -1,16 +1,16 @@
 # jaeyoung0509
 
-A statically exported engineering blog built with Next.js App Router and MDX.
+A statically exported engineering blog built with **SvelteKit 2 (Svelte 5 Runes)**, Tailwind CSS, Bits UI, and Markdown/MDX.
 Korean is the primary content language.
 
 ## Features
 
 - File-based posts authored in `content/posts/*.mdx`
 - Frontmatter for publishing dates, tags, locale, draft status, and cover media
-- Static export for GitHub Pages
-- Search and tag filtering
-- Generated table of contents
-- Syntax highlighting and code-copy controls
+- Static export for GitHub Pages (`@sveltejs/adapter-static`)
+- Search and tag filtering powered by Svelte 5 Runes & Bits UI
+- Generated table of contents with scroll spy
+- Shiki build-time syntax highlighting and code-copy controls
 - Mermaid diagrams in fenced code blocks
 - Responsive, privacy-enhanced YouTube embeds
 - YouTube videos as playable article covers and list thumbnails
@@ -24,16 +24,13 @@ Korean is the primary content language.
 ```sh
 npm install
 npm run dev
+npm run check
 npm run lint
 npm run build
 npm test
 ```
 
-The local development server uses webpack instead of Turbopack because the
-project encountered a Turbopack HMR panic while compiling dynamic MDX routes.
-
-`npm test` runs ESLint, the production build, static export, and MDX rendering
-regression tests. The exported site is written to `out/`.
+`npm test` runs SvelteKit sync & type-check, ESLint, production build (static export to `out/`), and MDX rendering regression tests.
 
 ## Writing a post
 
@@ -128,10 +125,10 @@ offline.
    `.env.local`.
 
 ```sh
-NEXT_PUBLIC_GISCUS_REPO=owner/repository
-NEXT_PUBLIC_GISCUS_REPO_ID=...
-NEXT_PUBLIC_GISCUS_CATEGORY=Comments
-NEXT_PUBLIC_GISCUS_CATEGORY_ID=...
+PUBLIC_GISCUS_REPO=owner/repository
+PUBLIC_GISCUS_REPO_ID=...
+PUBLIC_GISCUS_CATEGORY=Comments
+PUBLIC_GISCUS_CATEGORY_ID=...
 ```
 
 The comments section is not rendered when these values are absent. For GitHub

@@ -13,12 +13,10 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# sveltekit
+/.svelte-kit/
 /out/
-
-# production
-/build
+/build/
 
 # misc
 .DS_Store
