@@ -1,0 +1,395 @@
+---
+title: "Mutex는 왜 atomic보다 느릴까: Go로 직접 구현하며 체득한 Lock과 캐시 동기화 비용"
+description: "Jon Gjengset의 동시성 강연에서 다룬 캐시 라인, Cache Coherence, False Sharing, Padding 개념을 Go 벤치마크 코드로 직접 구현하고 체득한 과정을 정리합니다."
+publishedAt: "2026-08-16"
+updatedAt: "2026-08-16"
+tags: ["Go", "Concurrency", "Performance", "CPU", "Benchmark", "Lock-free"]
+locale: "ko"
+featured: false
+draft: false
+cover: "/images/20260812_165412.jpg"
+---
+
+# Mutex는 왜 atomic보다 느릴까: Go로 직접 구현하며 체득한 Lock과 캐시 동기화 비용
+
+얼마 전 Jon Gjengset의 [동시성과 동기화 비용에 관한 강연 영상](https://www.youtube.com/watch?v=tND-wBBZ8RY)을 봤습니다.
+
+<YouTube
+  videoId="tND-wBBZ8RY"
+  title="Jon Gjengset의 동시성과 동기화 비용 강연"
+  caption="이 글의 출발점이 된 영상"
+/>
+
+영상에서는 Mutex의 병목부터 시작해서 CPU 캐시 라인(64 bytes), Cache Coherence(캐시 일관성), Cache Line Bouncing, False Sharing, 그리고 Padding을 통한 완화 기법까지를 정말 친절하고 명쾌하게 짚어줍니다. 
+
+영상을 보며 머리로는 "아, 저래서 락을 빼도 캐시 경합이 생기는구나" 하고 이해했지만, **눈으로 직접 숫자를 찍어보지 않으면 온전히 내 지식이 되지 않을 것 같았습니다.** 특히 영상의 설명이 Go 런타임(고루틴 스케줄러, 메모리 배치) 환경에서는 실제로 어떻게 동작하고 어떤 비용 차이로 나타나는지 궁금해졌습니다.
+
+그래서 영상에서 알려준 핵심 개념들을 Go 코드로 직접 구현하고 벤치마크로 확인해보면서, 제 것으로 체득해간 과정을 정리해봤습니다.
+
+## 1. 영상에서 배운 첫 번째: Mutex의 진짜 비용은 스케줄러에 있다
+
+공유 카운터를 여러 고루틴이 안전하게 증가시켜야 할 때 가장 먼저 떠올리는 코드는 Mutex입니다.
+
+```go
+var mu sync.Mutex
+var counter uint64
+
+mu.Lock()
+counter++
+mu.Unlock()
+```
+
+단일 고루틴(Uncontended) 환경에서 이 코드를 돌려보면 생각보다 꽤 빠릅니다. 경쟁하는 고루틴이 없으면 Go의 Mutex는 빠른 경로(fast path)를 통해 원자적 연산 한두 번으로 락을 바로 획득하고 풀기 때문입니다.
+
+영상에서 지적하듯, 진짜 비용은 **여러 고루틴이 동시에 같은 Mutex를 원할 때(Contended)** 발생합니다.
+
+```text
+고루틴 A: Lock 획득 ──────── 작업 ──────── Unlock
+고루틴 B:        Lock 대기 (Spinning / Park) ───────→ 깨어남(Wake) → 작업
+고루틴 C:        Lock 대기 (Spinning / Park) ──────────────────────────→ 깨어남 → 작업
+```
+
+경쟁이 발생하면 단순히 함수를 호출하는 시간을 넘어 다음과 같은 런타임 동작이 일어납니다.
+
+1. **Spinning vs Waiting**: 락을 쥔 고루틴이 금방 끝날 것 같으면 잠시 CPU 루프를 돌며 대기(Spinning)하지만, 길어지면 고루틴을 대기 상태로 전환합니다.
+2. **고루틴 Park**: 대기 상태로 들어간 고루틴은 런타임 스케줄러에 의해 실행 큐에서 제외(`park`)되어 잠듭니다. CPU 자원을 낭비하지 않기 위해서입니다.
+3. **스케줄러 오버헤드**: 락을 쥐고 있던 고루틴이 `Unlock()`을 호출하면, 잠자고 있던 고루틴을 다시 깨워 실행 가능한 상태(`ready/unpark`)로 만들고 CPU에 올리는 스케줄링 비용이 들어갑니다.
+
+결국 Contended Mutex가 느린 주된 이유는 락 연산 자체보다 **경쟁으로 인해 발생하는 고루틴 대기와 스케줄러의 컨텍스트 전환 오버헤드** 때문이라는 점을 확인할 수 있었습니다.
+
+## 2. 영상에서 배운 두 번째: Atomic도 피할 수 없는 Cache Coherence
+
+"그렇다면 고루틴을 재우지도 않고 스케줄러를 거치지도 않는 `atomic`을 쓰면 모든 동기화 비용이 사라질까?"
+
+영상에서 가장 강조한 메시지 중 하나가 바로 **"Lock을 없앤다고 해서 CPU 간의 coordination(동기화)까지 사라지는 것은 아니다"** 였습니다.
+
+```go
+var counter atomic.Uint64
+
+counter.Add(1)
+```
+
+`atomic.Add`는 CPU 수준의 원자적 명령어를 사용해 Read-Modify-Write 과정을 깨지지 않게 처리합니다. Mutex처럼 고루틴이 대기 큐에 들어가 잠들지 않으므로 분명 훨씬 가볍습니다.
+
+하지만 여러 코어가 동시에 같은 atomic 변수를 수정하도록 벤치마크를 돌려보면, 코어 수를 늘려도 기대만큼 성능이 선형적으로 늘어나지 않습니다.
+
+그 이유는 하드웨어 수준의 **캐시 일관성(Cache Coherence)** 에 있습니다.
+
+```text
+                 같은 메모리 주소 (counter)
+                       │
+          ┌────────────┴────────────┐
+          ▼                         ▼
+      Core 0의 L1/L2             Core 1의 L1/L2
+          │                         │
+       [ counter: 10 ]           [ counter: 10 ]
+```
+
+각 CPU 코어는 독립된 L1/L2 캐시를 가지고 있습니다. Core 0이 `counter` 값을 11로 수정하면, Core 1이 가진 캐시의 복사본은 낡은 값(stale data)이 됩니다. 
+
+하드웨어는 데이터 일관성을 유지하기 위해 캐시 일관성 프로토콜(예: MESI)을 동작시킵니다. Core 0이 해당 메모리에 쓰기를 하려면 다른 코어들의 캐시를 무효화(Invalidate)하고 **해당 캐시 라인의 쓰기 소유권(Ownership)** 을 가져와야 합니다.
+
+영상에서 설명해준 핵심 포인트가 바로 이것이었습니다.
+
+> **CPU는 메모리를 8바이트 변수 단위로 다루지 않고, 보통 64바이트 크기의 'Cache Line' 단위로 가져오고 무효화합니다.**
+
+Core 0과 Core 1이 동시에 같은 카운터를 계속 수정하면, 64바이트 캐시 라인의 소유권이 코어 사이를 탁구공처럼 쉴 새 없이 오가게 됩니다.
+
+```text
+Core 0: "내가 쓸게" → Cache line 소유권 획득 (Core 1 캐시 Invalidate)
+Core 1: "나도 쓸게" → Core 1로 소유권 강제 이동 (Core 0 캐시 Invalidate)
+Core 0: "다시 내가 쓸게" → Core 0으로 소유권 강제 이동 ...
+```
+
+이것이 바로 **Cache Line Bouncing (또는 Ping-Pong)** 입니다.
+
+- **Mutex**: 런타임/스케줄러 레벨의 Lock Contention + 캐시 라인 이동 비용.
+- **Atomic**: 런타임 스케줄링 비용은 지웠지만, 같은 메모리 위치를 두고 벌어지는 **하드웨어 레벨의 Cache Contention(True Sharing)** 은 그대로 남아 있습니다.
+
+## 3. 가장 흥미로웠던 체득: 각자 다른 변수를 쓰는데 왜 느릴까? (False Sharing)
+
+영상 후반부에서 가장 인상 깊었던 개념이 바로 **False Sharing(거짓 공유)** 이었습니다.
+
+"그렇다면 코어(Worker)마다 카운터를 아예 따로 주면(`counters[id]`) 캐시 경쟁도 완전히 사라지지 않을까?"
+
+영상에서 설명한 시나리오대로 각 Worker가 자기 인덱스의 카운터만 증가시키도록 코드를 작성해봤습니다.
+
+```go
+type compactCounter struct {
+	value atomic.Uint64
+}
+
+counters := make([]compactCounter, workers)
+
+// 각 고루틴(id)은 오직 자기 카운터만 수정
+counters[id].value.Add(1)
+```
+
+논리적으로 보면 고루틴끼리 공유하는 변수는 전혀 없습니다. 고루틴 0은 `counters[0]`만, 고루틴 1은 `counters[1]`만 건드립니다.
+
+그런데 실제로 벤치마크를 돌려보니 코어 수를 늘려도 성능이 거의 오르지 않았습니다. 변수를 쪼갰는데 왜 여전히 느릴까요?
+
+범인은 영상에서 배웠던 **64바이트 Cache Line**이었습니다.
+
+```text
+하나의 64-byte Cache Line
+┌──────────────┬──────────────┬──────────────┬──────────────┬─────────────┐
+│ counters[0]  │ counters[1]  │ counters[2]  │ counters[3]  │ ...         │
+│   (8 bytes)  │   (8 bytes)  │   (8 bytes)  │   (8 bytes)  │             │
+└──────────────┴──────────────┴──────────────┴──────────────┴─────────────┘
+       ▲              ▲
+    Core 0이 쓰기   Core 1이 쓰기  ───▶ 하드웨어 입장에서는 같은 Cache Line!
+```
+
+`uint64`는 8바이트입니다. 슬라이스로 연속된 메모리에 구조체를 배치하면, 64바이트 캐시 라인 하나에 최대 8개의 카운터가 함께 묶여 들어갑니다.
+
+- 프로그래머 입장: "우리는 서로 다른 변수를 쓰고 있어."
+- CPU 하드웨어 입장: "같은 64바이트 덩어리를 서로 수정하고 있으니 캐시 라인 소유권을 뺏어와야겠군!"
+
+논리적으로는 독립적인 데이터인데 물리적 배치가 붙어 있어 발생하는 이 병목을 눈으로 확인하니, 영상의 설명이 비로소 피부에 와닿았습니다.
+
+## 4. Padding으로 물리적 거리를 벌리기: 눈으로 확인한 성능
+
+영상에서 알려준 해결책은 **Padding**이었습니다. 각 카운터가 서로 다른 캐시 라인에 위치하도록 강제로 빈 공간을 채워 넣는 방법입니다.
+
+```go
+const cacheLineSize = 64
+
+type paddedCounter struct {
+	value atomic.Uint64
+	_     [cacheLineSize - 8]byte // 56바이트 패딩을 넣어 구조체 크기를 64바이트로 맞춤
+}
+```
+
+이렇게 하면 슬라이스의 각 요소가 정확히 64바이트를 차지하므로, 하나의 캐시 라인에 카운터가 하나씩만 들어가게 됩니다.
+
+```text
+Cache Line 0 (64 bytes): [ counters[0] (8B) | Padding (56B) ] ──▶ Core 0 전용
+Cache Line 1 (64 bytes): [ counters[1] (8B) | Padding (56B) ] ──▶ Core 1 전용
+```
+
+이제 Core 0이 `counters[0]`을 수정해도 Core 1의 `counters[1]` 캐시 라인은 무효화되지 않습니다. 
+
+실제로 벤치마크를 돌려보니, 패딩을 적용한 버전(`Padded`)에서 비로소 코어 수 증가에 비례해 성능이 시원하게 스케일아웃되는 것을 숫자로 확인할 수 있었습니다.
+
+## 5. 직접 돌려보는 전체 Go 벤치마크 코드와 결과
+
+영상에서 다룬 개념들을 단계별로 검증하기 위해 작성한 단일 벤치마크 파일입니다. 외부 패키지 없이 Go 표준 라이브러리만으로 동작합니다.
+
+```go
+// mutex_benchmark_test.go
+package mutexbench
+
+import (
+	"runtime"
+	"sync"
+	"sync/atomic"
+	"testing"
+)
+
+const cacheLineSize = 64
+
+var benchmarkSink uint64
+
+type compactCounter struct {
+	value atomic.Uint64
+}
+
+type paddedCounter struct {
+	value atomic.Uint64
+	_     [cacheLineSize - 8]byte
+}
+
+func benchmarkWorkers() int {
+	workers := runtime.GOMAXPROCS(0)
+	if workers < 2 {
+		return 2
+	}
+	return workers
+}
+
+// 모든 worker가 준비된 후 동시에 시작하도록 제어
+func runWorkers(b *testing.B, workers int, worker func(id, operations int)) {
+	b.Helper()
+
+	base := b.N / workers
+	remainder := b.N % workers
+
+	var wg sync.WaitGroup
+	start := make(chan struct{})
+	wg.Add(workers)
+
+	for id := 0; id < workers; id++ {
+		operations := base
+		if id < remainder {
+			operations++
+		}
+
+		go func(id, operations int) {
+			defer wg.Done()
+			<-start
+			worker(id, operations)
+		}(id, operations)
+	}
+
+	b.ResetTimer()
+	close(start)
+	wg.Wait()
+	b.StopTimer()
+}
+
+// 1. 단일 고루틴 Mutex (Uncontended 기준선)
+func BenchmarkMutexUncontended(b *testing.B) {
+	var mu sync.Mutex
+	var counter uint64
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		mu.Lock()
+		counter++
+		mu.Unlock()
+	}
+	b.StopTimer()
+
+	benchmarkSink = counter
+}
+
+// 2. 다중 고루틴 Contended Mutex (스케줄러 대기/스위칭 오버헤드 확인)
+func BenchmarkMutexContended(b *testing.B) {
+	var mu sync.Mutex
+	var counter uint64
+	workers := benchmarkWorkers()
+
+	runWorkers(b, workers, func(_, operations int) {
+		for i := 0; i < operations; i++ {
+			mu.Lock()
+			counter++
+			mu.Unlock()
+		}
+	})
+
+	benchmarkSink = counter
+}
+
+// 3. 단일 고루틴 Atomic (Atomic 기준선)
+func BenchmarkAtomicUncontended(b *testing.B) {
+	var counter atomic.Uint64
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		counter.Add(1)
+	}
+	b.StopTimer()
+
+	benchmarkSink = counter.Load()
+}
+
+// 4. 다중 고루틴 단일 Atomic 공유 (True Sharing & Cache line bouncing)
+func BenchmarkAtomicShared(b *testing.B) {
+	var counter atomic.Uint64
+	workers := benchmarkWorkers()
+
+	runWorkers(b, workers, func(_, operations int) {
+		for i := 0; i < operations; i++ {
+			counter.Add(1)
+		}
+	})
+
+	benchmarkSink = counter.Load()
+}
+
+// 5. Worker별 분리했으나 같은 캐시 라인에 인접 (False Sharing 관찰)
+func BenchmarkAtomicPerWorkerFalseSharing(b *testing.B) {
+	workers := benchmarkWorkers()
+	counters := make([]compactCounter, workers)
+
+	runWorkers(b, workers, func(id, operations int) {
+		for i := 0; i < operations; i++ {
+			counters[id].value.Add(1)
+		}
+	})
+
+	var total uint64
+	for i := range counters {
+		total += counters[i].value.Load()
+	}
+	benchmarkSink = total
+}
+
+// 6. Worker별 분리 + 64바이트 패딩 적용 (완전 독립 캐시 라인)
+func BenchmarkAtomicPerWorkerPadded(b *testing.B) {
+	workers := benchmarkWorkers()
+	counters := make([]paddedCounter, workers)
+
+	runWorkers(b, workers, func(id, operations int) {
+		for i := 0; i < operations; i++ {
+			counters[id].value.Add(1)
+		}
+	})
+
+	var total uint64
+	for i := range counters {
+		total += counters[i].value.Load()
+	}
+	benchmarkSink = total
+}
+```
+
+아래 명령어로 CPU 코어 수를 1, 2, 4, 8개로 늘려가며 실제 측정한 결과입니다.
+
+```sh
+go test -run '^$' -bench . -benchmem -cpu 1,2,4,8 -benchtime=1s
+```
+
+```text
+goos: darwin
+goarch: arm64
+cpu: Apple M1
+BenchmarkMutexUncontended                	25678597	        42.81 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexUncontended-2              	34123828	        39.71 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexUncontended-4              	33129189	        44.75 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexUncontended-8              	20302449	        56.94 ns/op	       0 B/op	       0 allocs/op
+
+BenchmarkMutexContended                  	48201966	        57.57 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexContended-2                	17562024	        71.57 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexContended-4                	13547197	        84.30 ns/op	       0 B/op	       0 allocs/op
+BenchmarkMutexContended-8                	13032274	       103.50 ns/op	       0 B/op	       0 allocs/op
+
+BenchmarkAtomicUncontended               	53713500	        27.57 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicUncontended-2             	75818004	        27.49 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicUncontended-4             	72694228	        25.96 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicUncontended-8             	47006671	        23.82 ns/op	       0 B/op	       0 allocs/op
+
+BenchmarkAtomicShared                    	50803596	        26.47 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicShared-2                  	42895312	        38.59 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicShared-4                  	39331423	        35.43 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicShared-8                  	40400395	        35.30 ns/op	       0 B/op	       0 allocs/op
+
+BenchmarkAtomicPerWorkerFalseSharing     	60451240	        30.78 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicPerWorkerFalseSharing-2   	59208940	        28.59 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicPerWorkerFalseSharing-4   	32549728	        31.06 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicPerWorkerFalseSharing-8   	34775804	        31.45 ns/op	       0 B/op	       0 allocs/op
+
+BenchmarkAtomicPerWorkerPadded           	28126098	        45.68 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicPerWorkerPadded-2         	100000000	        35.69 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicPerWorkerPadded-4         	38509623	        27.91 ns/op	       0 B/op	       0 allocs/op
+BenchmarkAtomicPerWorkerPadded-8         	214378833	         7.27 ns/op	       0 B/op	       0 allocs/op
+PASS
+```
+
+숫자를 살펴보면 영상에서 설명한 이론들이 그대로 드러납니다.
+
+1. **Contended Mutex의 지연 급증**: 경쟁이 없을 때는 약 `42ns`였던 Mutex가, 8개 코어에서 동시 경쟁이 붙자 `103.5ns`로 두 배 이상 느려집니다. (스케줄러 대기 및 컨텍스트 스위칭 오버헤드)
+2. **AtomicShared의 한계 (True Sharing)**: 단일 atomic 카운터는 Mutex보다 빠르지만, 코어를 1개(`26.47ns`)에서 2개 이상(`35~38ns`)으로 늘리는 순간 캐시 라인 소유권 핑퐁 때문에 오히려 단일 코어보다 연산당 시간이 늘어납니다.
+3. **False Sharing의 벽**: 각 Worker에게 독립된 카운터를 줬음에도, 패딩이 없는 `FalseSharing`은 1코어(`30.78ns`)나 8코어(`31.45ns`)나 성능이 거의 그대로 멈춰 있습니다. 같은 캐시 라인에 묶여 있기 때문입니다.
+4. **Padding의 드라마틱한 개선**: 56바이트 패딩을 넣어 캐시 라인을 분리한 `Padded`는 1코어 `45.68ns`에서 시작해 **8코어에서 `7.27ns`로 수직 상승(스케일아웃)** 합니다. 캐시 경합이 완전히 사라지면서 하드웨어 병렬성이 온전히 발휘된 결과입니다.
+
+## 6. 마치며: 직접 구현해보며 얻은 인사이트
+
+Jon Gjengset의 영상을 보며 머리로만 이해했던 개념들을 Go 코드로 직접 구현하고 숫자로 확인해보니, 동시성 최적화에 대한 시야가 훨씬 선명해졌습니다.
+
+- **Mutex가 무조건 나쁜 것은 아니다**: 경쟁이 없는 단일 흐름이나 짧은 임계 영역에서는 충분히 빠릅니다. 복잡한 상태 전이나 여러 필드의 일관성을 지켜야 한다면 Mutex가 가장 안전한 선택입니다.
+- **Atomic의 본질을 알아야 한다**: Atomic은 런타임 스케줄러의 대기 비용을 지워줄 뿐, 동일 캐시 라인에 대한 하드웨어 동기화 비용(True Sharing)까지 없애주지는 못합니다.
+- **고성능 처리가 필요할 땐 물리적 배치까지 봐야 한다**: 높은 쓰기 처리량이 필요한 분산 카운터라면 단일 atomic 변수에 모으기보다 Worker별 카운터로 분리하고, 그 변수들이 False Sharing에 걸리지 않도록 **Padding**으로 캐시 라인을 분리해주는 설계가 필요합니다.
+
+단순히 "Mutex 대신 Atomic을 쓰자"가 아니라, **"무엇을 공유하고 있는가, 얼마나 자주 쓰고 있는가, 그리고 그 데이터가 메모리의 어느 캐시 라인에 배치되어 있는가?"** 라는 하드웨어 관점의 질문을 직접 코드로 확인해볼 수 있었던 의미 있는 공부였습니다.

@@ -17,36 +17,40 @@ export function PostRow({
   return (
     <article className="post-row">
       <Link
-        className="post-image"
+        className="post-row-link"
         href={`/blog/${post.slug}/`}
         aria-label={`${post.title} 읽기`}
       >
-        <Image
-          src={coverImage}
-          alt={post.coverYoutubeTitle ?? post.coverAlt ?? ""}
-          width={1800}
-          height={1029}
-          loading={eager ? "eager" : "lazy"}
-        />
+        <div className="post-image">
+          <Image
+            src={coverImage}
+            alt={post.coverYoutubeTitle ?? post.coverAlt ?? post.title}
+            width={1800}
+            height={1029}
+            loading={eager ? "eager" : "lazy"}
+          />
+        </div>
+        <div className="post-date">
+          <time dateTime={post.publishedAt}>
+            {formatDate(post.publishedAt)}
+          </time>
+          <span>{post.readingMinutes}분</span>
+        </div>
+        <div className="post-copy">
+          <div className="post-heading">
+            <h3>{post.title}</h3>
+            <ArrowUpRight size={18} strokeWidth={1.7} aria-hidden="true" />
+          </div>
+          <p>{post.description}</p>
+          <ul className="tag-list" aria-label="태그">
+            {post.tags.map((tag) => (
+              <li className="tag" key={tag}>
+                {tag}
+              </li>
+            ))}
+          </ul>
+        </div>
       </Link>
-      <div className="post-date">
-        <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-        <span>{post.readingMinutes}분</span>
-      </div>
-      <div className="post-copy">
-        <Link href={`/blog/${post.slug}/`}>
-          <h3>{post.title}</h3>
-          <ArrowUpRight size={18} strokeWidth={1.7} />
-        </Link>
-        <p>{post.description}</p>
-        <ul className="tag-list" aria-label="태그">
-          {post.tags.map((tag) => (
-            <li className="tag" key={tag}>
-              {tag}
-            </li>
-          ))}
-        </ul>
-      </div>
     </article>
   );
 }

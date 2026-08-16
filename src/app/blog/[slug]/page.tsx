@@ -179,7 +179,7 @@ export default async function PostPage({ params }: PageProps) {
           <figure className="article-cover">
             <Image
               src={post.cover}
-              alt={post.coverAlt ?? ""}
+              alt={post.coverAlt ?? post.title}
               width={1800}
               height={1029}
               priority

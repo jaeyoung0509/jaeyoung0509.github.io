@@ -432,11 +432,17 @@ summary {
 /* Post rows and archive */
 
 .post-row {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.post-row-link {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  padding: 0;
-  border: 0;
+  color: inherit;
+  text-decoration: none;
 }
 
 .post-image {
@@ -456,7 +462,7 @@ summary {
   transition: transform var(--dur-short) var(--ease-out);
 }
 
-.post-image:hover img {
+.post-row-link:hover .post-image img {
   transform: scale(1.015);
 }
 
@@ -473,7 +479,7 @@ summary {
   color: var(--faint);
 }
 
-.post-copy > a {
+.post-heading {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 16px;
@@ -1041,6 +1047,11 @@ summary {
   margin: 48px 0;
   border: 0;
   border-top: 1px solid var(--line);
+}
+
+.prose hr + h2 {
+  margin-top: 24px;
+  border-top: 0;
 }
 
 .prose table {
