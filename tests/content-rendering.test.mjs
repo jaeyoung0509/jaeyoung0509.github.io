@@ -150,6 +150,38 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     "Temporal 오픈소스 항목이 없습니다",
   );
   assert.match(aboutHtml, /PR #1741/, "Open Source PR #1741 링크가 없습니다");
+  assert.match(aboutHtml, /Genkit/, "Genkit 오픈소스 항목이 없습니다");
+  assert.match(
+    aboutHtml,
+    /genkit-ai\/genkit\/issues\/3748/,
+    "Genkit 이슈 링크가 없습니다",
+  );
+  assert.match(aboutHtml, /Python Chalice/, "Python Chalice 항목이 없습니다");
+  assert.match(
+    aboutHtml,
+    /genkit-ai\/genkit\/pull\/3813/,
+    "Genkit PR 링크가 없습니다",
+  );
+  assert.match(
+    aboutHtml,
+    /class="oss-pr-links"[\s\S]*genkit-ai\/genkit\/issues\/3748[\s\S]*genkit-ai\/genkit\/pull\/3813/,
+    "Genkit 이슈와 PR이 하나의 항목 아래 묶여 있지 않습니다",
+  );
+  assert.match(
+    aboutHtml,
+    /aws\/chalice\/issues\/2147/,
+    "Python Chalice 이슈 링크가 없습니다",
+  );
+  assert.doesNotMatch(
+    aboutHtml,
+    /Currently Exploring|15\+ microservices|25\+ asynchronous|0 financial loss|Rust Multi-Threaded Scanning Engine|genkit-readability|chalice-snap/,
+    "검증되지 않은 수치나 탐색 섹션이 남아 있습니다",
+  );
+  assert.doesNotMatch(
+    aboutHtml,
+    /class="about-highlights-col"|class="about-fact"/,
+    "About 통계 카드가 남아 있습니다",
+  );
 });
 
 test("홈(기본 블로그) 및 블로그 아카이브 정적 페이지를 올바르게 렌더링한다", async () => {

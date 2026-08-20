@@ -1920,10 +1920,7 @@ summary {
 /* About Split */
 
 .about-split-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
-  gap: 56px;
-  align-items: start;
+  max-width: 65ch;
 }
 
 .about-lead-paragraph {
@@ -1939,35 +1936,6 @@ summary {
   color: var(--muted);
   line-height: 1.85;
   margin: 0;
-}
-
-.about-highlights-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.about-fact {
-  padding: 18px 0;
-  border-top: 1px solid var(--line);
-}
-
-.about-fact:last-child {
-  border-bottom: 1px solid var(--line);
-}
-
-.stat-num {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 28px;
-  font-weight: 750;
-  color: var(--ink);
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
 }
 
 /* Principles */
@@ -2145,28 +2113,14 @@ summary {
   white-space: nowrap;
 }
 
+.oss-pr-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
 .oss-pr-link:hover {
   color: var(--accent-strong);
-}
-
-.explorations-group {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 56px;
-}
-
-.exploration-list {
-  border-top: 1px solid var(--line);
-}
-
-.exploration-note {
-  max-width: 760px;
-  padding: 24px 0 0;
-}
-
-.exploration-note .oss-card-sub {
-  margin-bottom: 10px;
 }
 
 /* Contact Footer Box */
@@ -3051,8 +3005,7 @@ summary {
   }
 
   .about-split-layout {
-    grid-template-columns: 1fr;
-    gap: 32px;
+    max-width: none;
   }
 
   .principles-row {

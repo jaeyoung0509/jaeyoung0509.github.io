@@ -69,10 +69,8 @@ bounces, parallax, or decorative animation.
   banners or repeated bordered boxes.
 - Open-source work is a single-column record list. Status is quiet metadata; green is
   reserved for a small state icon or link interaction.
-- “Currently exploring” is a reading/research note, visually distinct from completed
-  projects and contributions.
-- About facts are typographic rows, not statistic cards. If they repeat the prose
-  without adding useful context, remove them.
+- The About overview is prose, not a pair of statistic cards. If a fact repeats the
+  prose without adding useful context, remove it.
 - Mono type is metadata only: project numbers, domains, dates, stacks, and compact
   labels. Body explanations and headings remain in the primary sans family.
 
