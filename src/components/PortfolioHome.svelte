@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { tick } from "svelte";
+  import { slide } from "svelte/transition";
   import {
     ArrowUpRight,
     ArrowDown,
@@ -21,8 +23,27 @@
     zenith: false,
   });
 
-  function toggleWork(slug: string) {
-    expandedWork[slug] = !expandedWork[slug];
+  function disclosureDuration() {
+    if (typeof window === "undefined") return 0;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 0
+      : 300;
+  }
+
+  async function toggleWork(slug: string) {
+    const isOpening = !expandedWork[slug];
+    expandedWork[slug] = isOpening;
+    await tick();
+
+    requestAnimationFrame(() => {
+      const targetId = isOpening
+        ? `work-details-${slug}`
+        : `work-item-${slug}`;
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
   }
 
   const content = $derived({
@@ -902,7 +923,11 @@
 
     <div class="work-showcase">
       {#each c.work.items as item (item.slug)}
-        <article class="work-item" class:is-expanded={expandedWork[item.slug]}>
+        <article
+          id={`work-item-${item.slug}`}
+          class="work-item"
+          class:is-expanded={expandedWork[item.slug]}
+        >
           <div class="work-num-col">
             <span class="work-large-num">{item.number}</span>
           </div>
@@ -939,7 +964,11 @@
 
             <!-- Expandable Technical Case Study Detail -->
             {#if expandedWork[item.slug]}
-              <div class="work-deep-dive-panel">
+              <div
+                id={`work-details-${item.slug}`}
+                class="work-deep-dive-panel"
+                transition:slide={{ duration: disclosureDuration() }}
+              >
                 <!-- Context & Focus -->
                 <div class="dd-section">
                   <h4 class="dd-title">01 / Context & Focus</h4>
@@ -1036,6 +1065,7 @@
               class:is-active={expandedWork[item.slug]}
               onclick={() => toggleWork(item.slug)}
               aria-expanded={expandedWork[item.slug]}
+              aria-controls={`work-details-${item.slug}`}
               aria-label={expandedWork[item.slug] ? c.work.collapseCTA : c.work.expandCTA}
             >
               <span class="toggle-label">

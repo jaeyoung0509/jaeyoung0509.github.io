@@ -1687,7 +1687,11 @@ summary {
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
+  position: sticky;
+  top: var(--space-md);
+  z-index: 2;
   padding-top: 4px;
+  background: var(--page);
 }
 
 .work-toggle-btn {
@@ -1739,6 +1743,7 @@ summary {
   margin-top: 32px;
   padding-top: 28px;
   border-top: 1px dashed var(--line-strong);
+  scroll-margin-top: var(--space-md);
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -3025,7 +3030,8 @@ summary {
   }
 
   .work-item {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 16px;
     padding: 32px 0;
   }
@@ -3035,8 +3041,13 @@ summary {
   }
 
   .work-action-col {
+    order: -1;
+    width: 100%;
     justify-content: flex-start;
     padding-top: 0;
+    padding-bottom: 8px;
+    top: 0;
+    border-bottom: 1px solid var(--line);
   }
 
   .about-split-layout {
