@@ -32,6 +32,11 @@ export async function getHighlighter(): Promise<Highlighter> {
         "text",
         "markdown",
         "mermaid",
+        "make",
+        "makefile",
+        "just",
+        "justfile",
+        "rust",
       ],
     });
   }

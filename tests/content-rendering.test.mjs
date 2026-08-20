@@ -85,7 +85,82 @@ test("Go Mutex vs Atomic 벤치마크 글의 코드 및 벤치마크 결과를 �
   assert.match(html, /class="article-toc"/, "TOC가 렌더링되지 않았습니다");
 });
 
-test("홈, 블로그 아카이브, 어바웃 정적 페이지를 올바르게 렌더링한다", async () => {
+test("Makefile에서 Just로 이사오기 글의 다이어그램, 이미지, 코드 및 TOC를 정적으로 렌더링한다", async () => {
+  const html = await readFile(
+    new URL(
+      "../out/blog/migrate-makefile-to-just/index.html",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(
+    html,
+    /Makefile에서 Just로 이사오기/,
+    "포스트 제목이 올바르지 않습니다",
+  );
+  assert.match(html, /class="mermaid-diagram"/, "Mermaid 다이어그램이 없습니다");
+  assert.match(html, /class="article-toc"/, "TOC가 렌더링되지 않았습니다");
+  assert.match(html, /class="shiki/, "Shiki 코드 하이라이팅이 적용되지 않았습니다");
+  assert.match(
+    html,
+    /src="\/images\/make-wikipedia\.png"/,
+    "Make 위키피디아 이미지가 렌더링되지 않았습니다",
+  );
+  assert.match(
+    html,
+    /src="\/images\/just-casey-rodarmor-blog\.png"/,
+    "Casey Rodarmor 블로그 이미지가 렌더링되지 않았습니다",
+  );
+});
+
+test("About 페이지에 Hero, Selected Work(ZENITH 포함), Engineering Approach, Open Source, 언어 전환이 렌더링된다", async () => {
+  const aboutHtml = await readFile(
+    new URL("../out/about/index.html", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(aboutHtml, /Jaeyoung Lee/, "작성자 이름이 없습니다");
+  assert.match(
+    aboutHtml,
+    /I enjoy understanding how systems work/,
+    "Hero 핵심 태그라인이 없습니다",
+  );
+  assert.match(aboutHtml, /Seoul, South Korea/, "Seoul 위치 정보가 없습니다");
+  assert.match(aboutHtml, /class="lang-toggle-box"/, "언어 전환 버튼이 없습니다");
+  assert.match(
+    aboutHtml,
+    /Understanding systems/,
+    "엔지니어링 접근 방식 1이 없습니다",
+  );
+  assert.match(
+    aboutHtml,
+    /Communication first/,
+    "엔지니어링 접근 방식 2가 없습니다",
+  );
+  assert.match(
+    aboutHtml,
+    /Practical trade-offs/,
+    "엔지니어링 접근 방식 3이 없습니다",
+  );
+  assert.match(
+    aboutHtml,
+    /class="work-showcase"/,
+    "Selected Work 목록이 없습니다",
+  );
+  assert.match(aboutHtml, /PAYMONTHS/, "PAYMONTHS 케이스 스터디가 없습니다");
+  assert.match(aboutHtml, /MOONBERG/, "MOONBERG 케이스 스터디가 없습니다");
+  assert.match(aboutHtml, /ALEMBIC-DUMP/, "ALEMBIC-DUMP 케이스 스터디가 없습니다");
+  assert.match(aboutHtml, /ZENITH/, "ZENITH 케이스 스터디가 없습니다");
+  assert.match(
+    aboutHtml,
+    /Temporal Python SDK/,
+    "Temporal 오픈소스 항목이 없습니다",
+  );
+  assert.match(aboutHtml, /PR #1741/, "Open Source PR #1741 링크가 없습니다");
+});
+
+test("홈(기본 블로그) 및 블로그 아카이브 정적 페이지를 올바르게 렌더링한다", async () => {
   const homeHtml = await readFile(
     new URL("../out/index.html", import.meta.url),
     "utf8",
@@ -94,24 +169,13 @@ test("홈, 블로그 아카이브, 어바웃 정적 페이지를 올바르게 �
     new URL("../out/blog/index.html", import.meta.url),
     "utf8",
   );
-  const aboutHtml = await readFile(
-    new URL("../out/about/index.html", import.meta.url),
-    "utf8",
-  );
 
-  assert.match(homeHtml, /jaeyoung lee/, "홈페이지 헤더 브랜드가 없습니다");
-  assert.match(homeHtml, /class="post-row"/, "홈페이지 글 목록이 없습니다");
-  assert.match(
-    homeHtml,
-    /google-site-verification/,
-    "Google 소유권 확인 태그가 없습니다",
-  );
-
-  assert.match(blogHtml, /class="search-field"/, "검색 필드가 없습니다");
-  assert.match(blogHtml, /class="tag-filters"/, "태그 필터가 없습니다");
-
-  assert.match(aboutHtml, /운영 가능한 시스템을 만드는 백엔드 엔지니어/, "소개 본문이 없습니다");
-  assert.match(aboutHtml, /class="project-list"/, "프로젝트 목록이 없습니다");
+  for (const html of [homeHtml, blogHtml]) {
+    assert.match(html, /jaeyoung lee/, "헤더 브랜드가 없습니다");
+    assert.match(html, /class="post-row"/, "블로그 글 목록이 없습니다");
+    assert.match(html, /class="search-field"/, "검색 필드가 없습니다");
+    assert.match(html, /class="tag-filters"/, "태그 필터가 없습니다");
+  }
 });
 
 test("RSS 피드, 사이트맵, robots.txt, 404 페이지가 올바르게 생성된다", async () => {
@@ -137,6 +201,7 @@ test("RSS 피드, 사이트맵, robots.txt, 404 페이지가 올바르게 생성
 
   assert.match(sitemapXml, /<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/, "Sitemap XML 형식이 올바르지 않습니다");
   assert.match(sitemapXml, /https:\/\/jaeyoung0509.github.io\/blog\/go-mutex-atomic-cache-coherence-benchmark\//, "Sitemap에 포스트 URL이 없습니다");
+  assert.match(sitemapXml, /https:\/\/jaeyoung0509.github.io\/about\//, "Sitemap에 about URL이 없습니다");
 
   assert.match(robotsTxt, /User-agent: \*/, "robots.txt 내용이 올바르지 않습니다");
   assert.match(robotsTxt, /Sitemap: https:\/\/jaeyoung0509.github.io\/sitemap.xml/, "robots.txt sitemap 설정이 없습니다");
