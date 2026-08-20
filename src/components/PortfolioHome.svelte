@@ -9,7 +9,6 @@
     Check,
     AlertCircle,
     CheckCircle2,
-    Languages,
   } from "lucide-svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
   import { siteConfig } from "$lib/site";
@@ -29,7 +28,7 @@
   const content = $derived({
     en: {
       hero: {
-        role: "Backend Software Engineer",
+        role: "Software Engineer",
         location: "Seoul, South Korea",
         name: "Jaeyoung Lee",
         headline: "I enjoy understanding how systems work,\nbuilding practical tools, and learning from open source.",
@@ -40,7 +39,6 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
       },
       about: {
-        eyebrow: "ABOUT ME",
         title: "Turning manual and failure-prone workflows into reliable systems.",
         p1: "I enjoy taking manual, repetitive, or failure-prone problems in day-to-day engineering and turning them into reliable systems and practical developer tools.",
         p2: "When learning new technologies or solving tricky edge cases, I prefer digging into the underlying source code and tracing real execution paths rather than relying solely on high-level documentation. This habit naturally led to building tools like alembic-dump and Zenith, as well as contributing upstream to open-source projects like the Temporal Python SDK.",
@@ -50,8 +48,7 @@
         ],
       },
       work: {
-        eyebrow: "SELECTED WORK",
-        title: "Engineering Case Studies",
+        title: "Selected work",
         subtitle:
           "Real-world engineering problems I encountered, and the technical decisions behind solving them.",
         expandCTA: "Details",
@@ -65,7 +62,6 @@
             tagline:
               "B2B BNPL platform handling multi-step transactions across payments, e-contracts, and seller payouts.",
             domain: "B2B FinTech · Event-Driven",
-            signals: ["Production Scale", "FinTech", "Event-Driven", "AWS Serverless"],
             stack: [
               "Python",
               "AWS Lambda",
@@ -152,7 +148,6 @@
             tagline:
               "Coordinating multi-minute corporate financial filing extractions between Go API gateways and isolated Python workers.",
             domain: "Financial Data · Async Architecture",
-            signals: ["Go Backend", "Async Workers", "Job State Machine", "Fault Tolerant"],
             stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
             quickSummary: {
               problem: "Gateway timeouts and zombie job state on multi-minute extraction tasks",
@@ -227,7 +222,6 @@
             tagline:
               "Turning error-prone manual staging checklists into a single, reproducible CLI command.",
             domain: "Developer Tooling · Open Source",
-            signals: ["Developer Tooling", "Automation", "PostgreSQL", "Safety First"],
             stack: ["Python", "PostgreSQL", "Alembic", "AWS SSM", "CLI"],
             quickSummary: {
               problem: "Fragile, multi-step manual procedures for private VPC DB migration tests",
@@ -293,7 +287,6 @@
             tagline:
               "Rust + Svelte desktop application focused on safely cleaning development environments.",
             domain: "Developer Tooling · macOS",
-            signals: ["Developer Tooling", "Rust & Tauri", "Svelte", "macOS"],
             stack: ["Rust", "Tauri", "Svelte", "macOS"],
             quickSummary: {
               problem: "Safely identifying reclaimable developer build caches without touching user data",
@@ -358,12 +351,10 @@
         ],
       },
       oss: {
-        eyebrow: "OPEN SOURCE",
-        title: "Open Source & Explorations",
+        title: "Open source",
         subtitle:
           "I enjoy learning from open source projects, reading implementations, and contributing improvements when I find something useful.",
         contributionsTitle: "Core Contributions & Tooling",
-        explorationsTitle: "Currently Exploring",
         contributions: [
           {
             name: "Temporal Python SDK",
@@ -384,24 +375,14 @@
             statusType: "active",
           },
         ],
-        explorations: [
-          {
-            name: "AWS Chalice & Lambda Runtimes",
-            subtitle: "Serverless & SnapStart Execution Lifecycle",
-            desc: "Investigated AWS Lambda cold-start characteristics, SnapStart initialization lifecycle, and lightweight Python serverless framework behavior in high-throughput webhook contexts.",
-            status: "Research & Discussion",
-            statusType: "research",
-          },
-        ],
       },
       experience: {
-        eyebrow: "EXPERIENCE",
-        title: "Work History",
+        title: "Experience",
         items: [
           {
-            company: "PAYMONTHS",
-            role: "Backend Software Engineer",
-            period: "2022.01 – 2025.04",
+            company: "FinovusLab",
+            role: "Software Engineer",
+            period: "2022.04 – 2025.11",
             summary:
               "Built core payment, automated contract signing, credit evaluation, and merchant settlement backends for a B2B BNPL platform.",
             highlights: [
@@ -416,7 +397,7 @@
     },
     ko: {
       hero: {
-        role: "백엔드 소프트웨어 엔지니어",
+        role: "소프트웨어 엔지니어",
         location: "대한민국 서울",
         name: "이재영 (Jaeyoung Lee)",
         headline: "시스템의 동작 원리를 이해하고,\n실용적인 도구를 만드는 과정을 즐깁니다.",
@@ -427,7 +408,6 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
       },
       about: {
-        eyebrow: "ABOUT ME",
         title: "불안정하고 반복적인 문제를 신뢰할 수 있는 시스템과 도구로 바꿉니다.",
         p1: "업무에서 반복해서 마주치는 수동 절차나 실패하기 쉬운 불안정한 문제들을 그냥 두기보다, 신뢰할 수 있는 시스템과 작고 유용한 도구로 구조화하는 것을 좋아합니다.",
         p2: "새로운 기술을 배우거나 복잡한 버그를 해결할 때도 단순히 문서를 읽는 데 그치지 않고 실제 오픈소스 구현체와 런타임을 따라 내려가며 설계 의도를 파악하는 습관이 있습니다. 이러한 탐구는 자연스럽게 alembic-dump와 Zenith 같은 도구 제작과 Temporal Python SDK 기여로 이어졌습니다.",
@@ -437,8 +417,7 @@
         ],
       },
       work: {
-        eyebrow: "SELECTED WORK",
-        title: "엔지니어링 케이스 스터디",
+        title: "주요 작업",
         subtitle:
           "실제 프로젝트에서 마주한 문제와, 해결 과정에서 고민했던 기술적 선택을 정리했습니다.",
         expandCTA: "자세히",
@@ -452,7 +431,6 @@
             tagline:
               "결제부터 판매자 정산까지 여러 금융 단계를 안정적으로 처리하는 B2B BNPL 플랫폼",
             domain: "B2B 핀테크 · 이벤트 기반",
-            signals: ["프로덕션 스케일", "핀테크", "이벤트 기반", "AWS Serverless"],
             stack: [
               "Python",
               "AWS Lambda",
@@ -539,7 +517,6 @@
             tagline:
               "Go API 코디네이터와 격리된 Python 워커 간의 수 분 소요 기업 공시 데이터 수집 작업 조율",
             domain: "금융 데이터 · 비동기 아키텍처",
-            signals: ["Go 백엔드", "비동기 워커", "상태 머신", "결함 복원력"],
             stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
             quickSummary: {
               problem: "수 분 소요되는 크롤링 작업의 타임아웃 및 워커 크래시 시 좀비 작업 발생",
@@ -614,7 +591,6 @@
             tagline:
               "실수를 유발하던 수동 검증 절차를 재현 가능한 단일 CLI 명령어로 자동화",
             domain: "개발자 도구 · 오픈소스",
-            signals: ["개발자 도구", "자동화", "PostgreSQL", "안전성"],
             stack: ["Python", "PostgreSQL", "Alembic", "AWS SSM", "CLI"],
             quickSummary: {
               problem: "복잡하고 실수하기 쉬운 Private VPC DB 마이그레이션 수동 검증",
@@ -680,7 +656,6 @@
             tagline:
               "Rust와 Tauri를 활용하여 개발 환경의 대용량 빌드 캐시를 빠르고 안전하게 정리",
             domain: "개발자 도구 · macOS",
-            signals: ["개발자 도구", "Rust & Tauri", "Svelte", "macOS"],
             stack: ["Rust", "Tauri", "Svelte", "macOS"],
             quickSummary: {
               problem: "사용자 데이터 손실 없이 대용량 개발 빌드 캐시를 안전하게 식별 및 정리",
@@ -745,12 +720,10 @@
         ],
       },
       oss: {
-        eyebrow: "OPEN SOURCE",
-        title: "오픈소스 기여 및 활동",
+        title: "오픈소스",
         subtitle:
           "오픈소스 코드를 읽으며 구현을 배우고, 유용한 개선점을 찾아 생태계에 기여하는 것을 좋아합니다.",
         contributionsTitle: "주요 오픈소스 기여 및 도구",
-        explorationsTitle: "현재 탐구 중인 영역",
         contributions: [
           {
             name: "Temporal Python SDK",
@@ -771,24 +744,14 @@
             statusType: "active",
           },
         ],
-        explorations: [
-          {
-            name: "AWS Chalice & 람다 런타임",
-            subtitle: "서버리스 & SnapStart 생명주기 연구",
-            desc: "AWS Lambda의 콜드스타트 특성, SnapStart 초기화 생명주기 및 경량 서버리스 웹 프레임워크의 동작을 조사했습니다.",
-            status: "연구 및 토론",
-            statusType: "research",
-          },
-        ],
       },
       experience: {
-        eyebrow: "EXPERIENCE",
-        title: "경력 사항",
+        title: "경력",
         items: [
           {
-            company: "페이먼스 (PAYMONTHS)",
-            role: "백엔드 소프트웨어 엔지니어",
-            period: "2022.01 – 2025.04",
+            company: "FinovusLab",
+            role: "소프트웨어 엔지니어",
+            period: "2022.04 – 2025.11",
             summary:
               "B2B BNPL 핀테크 플랫폼에서 결제, 전자계약 체결, 신용평가, 정산 코어 백엔드 시스템 개발 및 운영",
             highlights: [
@@ -807,12 +770,12 @@
 </script>
 
 <svelte:head>
-  <title>Jaeyoung Lee — Backend Software Engineer</title>
+  <title>Jaeyoung Lee — Software Engineer</title>
   <meta
     name="description"
-    content="Jaeyoung Lee · Backend Software Engineer. I enjoy understanding how systems work, building practical tools, and learning from open source."
+    content="Jaeyoung Lee · Software Engineer. I enjoy understanding how systems work, building practical tools, and learning from open source."
   />
-  <meta property="og:title" content="Jaeyoung Lee — Backend Software Engineer" />
+  <meta property="og:title" content="Jaeyoung Lee — Software Engineer" />
   <meta
     property="og:description"
     content="Backend engineer with 3.5+ years building payment, credit, contract, and settlement systems. Interested in reliable asynchronous systems, developer tooling, and understanding how things work beneath the abstraction."
@@ -833,7 +796,6 @@
 
       <!-- Language Switcher -->
       <div class="lang-toggle-box" aria-label="언어 선택 / Language switcher">
-        <Languages size={14} class="lang-icon" />
         <button
           type="button"
           class="lang-btn"
@@ -908,7 +870,6 @@
   <!-- About Me Section -->
   <section class="portfolio-section" id="about">
     <div class="section-title-row">
-      <p class="section-eyebrow">{c.about.eyebrow}</p>
       <h2 class="section-heading-large">{c.about.title}</h2>
     </div>
 
@@ -920,7 +881,7 @@
 
       <div class="about-highlights-col">
         {#each c.about.stats as stat (stat.label)}
-          <div class="stat-card">
+          <div class="about-fact">
             <span class="stat-num">{stat.num}</span>
             <span class="stat-label">{stat.label}</span>
           </div>
@@ -935,7 +896,6 @@
   <!-- Selected Work Section -->
   <section class="portfolio-section" id="work">
     <div class="section-title-row">
-      <p class="section-eyebrow">{c.work.eyebrow}</p>
       <h2 class="section-heading-large">{c.work.title}</h2>
       <p class="section-heading-sub">{c.work.subtitle}</p>
     </div>
@@ -950,38 +910,32 @@
           <div class="work-main-col">
             <div class="work-meta-top">
               <span class="work-domain-badge">{item.domain}</span>
-              <div class="work-signals-inline">
-                {#each item.signals as signal (signal)}
-                  <span class="work-signal-pill">{signal}</span>
-                {/each}
-              </div>
             </div>
 
             <h3 class="work-title">{item.title}</h3>
             <p class="work-subtitle">{item.subtitle}</p>
             <p class="work-tagline">{item.tagline}</p>
 
-            <!-- Quick Summary Bar (Always Visible) -->
-            <div class="work-quick-summary-grid">
-              <div class="qs-item">
-                <span class="qs-label">Problem</span>
-                <span class="qs-value">{item.quickSummary.problem}</span>
+            <dl class="work-summary">
+              <div class="summary-row">
+                <dt>{lang === "ko" ? "문제" : "Problem"}</dt>
+                <dd>{item.quickSummary.problem}</dd>
               </div>
-              <div class="qs-item">
-                <span class="qs-label">Solution</span>
-                <span class="qs-value">{item.quickSummary.solution}</span>
+              <div class="summary-row">
+                <dt>{lang === "ko" ? "해결" : "Solution"}</dt>
+                <dd>{item.quickSummary.solution}</dd>
               </div>
-              <div class="qs-item">
-                <span class="qs-label">Impact</span>
-                <span class="qs-value">{item.quickSummary.impact}</span>
+              <div class="summary-row">
+                <dt>{lang === "ko" ? "결과" : "Result"}</dt>
+                <dd>{item.quickSummary.impact}</dd>
               </div>
-            </div>
+            </dl>
 
-            <div class="work-stack-row">
-              {#each item.stack as tech (tech)}
-                <span class="stack-tag">{tech}</span>
+            <p class="work-stack-line" aria-label={lang === "ko" ? "기술 스택" : "Technology stack"}>
+              {#each item.stack as tech, idx (tech)}
+                <span>{tech}</span>{#if idx < item.stack.length - 1}<span aria-hidden="true"> / </span>{/if}
               {/each}
-            </div>
+            </p>
 
             <!-- Expandable Technical Case Study Detail -->
             {#if expandedWork[item.slug]}
@@ -1105,7 +1059,6 @@
   <!-- Open Source & Explorations -->
   <section class="portfolio-section">
     <div class="section-title-row">
-      <p class="section-eyebrow">{c.oss.eyebrow}</p>
       <h2 class="section-heading-large">{c.oss.title}</h2>
       <p class="section-heading-sub">{c.oss.subtitle}</p>
     </div>
@@ -1113,15 +1066,16 @@
     <!-- Core Contributions -->
     <div class="oss-subgroup">
       <h3 class="oss-group-heading">{c.oss.contributionsTitle}</h3>
-      <div class="oss-grid-clean">
+      <div class="oss-list">
         {#each c.oss.contributions as item (item.name)}
-          <div class="oss-item-card">
+          <article class="oss-entry">
             <div class="oss-card-top">
               <div>
                 <h4 class="oss-card-name">{item.name}</h4>
                 <p class="oss-card-sub">{item.subtitle}</p>
               </div>
-              <span class={`oss-badge-status status-${item.statusType}`}>
+              <span class="oss-status">
+                {#if item.statusType === "merged"}<Check size={13} aria-hidden="true" />{/if}
                 {item.status}
               </span>
             </div>
@@ -1129,43 +1083,20 @@
             <p class="oss-card-desc">{item.desc}</p>
 
             {#if item.prTitle && item.prUrl}
-              <div class="oss-card-footer">
-                <a
-                  href={item.prUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  class="oss-pr-link"
-                >
-                  <GitPullRequest size={14} /> {item.prTitle}
-                </a>
-              </div>
+              <a
+                href={item.prUrl}
+                target="_blank"
+                rel="noreferrer"
+                class="oss-pr-link"
+              >
+                <GitPullRequest size={14} /> {item.prTitle}
+              </a>
             {/if}
-          </div>
+          </article>
         {/each}
       </div>
     </div>
 
-    <!-- Current Explorations -->
-    <div class="oss-subgroup" style="margin-top: 32px;">
-      <h3 class="oss-group-heading">{c.oss.explorationsTitle}</h3>
-      <div class="oss-grid-clean">
-        {#each c.oss.explorations as item (item.name)}
-          <div class="oss-item-card">
-            <div class="oss-card-top">
-              <div>
-                <h4 class="oss-card-name">{item.name}</h4>
-                <p class="oss-card-sub">{item.subtitle}</p>
-              </div>
-              <span class={`oss-badge-status status-${item.statusType}`}>
-                {item.status}
-              </span>
-            </div>
-
-            <p class="oss-card-desc">{item.desc}</p>
-          </div>
-        {/each}
-      </div>
-    </div>
   </section>
 
   <!-- Section Divider -->
@@ -1174,7 +1105,6 @@
   <!-- Experience Summary -->
   <section class="portfolio-section">
     <div class="section-title-row">
-      <p class="section-eyebrow">{c.experience.eyebrow}</p>
       <h2 class="section-heading-large">{c.experience.title}</h2>
     </div>
 

@@ -128,6 +128,8 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   );
   assert.match(aboutHtml, /Seoul, South Korea/, "Seoul 위치 정보가 없습니다");
   assert.match(aboutHtml, /class="lang-toggle-box"/, "언어 전환 버튼이 없습니다");
+  assert.match(aboutHtml, /FinovusLab/, "경력 회사명이 없습니다");
+  assert.match(aboutHtml, /2022\.04 – 2025\.11/, "경력 기간이 올바르지 않습니다");
   assert.match(
     aboutHtml,
     /Turning manual and failure-prone workflows into reliable systems/,

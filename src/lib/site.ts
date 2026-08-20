@@ -6,7 +6,7 @@ export const siteConfig = {
   url: "https://jaeyoung0509.github.io",
   author: {
     name: "Jaeyoung Lee",
-    title: "Backend Software Engineer",
+    title: "Software Engineer",
     tagline: "I build reliable systems for workflows that don't always go as planned.",
     email: "ejaebbang@gmail.com",
     github: "https://github.com/jaeyoung0509",

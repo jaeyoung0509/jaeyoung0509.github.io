@@ -72,11 +72,11 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "How I designed, operated, and evolved asynchronous payment, digital contract, and seller settlement workflows for a B2B Buy Now Pay Later (BNPL) platform on AWS.",
     meta: [
-      { label: "ROLE", value: "Backend Software Engineer" },
+      { label: "ROLE", value: "Software Engineer" },
       { label: "DOMAIN", value: "FinTech (B2B BNPL)" },
       { label: "FOCUS", value: "Reliability · Asynchronous Workflows · Idempotency" },
       { label: "STACK", value: "Python / AWS Lambda / EventBridge / SQS FIFO / PostgreSQL / DynamoDB" },
-      { label: "PERIOD", value: "2022 – 2025" },
+      { label: "PERIOD", value: "2022.04 – 2025.11" },
     ],
     stack: [
       "Python",
