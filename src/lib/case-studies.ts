@@ -204,7 +204,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     results: [
       "Handled retries and downstream failures without duplicate payout issues reported during the production period.",
-      "Standardized correlation_id tracing across asynchronous services, reducing incident triage time from hours to minutes.",
+      "Standardized correlation_id tracing across asynchronous services, making incident triage faster.",
       "Decoupled slow external partner API calls (3–5s) from user-facing checkout response paths, ensuring snappy client responsiveness.",
     ],
     learnings: [
@@ -252,7 +252,7 @@ export const caseStudies: CaseStudy[] = [
     whatIOwned: [
       "Designed asynchronous job dispatch between a Go API and isolated Python Bloomberg workers.",
       "Implemented persistent job states (queued → dispatched → running → succeeded/failed) backed by PostgreSQL and PGMQ.",
-      "Kept collection results available after the original request ended so the workflow could be resumed and reviewed later.",
+      "Kept collection results available after the original request ended so users could return to the persisted job state and results later.",
     ],
     problem: {
       headline: "Bloomberg data collection could take minutes and depended on isolated local workers.",
@@ -493,7 +493,7 @@ export const caseStudies: CaseStudy[] = [
       "ZENITH was designed as a fast, offline-first native tool that scans and cleans development workspaces without sending telemetry.",
     ],
     whatIOwned: [
-      "Designed and developed the complete desktop application combining a high-performance Rust backend with a modern Svelte UI via Tauri.",
+      "Designed and developed the complete desktop application combining a Rust core with a modern Svelte UI via Tauri.",
       "Moved scan execution to a background worker so large directory walks do not block the UI.",
       "Designed a clean, keyboard-friendly UI focused on developer productivity and safety.",
     ],
@@ -527,7 +527,7 @@ export const caseStudies: CaseStudy[] = [
         name: "Option C",
         title: "Tauri (Rust) + Svelte (Chosen)",
         pros: [
-          "Small native footprint, fast filesystem scanning in Rust, and a reactive Svelte UI.",
+          "Lower runtime overhead than an Electron-based architecture, fast filesystem scanning in Rust, and a reactive Svelte UI.",
           "OS-native webview with a lower runtime footprint.",
         ],
         cons: ["Requires bridging async commands between Rust IPC and frontend state."],

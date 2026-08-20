@@ -159,6 +159,11 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(aboutHtml, /AWS Chalice/, "AWS Chalice 항목이 없습니다");
   assert.match(
     aboutHtml,
+    /upstream contributions to Temporal and Genkit/,
+    "About 소개에 Genkit upstream 기여가 반영되지 않았습니다",
+  );
+  assert.match(
+    aboutHtml,
     /genkit-ai\/genkit\/pull\/3813/,
     "Genkit PR 링크가 없습니다",
   );
@@ -171,6 +176,14 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     aboutHtml,
     /aws\/chalice\/issues\/2147/,
     "AWS Chalice 이슈 링크가 없습니다",
+  );
+  const ossNames = [...aboutHtml.matchAll(/class="oss-card-name">([^<]+)</g)].map(
+    ([, name]) => name,
+  );
+  assert.deepEqual(
+    ossNames.slice(0, 4),
+    ["Temporal Python SDK", "Genkit Go", "alembic-dump", "AWS Chalice"],
+    "Open Source 항목 순서가 contribution 무게에 맞지 않습니다",
   );
   assert.doesNotMatch(
     aboutHtml,

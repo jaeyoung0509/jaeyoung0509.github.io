@@ -62,7 +62,7 @@
       about: {
         title: "Turning manual and failure-prone workflows into reliable systems.",
         p1: "The problems I keep returning to are practical ones: a payment retry that can duplicate a payout, a data-collection job that outlives its request, or a migration check people skip because it takes too long.",
-        p2: "I like tracing those failures through the implementation—not just the API surface—and turning the repeated fix into a tool or a clearer system boundary. That led to work on alembic-dump, Zenith, and an upstream Temporal Python SDK contribution.",
+        p2: "I like tracing those failures through the implementation—not just the API surface—and turning the repeated fix into a tool or a clearer system boundary. That habit has led to developer tools like alembic-dump and Zenith, as well as upstream contributions to Temporal and Genkit.",
       },
       work: {
         title: "Selected work",
@@ -176,7 +176,7 @@
             owned: [
               "Designed asynchronous job dispatch between a Go API and isolated Python Bloomberg workers.",
               "Implemented persistent job states (queued → dispatched → running → succeeded/failed) backed by PostgreSQL and PGMQ.",
-              "Kept collection results available after the original request ended so the workflow could be resumed and reviewed later.",
+              "Kept collection results available after the original request ended so users could return to the persisted job state and results later.",
             ],
             problem: {
               headline:
@@ -305,7 +305,7 @@
             context:
               "Developers accumulate gigabytes of hidden build artifacts (Cargo target/, node_modules, Docker unused caches) on macOS. The key engineering challenge is accurately identifying safe-to-delete artifacts while preventing any accidental data loss.",
             owned: [
-              "Designed and developed the desktop app combining a high-performance Rust core with a modern Svelte UI via Tauri.",
+              "Designed and developed the desktop app combining a Rust core with a modern Svelte UI via Tauri.",
               "Moved scan execution to a background worker so large directory walks do not block the UI.",
               "Designed preview-first safety checks and guarded deletion boundaries.",
             ],
@@ -324,7 +324,7 @@
                 },
                 {
                   title: "Tauri (Rust) + Svelte",
-                  desc: "Tiny binary footprint, fast native filesystem traversal in Rust, and reactive lightweight UI.",
+                  desc: "Lower runtime overhead than an Electron-based architecture, fast native filesystem traversal in Rust, and a reactive lightweight UI.",
                 },
               ],
               choice:
@@ -362,7 +362,7 @@
       oss: {
         title: "Open source",
         subtitle:
-          "Reading implementations, then contributing where the behavior needs to be clearer.",
+          "Reading implementations, fixing rough edges, and contributing improvements upstream.",
         contributionsTitle: "Open source work",
         contributions: [
           {
@@ -392,21 +392,21 @@
             statusType: "active",
           },
           {
-            name: "AWS Chalice",
-            subtitle: "Lambda SnapStart · Framework Support Discussion",
-            prTitle: "Issue #2147 — SnapStart ↗",
-            prUrl: "https://github.com/aws/chalice/issues/2147",
-            desc: "Asked whether Chalice plans native AWS Lambda SnapStart support, since the deploy command and .chalice/config.json did not expose a configuration option.",
-            status: "Open · Issue",
-            statusType: "active",
-          },
-          {
             name: "alembic-dump",
             subtitle: "Database Migration & Data Tooling",
             prTitle: "GitHub Repository ↗",
             prUrl: "https://github.com/jaeyoung0509/alembic-dump",
             desc: "Open-source Python library for Alembic synchronization, database dump/load, data masking, and SSH-based remote access.",
             status: "Active · Published",
+            statusType: "active",
+          },
+          {
+            name: "AWS Chalice",
+            subtitle: "Lambda SnapStart · Framework Support Discussion",
+            prTitle: "Issue #2147 — SnapStart ↗",
+            prUrl: "https://github.com/aws/chalice/issues/2147",
+            desc: "Asked whether Chalice plans native AWS Lambda SnapStart support, since the deploy command and .chalice/config.json did not expose a configuration option.",
+            status: "Open · Issue",
             statusType: "active",
           },
         ],
@@ -423,7 +423,7 @@
             highlights: [
               "Built and operated 10+ event-driven serverless services across payment, credit, contract, and settlement workflows on AWS.",
               "Designed idempotent processing and transactional state guards around retryable bank and payment-provider integrations.",
-              "Unified structured logging with correlation IDs, reducing distributed incident triage time from hours to minutes.",
+              "Unified structured logging with correlation IDs, making cross-service incident tracing significantly faster.",
               "Built the internal migration workflow that later evolved into alembic-dump, reducing staging verification from 30m to 2m.",
             ],
           },
@@ -445,7 +445,7 @@
         about: {
           title: "불안정하고 반복적인 문제를 신뢰할 수 있는 시스템과 도구로 바꿉니다.",
           p1: "제가 반복해서 다루는 문제는 꽤 실무적입니다. 재시도로 정산이 중복될 수 있는 결제, 요청보다 오래 걸리는 데이터 수집, 번거로워서 건너뛰기 쉬운 마이그레이션 검증 같은 문제입니다.",
-          p2: "이런 실패를 API 표면에서 멈추지 않고 실제 구현까지 따라가 원인을 확인한 뒤, 반복되는 해결책을 도구나 명확한 시스템 경계로 바꾸는 편입니다. 그 과정에서 alembic-dump, Zenith, Temporal Python SDK 기여로 이어졌습니다.",
+          p2: "이런 실패를 API 표면에서 멈추지 않고 실제 구현까지 따라가 원인을 확인한 뒤, 반복되는 해결책을 도구나 명확한 시스템 경계로 바꾸는 편입니다. 그 습관은 alembic-dump와 Zenith 같은 개발자 도구, Temporal과 Genkit upstream 기여로 이어졌습니다.",
       },
         work: {
           title: "주요 작업",
@@ -559,7 +559,7 @@
             owned: [
               "Go API와 격리된 Python Bloomberg 워커 사이의 비동기 작업 디스패치 구조 설계",
               "PostgreSQL과 PGMQ를 기반으로 queued → dispatched → running → succeeded/failed 작업 상태를 영속화",
-              "원래 요청이 끝난 뒤에도 작업 결과를 조회하고 이어서 확인할 수 있도록 결과 저장 흐름 구성",
+              "원래 요청이 끝난 뒤에도 작업 결과를 저장해 나중에 조회하고 검토할 수 있도록 구성",
             ],
             problem: {
               headline:
@@ -745,7 +745,7 @@
       oss: {
         title: "오픈소스",
         subtitle:
-          "구현을 따라가며 이해한 내용을 문서와 도구로 다시 남깁니다.",
+          "구현을 따라가며 문제를 확인하고, 필요한 수정이나 도구를 upstream에 다시 기여합니다.",
         contributionsTitle: "오픈소스 작업",
         contributions: [
           {
@@ -775,21 +775,21 @@
             statusType: "active",
           },
           {
-            name: "AWS Chalice",
-            subtitle: "Lambda SnapStart · 프레임워크 지원 논의",
-            prTitle: "Issue #2147 — SnapStart ↗",
-            prUrl: "https://github.com/aws/chalice/issues/2147",
-            desc: "Chalice의 deploy 명령과 .chalice/config.json에 설정 옵션이 없어 AWS Lambda SnapStart를 공식 지원할 계획이 있는지 문의했습니다.",
-            status: "Open · Issue",
-            statusType: "active",
-          },
-          {
             name: "alembic-dump",
             subtitle: "데이터베이스 마이그레이션 및 데이터 도구",
             prTitle: "GitHub 리포지토리 ↗",
             prUrl: "https://github.com/jaeyoung0509/alembic-dump",
             desc: "Alembic 동기화, 데이터베이스 dump/load, 데이터 마스킹, SSH 기반 원격 접근을 제공하는 오픈소스 Python 라이브러리입니다.",
             status: "Active · PyPI / GitHub",
+            statusType: "active",
+          },
+          {
+            name: "AWS Chalice",
+            subtitle: "Lambda SnapStart · 프레임워크 지원 논의",
+            prTitle: "Issue #2147 — SnapStart ↗",
+            prUrl: "https://github.com/aws/chalice/issues/2147",
+            desc: "Chalice의 deploy 명령과 .chalice/config.json에 설정 옵션이 없어 AWS Lambda SnapStart를 공식 지원할 계획이 있는지 문의했습니다.",
+            status: "Open · Issue",
             statusType: "active",
           },
         ],
