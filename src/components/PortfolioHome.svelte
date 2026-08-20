@@ -34,10 +34,20 @@
         name: "Jaeyoung Lee",
         headline: "I enjoy understanding how systems work,\nbuilding practical tools, and learning from open source.",
         subheadline:
-          "Backend engineer with 3.5+ years building fintech backends. Focused on reliable systems, developer experience, and runtime internals.",
+          "Backend engineer with 3.5+ years building payment, credit, contract, and settlement systems. Interested in reliable asynchronous systems, developer tooling, and understanding how things work beneath the abstraction.",
         ctaWork: "View Selected Work",
         ctaContact: "Contact",
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
+      },
+      about: {
+        eyebrow: "ABOUT ME",
+        title: "Turning manual and failure-prone workflows into reliable systems.",
+        p1: "I enjoy taking manual, repetitive, or failure-prone problems in day-to-day engineering and turning them into reliable systems and practical developer tools.",
+        p2: "When learning new technologies or solving tricky edge cases, I prefer digging into the underlying source code and tracing real execution paths rather than relying solely on high-level documentation. This habit naturally led to building tools like alembic-dump and Zenith, as well as contributing upstream to open-source projects like the Temporal Python SDK.",
+        stats: [
+          { num: "3.5+", label: "Years Building FinTech Systems" },
+          { num: "Open Source", label: "Learning Through Source Code & Contributions" },
+        ],
       },
       work: {
         eyebrow: "SELECTED WORK",
@@ -66,8 +76,8 @@
             ],
             quickSummary: {
               problem: "Handling partial failures across external payment/bank APIs",
-              solution: "SQS FIFO + Idempotency Keys + Transactional State Guards",
-              impact: "Reliable operations without payout discrepancies",
+              solution: "Per-order SQS FIFO + Idempotency Keys + Transactional State Guards",
+              impact: "Prevented duplicate processing and inconsistent payout state across retryable workflows",
             },
             context:
               "PAYMONTHS is a B2B BNPL service that processes financial events from buyer checkout to seller settlement across multiple external partners.",
@@ -140,17 +150,17 @@
             title: "MOONBERG",
             subtitle: "Asynchronous architecture for long-running data collection",
             tagline:
-              "Coordinating multi-minute data extraction jobs between Go API gateways and isolated Python workers.",
+              "Coordinating multi-minute corporate financial filing extractions between Go API gateways and isolated Python workers.",
             domain: "Financial Data · Async Architecture",
             signals: ["Go Backend", "Async Workers", "Job State Machine", "Fault Tolerant"],
             stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
             quickSummary: {
-              problem: "Tracking state and handling failures in multi-minute scraping jobs",
-              solution: "Go Coordinator + Python Workers + DB State Machine & Heartbeats",
-              impact: "Resilient job recovery without zombie tasks or UI freezes",
+              problem: "Gateway timeouts and zombie job state on multi-minute extraction tasks",
+              solution: "Go Coordinator + Isolated Python Workers + DB State Machine & Heartbeats",
+              impact: "Decoupled long-running jobs from API request lifecycles with automatic failure recovery",
             },
             context:
-              "Moonberg extracts and structures public corporate financial filings. A single collection job takes between 30 seconds and 10 minutes depending on document size and exchange rate limits.",
+              "Moonberg extracts, normalizes, and structures public corporate financial filings and market disclosures. A single collection job takes between 30 seconds and 10 minutes depending on document size and exchange rate limits.",
             owned: [
               "Designed asynchronous job dispatch splitting lightweight client coordination in Go from heavy HTML parsing in Python.",
               "Implemented a PostgreSQL-backed transactional job state machine using SELECT FOR UPDATE SKIP LOCKED.",
@@ -222,7 +232,7 @@
             quickSummary: {
               problem: "Fragile, multi-step manual procedures for private VPC DB migration tests",
               solution: "Unified CLI automating SSM tunnels, schema dumps, and local dry-runs",
-              impact: "Faster verification and reduced risk of deployment schema conflicts",
+              impact: "Reduced staging migration verification from ~30 min to ~2 min",
             },
             context:
               "In production AWS environments, RDS PostgreSQL databases reside inside private VPC subnets. Before applying schema migrations, developers had to manually set up bastion tunnels, extract schema snapshots, sanitize data, and verify migrations locally.",
@@ -281,28 +291,28 @@
             title: "ZENITH",
             subtitle: "A lightweight macOS utility for developers",
             tagline:
-              "Rust + Svelte desktop application focused on cleaning development environments.",
+              "Rust + Svelte desktop application focused on safely cleaning development environments.",
             domain: "Developer Tooling · macOS",
             signals: ["Developer Tooling", "Rust & Tauri", "Svelte", "macOS"],
             stack: ["Rust", "Tauri", "Svelte", "macOS"],
             quickSummary: {
-              problem: "Gigabytes of hidden build artifacts and bloated subscription cleaners",
-              solution: "Native Rust file scanning engine + lightweight Tauri & Svelte UI",
-              impact: "Fast, privacy-first cleanup with safe Trash recovery",
+              problem: "Safely identifying reclaimable developer build caches without touching user data",
+              solution: "Rust Multi-Threaded Scanning Engine + Tauri & Svelte Native UI",
+              impact: "Fast workspace cleanup backed by dry-run previews and safe Trash recovery",
             },
             context:
-              "Developers accumulate gigabytes of hidden build artifacts (target/, node_modules, Docker caches) on macOS. Existing cleaners are often bloated, subscription-heavy, and collect telemetry.",
+              "Developers accumulate gigabytes of hidden build artifacts (Cargo target/, node_modules, Docker unused caches) on macOS. The key engineering challenge is accurately identifying safe-to-delete artifacts while preventing any accidental data loss.",
             owned: [
               "Designed and developed the desktop app combining a high-performance Rust core with a modern Svelte UI via Tauri.",
               "Implemented multi-threaded parallel directory traversal in Rust to inspect heavy build caches quickly.",
-              "Focused on preview-first and Trash-safe deletion experiences to prevent accidental data loss.",
+              "Focused on preview-first and Trash-safe deletion experiences to guarantee deletion safety.",
             ],
             problem: {
               headline:
-                "Existing system cleaners are heavy, subscription-based, and ignore developer build caches.",
+                "Development caches are deeply nested and dangerous to clean with naive recursive deletes.",
               subheadline: "How do you scan and safely reclaim gigabytes of development artifacts?",
               details:
-                "Traditional tools target browser caches while missing developer folders like Cargo target/ or node_modules/. Electron tools consume excessive memory (>300MB idle).",
+                "Build artifacts spread across arbitrary folders. A deletion tool must provide deterministic pattern recognition, explicit dry-run previews, and safe recovery to protect uncommitted work.",
             },
             decisions: {
               considerations: [
@@ -330,11 +340,15 @@
                 q: "What if scanning a massive directory locks up the UI thread?",
                 a: "Scanning runs on background Rust worker threads using rayon. Progress events are throttled and streamed over Tauri IPC, keeping the Svelte UI smooth.",
               },
+              {
+                q: "What if a user accidentally includes source files in a cleanup run?",
+                a: "ZENITH matches strict known artifact signatures (e.g. target/, .venv, node_modules) and defaults to macOS Trash rather than permanent unrecoverable deletion.",
+              },
             ],
             results: [
-              "Lightweight distribution bundle with minimal idle memory usage.",
-              "Fast parallel scanning across deeply nested development directories.",
-              "Safely reclaims tens of gigabytes of disk space per clean run.",
+              "Lightweight distribution bundle with minimal idle memory usage (<30MB).",
+              "Fast parallel scanning across deeply nested development directories in milliseconds.",
+              "Safely reclaims tens of gigabytes of disk space per clean run with zero data loss accidents.",
             ],
             learning:
               "Developer tools must prioritize safety and predictability above all else—accidental data loss destroys user trust immediately.",
@@ -343,31 +357,40 @@
           },
         ],
       },
-      about: {
-        eyebrow: "ABOUT ME",
-        title: "Understanding systems, building useful tools.",
-        p1: "I’m a backend engineer with 3.5+ years of experience building fintech systems across payments, credit evaluation, contracts, and settlement.",
-        p2: "I enjoy digging into how systems work under the hood, from backend architectures to open source implementations. Reading source code, understanding design trade-offs, and building practical solutions with teammates are some of my favorite ways to grow.",
-        stats: [
-          { num: "3.5+", label: "Years Building FinTech Systems" },
-          { num: "Open Source", label: "Learning Through Reading & Contributing" },
+      oss: {
+        eyebrow: "OPEN SOURCE",
+        title: "Open Source & Explorations",
+        subtitle:
+          "I enjoy learning from open source projects, reading implementations, and contributing improvements when I find something useful.",
+        contributionsTitle: "Core Contributions & Tooling",
+        explorationsTitle: "Currently Exploring",
+        contributions: [
+          {
+            name: "Temporal Python SDK",
+            subtitle: "OpenAI Agents Integration",
+            prTitle: "PR #1741 — Clarify OpenAI Agents tool execution ↗",
+            prUrl: "https://github.com/temporalio/sdk-python/pull/1741",
+            desc: "While experimenting with Temporal's OpenAI Agents integration, I traced the SDK execution boundaries between Workflow-local and Activity-backed tools, contributing documentation clarifications upstream.",
+            status: "Merged",
+            statusType: "merged",
+          },
+          {
+            name: "alembic-dump",
+            subtitle: "Database Migration Automation CLI",
+            prTitle: "GitHub Repository ↗",
+            prUrl: "https://github.com/jaeyoung0509/alembic-dump",
+            desc: "Open-source Python CLI tool automating AWS SSM Session Manager port-forwarding, database snapshot extraction, and local Alembic migration verification.",
+            status: "Active · Published",
+            statusType: "active",
+          },
         ],
-      },
-      principles: {
-        eyebrow: "HOW I WORK",
-        title: "How I Work",
-        items: [
+        explorations: [
           {
-            title: "Understanding systems",
-            desc: "I enjoy digging into how systems work, from backend architecture to open source implementations. Reading source code and understanding design decisions is one of my favorite ways to learn.",
-          },
-          {
-            title: "Communication first",
-            desc: "Good engineering is not only about writing code. I value clear communication, documenting decisions, and finding practical solutions together with teammates.",
-          },
-          {
-            title: "Practical trade-offs",
-            desc: "Every architecture has trade-offs. I focus on understanding the domain context and choosing solutions that fit the product, team, and stage of the system.",
+            name: "AWS Chalice & Lambda Runtimes",
+            subtitle: "Serverless & SnapStart Execution Lifecycle",
+            desc: "Investigated AWS Lambda cold-start characteristics, SnapStart initialization lifecycle, and lightweight Python serverless framework behavior in high-throughput webhook contexts.",
+            status: "Research & Discussion",
+            statusType: "research",
           },
         ],
       },
@@ -390,46 +413,6 @@
           },
         ],
       },
-      oss: {
-        eyebrow: "OPEN SOURCE",
-        title: "Contributions & Explorations",
-        subtitle:
-          "I enjoy learning from open source projects, reading implementations, and contributing improvements when I find something useful.",
-        items: [
-          {
-            name: "Temporal Python SDK",
-            subtitle: "OpenAI Agents Integration",
-            prTitle: "PR #1741 — Clarify OpenAI Agents tool execution ↗",
-            prUrl: "https://github.com/temporalio/sdk-python/pull/1741",
-            desc: "While experimenting with Temporal's OpenAI Agents integration, I traced the SDK execution boundaries between Workflow-local and Activity-backed tools, contributing documentation clarifications upstream.",
-            status: "Merged",
-            statusType: "merged",
-          },
-          {
-            name: "AWS Chalice",
-            subtitle: "Serverless & Lambda Runtime",
-            desc: "Investigated AWS Lambda cold-start characteristics, SnapStart initialization lifecycle, and lightweight Python serverless framework behavior in high-throughput webhook contexts.",
-            status: "Research & Discussion",
-            statusType: "research",
-          },
-          {
-            name: "Genkit Go",
-            subtitle: "Ollama Cloud & Go AI Tooling",
-            desc: "Exploring structured output, tool execution, and local-to-cloud model runtime orchestration within the Go ecosystem.",
-            status: "Exploration",
-            statusType: "exploration",
-          },
-          {
-            name: "alembic-dump",
-            subtitle: "Database Migration Automation CLI",
-            prTitle: "GitHub Repository ↗",
-            prUrl: "https://github.com/jaeyoung0509/alembic-dump",
-            desc: "Open-source Python CLI tool automating AWS SSM Session Manager port-forwarding, database snapshot extraction, and local Alembic migration verification.",
-            status: "Active · PyPI / GitHub",
-            statusType: "active",
-          },
-        ],
-      },
     },
     ko: {
       hero: {
@@ -438,10 +421,20 @@
         name: "이재영 (Jaeyoung Lee)",
         headline: "시스템의 동작 원리를 이해하고,\n실용적인 도구를 만드는 과정을 즐깁니다.",
         subheadline:
-          "3.5년간의 핀테크 백엔드 운영 경험을 바탕으로, 신뢰할 수 있는 시스템 구축과 개발자 경험 개선, 오픈소스 탐색에 집중하고 있습니다.",
+          "결제, 신용평가, 전자계약, 정산 등 핀테크 코어 시스템을 3.5년 이상 설계·운영해 온 백엔드 엔지니어입니다. 신뢰성 있는 비동기 시스템과 개발자 도구, 그리고 추상화 아래의 동작 원리를 탐구하는 데 깊은 관심을 두고 있습니다.",
         ctaWork: "주요 엔지니어링 사례 보기",
         ctaContact: "문의하기",
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
+      },
+      about: {
+        eyebrow: "ABOUT ME",
+        title: "불안정하고 반복적인 문제를 신뢰할 수 있는 시스템과 도구로 바꿉니다.",
+        p1: "업무에서 반복해서 마주치는 수동 절차나 실패하기 쉬운 불안정한 문제들을 그냥 두기보다, 신뢰할 수 있는 시스템과 작고 유용한 도구로 구조화하는 것을 좋아합니다.",
+        p2: "새로운 기술을 배우거나 복잡한 버그를 해결할 때도 단순히 문서를 읽는 데 그치지 않고 실제 오픈소스 구현체와 런타임을 따라 내려가며 설계 의도를 파악하는 습관이 있습니다. 이러한 탐구는 자연스럽게 alembic-dump와 Zenith 같은 도구 제작과 Temporal Python SDK 기여로 이어졌습니다.",
+        stats: [
+          { num: "3.5+년", label: "핀테크 시스템 구축 및 운영" },
+          { num: "오픈소스", label: "소스코드 분석과 기여를 통한 배움" },
+        ],
       },
       work: {
         eyebrow: "SELECTED WORK",
@@ -469,9 +462,9 @@
               "PostgreSQL",
             ],
             quickSummary: {
-              problem: "외부 API 실패와 부분 성공(Partial Failure) 상황에서의 상태 관리",
-              solution: "주문별 SQS FIFO + 멱등성 키 + DB 상태 전이 검증",
-              impact: "운영 기간 동안 정산 누락 및 이중 지급 문제 없이 안정적으로 운영",
+              problem: "외부 PG/은행 API 실패 및 부분 성공(Partial Failure) 처리",
+              solution: "주문별 SQS FIFO + DB 멱등성 키 + 트랜잭션 상태 전이 검증",
+              impact: "재시도 상황에서도 정산 누락 및 중복 결제/지급 발생 방지",
             },
             context:
               "PAYMONTHS는 B2B BNPL 서비스로, 구매 기업의 결제부터 판매 기업의 정산까지 여러 금융 이벤트를 처리하는 플랫폼입니다.",
@@ -544,17 +537,17 @@
             title: "MOONBERG",
             subtitle: "장시간 실행되는 데이터 수집 작업 처리 구조",
             tagline:
-              "Go API 코디네이터와 격리된 Python 워커 간의 수 분 소요 데이터 수집 작업 조율",
+              "Go API 코디네이터와 격리된 Python 워커 간의 수 분 소요 기업 공시 데이터 수집 작업 조율",
             domain: "금융 데이터 · 비동기 아키텍처",
             signals: ["Go 백엔드", "비동기 워커", "상태 머신", "결함 복원력"],
             stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
             quickSummary: {
-              problem: "수 분 소요되는 크롤링 작업의 실패 감지 및 상태 관리",
-              solution: "Go 코디네이터 + Python 워커 + DB 상태 머신 & 하트비트 GC",
-              impact: "좀비 작업 없는 안정적인 작업 복구 및 사용자 경험 개선",
+              problem: "수 분 소요되는 크롤링 작업의 타임아웃 및 워커 크래시 시 좀비 작업 발생",
+              solution: "Go 코디네이터(SSE) + Python 워커 풀 + DB 상태 머신 & 하트비트 GC",
+              impact: "API 요청 생명주기와 장기 실행 작업 분리 및 자동 복구 달성",
             },
             context:
-              "Moonberg는 상장 기업의 공시 보고서와 재무제표를 수집하고 정규화하는 서비스입니다. 문서 크기와 거래소 레이트 리밋에 따라 작업 하나당 30초에서 10분이 소요됩니다.",
+              "Moonberg는 상장 기업의 공시 보고서와 재무제표를 수집하고 정규화하는 데이터 파이프라인 서비스입니다. 문서 크기와 거래소 레이트 리밋에 따라 작업 하나당 30초에서 10분이 소요됩니다.",
             owned: [
               "경량 클라이언트 조율(Go)과 무거운 파싱 작업(Python)을 분리한 비동기 작업 디스패치 구조 설계",
               "PostgreSQL SELECT FOR UPDATE SKIP LOCKED를 활용한 트랜잭션 기반 작업 상태 머신 구현",
@@ -626,7 +619,7 @@
             quickSummary: {
               problem: "복잡하고 실수하기 쉬운 Private VPC DB 마이그레이션 수동 검증",
               solution: "SSM 터널링, 스키마 덤프, 로컬 도커 DB 테스트를 자동화한 통합 CLI",
-              impact: "검증 시간 단축 및 배포 시점의 스키마 충돌 사고 예방",
+              impact: "스테이징 마이그레이션 사전 검증 시간 30분 → 2분 단축",
             },
             context:
               "보안 규정에 따라 AWS RDS 데이터베이스는 인터넷에 연결되지 않는 Private VPC 서브넷에 위치합니다. 스키마 마이그레이션을 적용하기 전, 배스천 터널을 설정하고 스키마 덤프를 추출하여 로컬 도커 DB에서 사전 검증해야 했습니다.",
@@ -690,23 +683,23 @@
             signals: ["개발자 도구", "Rust & Tauri", "Svelte", "macOS"],
             stack: ["Rust", "Tauri", "Svelte", "macOS"],
             quickSummary: {
-              problem: "수십 GB의 숨겨진 개발 아티팩트와 무겁고 비싼 상용 클리너",
-              solution: "Rust 고성능 파일 탐색 엔진 + Tauri & Svelte 네이티브 UI",
-              impact: "오프라인 프라이버시와 휴지통 안전 복구를 지원하는 빠른 정리",
+              problem: "사용자 데이터 손실 없이 대용량 개발 빌드 캐시를 안전하게 식별 및 정리",
+              solution: "Rust 멀티스레드 병렬 탐색 엔진 + Tauri & Svelte 네이티브 UI",
+              impact: "사전 프리뷰와 휴지통 안전 복구 기반의 빠른 로컬 개발 환경 정리",
             },
             context:
-              "개발을 진행하다 보면 수십 기가바이트의 target, node_modules, Docker 캐시가 시스템에 쌓입니다. 상용 클리너 도구들은 무겁고 구독을 강요하며 텔레메트리를 수집합니다.",
+              "개발을 진행하다 보면 수십 기가바이트의 target, node_modules, Docker 캐시가 시스템에 쌓입니다. 핵심 엔지니어링 과제는 소스코드 유실 없이 안전하게 삭제 가능한 대상을 정확히 식별하고 검증하는 것입니다.",
             owned: [
-              "Rust 기반 파일 탐색 엔진과 Tauri + Svelte UI 구조 설계 및 개발",
+              "Rust 기반 고성능 파일 탐색 엔진과 Tauri + Svelte UI 구조 설계 및 개발",
               "대용량 개발 캐시(target/, node_modules, Docker 등)를 안전하게 탐색하고 정리하는 워크플로 구현",
               "소스코드 유실 방지를 위한 사전 확인 및 휴지통 이동 중심의 안전한 삭제 경험 설계",
             ],
             problem: {
               headline:
-                "기존 정리 툴들은 무겁고 비싸며, 정작 개발자 빌드 캐시는 찾지 못합니다.",
+                "개발 환경 캐시는 깊고 방대하여 단순 삭제 명령 시 중요한 소스코드 유실 위험이 있습니다.",
               subheadline: "수십 기가바이트의 개발 아티팩트를 어떻게 빠르고 안전하게 정리할 것인가?",
               details:
-                "일반 클리너는 브라우저 캐시만 다룰 뿐 개발 아티팩트를 지원하지 못하고, Electron 기반 앱은 과도한 메모리를 점유합니다.",
+                "빌드 아티팩트는 디렉터리 곳곳에 흩어져 있습니다. 삭제 도구는 명확한 패턴 인식과 사전 드라이런 확인, 복구 가능한 삭제 경로를 제공해야 합니다.",
             },
             decisions: {
               considerations: [
@@ -734,10 +727,14 @@
                 q: "수십만 개의 대규모 디렉터리를 스캔할 때 UI 렌더링이 멈추면?",
                 a: "스캔 작업은 rayon 백그라운드 워커 스레드에서 수행되며 진행률 이벤트는 스로틀링되어 전송되므로 Svelte UI가 매끄럽게 유지됩니다.",
               },
+              {
+                q: "사용자가 중요한 소스 코드를 실수로 삭제 대상에 포함하면?",
+                a: "ZENITH는 명확한 빌드 아티팩트 서명만 매칭하며, 영구 삭제가 아닌 OS 휴지통으로 이동시켜 언제든 복구할 수 있도록 방어합니다.",
+              },
             ],
             results: [
-              "가벼운 번들 용량과 적은 메모리 사용량 유지",
-              "Rust 병렬 이터레이터로 깊은 개발 디렉터리를 빠르게 탐색",
+              "가벼운 번들 용량과 적은 메모리 사용량 유지 (<30MB)",
+              "Rust 병렬 이터레이터로 깊은 개발 디렉터리를 수백 밀리초 만에 탐색",
               "사전 검사와 휴지통 이동을 통해 소스코드 유실 없이 안전하게 디스크 공간 확보",
             ],
             learning:
@@ -747,31 +744,40 @@
           },
         ],
       },
-      about: {
-        eyebrow: "ABOUT ME",
-        title: "시스템의 내부를 이해하고, 실용적인 도구를 만듭니다.",
-        p1: "3.5년 동안 결제, 전자계약, 신용평가, 정산 등 데이터 정합성이 생명인 B2B 핀테크 코어 시스템을 설계하고 프로덕션에서 직접 운영해 왔습니다.",
-        p2: "백엔드 아키텍처부터 오픈소스 구현체까지 시스템 내부가 어떻게 동작하는지 파고드는 과정을 즐깁니다. 소스코드를 읽으며 설계 의도와 트레이드오프를 이해하고, 동료들과 함께 실용적인 해답을 만들어가는 과정에서 가장 크게 성장합니다.",
-        stats: [
-          { num: "3.5+년", label: "핀테크 시스템 구축 및 운영 경험" },
-          { num: "오픈소스", label: "코드 읽기와 기여를 통한 배움" },
+      oss: {
+        eyebrow: "OPEN SOURCE",
+        title: "오픈소스 기여 및 활동",
+        subtitle:
+          "오픈소스 코드를 읽으며 구현을 배우고, 유용한 개선점을 찾아 생태계에 기여하는 것을 좋아합니다.",
+        contributionsTitle: "주요 오픈소스 기여 및 도구",
+        explorationsTitle: "현재 탐구 중인 영역",
+        contributions: [
+          {
+            name: "Temporal Python SDK",
+            subtitle: "OpenAI Agents SDK 통합",
+            prTitle: "PR #1741 — OpenAI Agents 도구 실행 경계 명확화 ↗",
+            prUrl: "https://github.com/temporalio/sdk-python/pull/1741",
+            desc: "Temporal과 OpenAI Agents 통합 시 Workflow(결정론적 로컬 도구)와 Activity(비결정론적 I/O 도구) 간의 실행 경계 모호성을 SDK 소스코드 분석을 통해 밝혀내고 공식 문서에 기여했습니다.",
+            status: "Merged",
+            statusType: "merged",
+          },
+          {
+            name: "alembic-dump",
+            subtitle: "데이터베이스 마이그레이션 자동화 CLI",
+            prTitle: "GitHub 리포지토리 ↗",
+            prUrl: "https://github.com/jaeyoung0509/alembic-dump",
+            desc: "AWS SSM 터널링, 스키마 덤프 추출, 로컬 도커 DB 마이그레이션 사전 검증을 자동화하는 오픈소스 파이썬 CLI입니다.",
+            status: "Active · PyPI / GitHub",
+            statusType: "active",
+          },
         ],
-      },
-      principles: {
-        eyebrow: "HOW I WORK",
-        title: "일하는 방식",
-        items: [
+        explorations: [
           {
-            title: "시스템 동작 원리의 이해 (Understanding systems)",
-            desc: "백엔드 아키텍처부터 오픈소스 내부 구현까지 시스템이 어떻게 동작하는지 깊이 파고듭니다. 소스코드를 읽고 설계 결정을 분석하며 배우는 과정을 좋아합니다.",
-          },
-          {
-            title: "소통과 협업 우선 (Communication first)",
-            desc: "좋은 엔지니어링은 단순히 코드를 짜는 것에 그치지 않습니다. 명확한 커뮤니케이션, 아키텍처 결정 과정의 문서화, 동료들과 함께 문제를 풀어나가는 것을 소중히 여깁니다.",
-          },
-          {
-            title: "맥락에 맞는 실용적 절충 (Practical trade-offs)",
-            desc: "모든 아키텍처에는 트레이드오프가 존재합니다. 이론적인 완벽함보다는 도메인 맥락을 이해하고 제품과 팀, 시스템의 현재 단계에 가장 적합한 실용적인 해답을 찾습니다.",
+            name: "AWS Chalice & 람다 런타임",
+            subtitle: "서버리스 & SnapStart 생명주기 연구",
+            desc: "AWS Lambda의 콜드스타트 특성, SnapStart 초기화 생명주기 및 경량 서버리스 웹 프레임워크의 동작을 조사했습니다.",
+            status: "연구 및 토론",
+            statusType: "research",
           },
         ],
       },
@@ -794,46 +800,6 @@
           },
         ],
       },
-      oss: {
-        eyebrow: "OPEN SOURCE",
-        title: "오픈소스 기여 및 활동",
-        subtitle:
-          "오픈소스 코드를 읽으며 구현을 배우고, 유용한 개선점을 찾아 생태계에 기여하는 것을 좋아합니다.",
-        items: [
-          {
-            name: "Temporal Python SDK",
-            subtitle: "OpenAI Agents SDK 통합",
-            prTitle: "PR #1741 — OpenAI Agents 도구 실행 경계 명확화 ↗",
-            prUrl: "https://github.com/temporalio/sdk-python/pull/1741",
-            desc: "Temporal과 OpenAI Agents 통합 시 Workflow(결정론적 로컬 도구)와 Activity(비결정론적 I/O 도구) 간의 실행 경계 모호성을 SDK 소스코드 분석을 통해 밝혀내고 공식 문서에 기여했습니다.",
-            status: "Merged",
-            statusType: "merged",
-          },
-          {
-            name: "AWS Chalice",
-            subtitle: "서버리스 & 람다 런타임 연구",
-            desc: "AWS Lambda의 콜드스타트 특성, SnapStart 초기화 생명주기 및 경량 서버리스 웹 프레임워크의 동작을 조사했습니다.",
-            status: "연구 및 토론",
-            statusType: "research",
-          },
-          {
-            name: "Genkit Go",
-            subtitle: "Ollama Cloud & Go AI 도구",
-            desc: "Go 생태계 내에서의 구조화된 출력(Structured Output) 및 로컬/클라우드 모델 런타임 오케스트레이션을 연구하고 있습니다.",
-            status: "탐색 및 구현",
-            statusType: "exploration",
-          },
-          {
-            name: "alembic-dump",
-            subtitle: "데이터베이스 마이그레이션 자동화 CLI",
-            prTitle: "GitHub 리포지토리 ↗",
-            prUrl: "https://github.com/jaeyoung0509/alembic-dump",
-            desc: "AWS SSM 터널링, 스키마 덤프 추출, 로컬 도커 DB 마이그레이션 사전 검증을 자동화하는 오픈소스 파이썬 CLI입니다.",
-            status: "Active · PyPI / GitHub",
-            statusType: "active",
-          },
-        ],
-      },
     },
   });
 
@@ -849,7 +815,7 @@
   <meta property="og:title" content="Jaeyoung Lee — Backend Software Engineer" />
   <meta
     property="og:description"
-    content="Backend engineer focused on building reliable systems, developer experience, and exploring runtime internals."
+    content="Backend engineer with 3.5+ years building payment, credit, contract, and settlement systems. Interested in reliable asynchronous systems, developer tooling, and understanding how things work beneath the abstraction."
   />
   <meta property="og:image" content={`${siteConfig.url}/images/editorial-backend-desk.jpg`} />
 </svelte:head>
@@ -1136,20 +1102,69 @@
   <!-- Section Divider -->
   <hr class="section-rule" />
 
-  <!-- How I Work / Engineering Approach -->
+  <!-- Open Source & Explorations -->
   <section class="portfolio-section">
     <div class="section-title-row">
-      <p class="section-eyebrow">{c.principles.eyebrow}</p>
-      <h2 class="section-heading-large">{c.principles.title}</h2>
+      <p class="section-eyebrow">{c.oss.eyebrow}</p>
+      <h2 class="section-heading-large">{c.oss.title}</h2>
+      <p class="section-heading-sub">{c.oss.subtitle}</p>
     </div>
 
-    <div class="principles-row">
-      {#each c.principles.items as principle (principle.title)}
-        <div class="principle-column">
-          <h3 class="principle-headline">{principle.title}</h3>
-          <p class="principle-text">{principle.desc}</p>
-        </div>
-      {/each}
+    <!-- Core Contributions -->
+    <div class="oss-subgroup">
+      <h3 class="oss-group-heading">{c.oss.contributionsTitle}</h3>
+      <div class="oss-grid-clean">
+        {#each c.oss.contributions as item (item.name)}
+          <div class="oss-item-card">
+            <div class="oss-card-top">
+              <div>
+                <h4 class="oss-card-name">{item.name}</h4>
+                <p class="oss-card-sub">{item.subtitle}</p>
+              </div>
+              <span class={`oss-badge-status status-${item.statusType}`}>
+                {item.status}
+              </span>
+            </div>
+
+            <p class="oss-card-desc">{item.desc}</p>
+
+            {#if item.prTitle && item.prUrl}
+              <div class="oss-card-footer">
+                <a
+                  href={item.prUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="oss-pr-link"
+                >
+                  <GitPullRequest size={14} /> {item.prTitle}
+                </a>
+              </div>
+            {/if}
+          </div>
+        {/each}
+      </div>
+    </div>
+
+    <!-- Current Explorations -->
+    <div class="oss-subgroup" style="margin-top: 32px;">
+      <h3 class="oss-group-heading">{c.oss.explorationsTitle}</h3>
+      <div class="oss-grid-clean">
+        {#each c.oss.explorations as item (item.name)}
+          <div class="oss-item-card">
+            <div class="oss-card-top">
+              <div>
+                <h4 class="oss-card-name">{item.name}</h4>
+                <p class="oss-card-sub">{item.subtitle}</p>
+              </div>
+              <span class={`oss-badge-status status-${item.statusType}`}>
+                {item.status}
+              </span>
+            </div>
+
+            <p class="oss-card-desc">{item.desc}</p>
+          </div>
+        {/each}
+      </div>
     </div>
   </section>
 
@@ -1180,49 +1195,6 @@
             {/each}
           </ul>
         </article>
-      {/each}
-    </div>
-  </section>
-
-  <!-- Section Divider -->
-  <hr class="section-rule" />
-
-  <!-- Open Source & Explorations -->
-  <section class="portfolio-section">
-    <div class="section-title-row">
-      <p class="section-eyebrow">{c.oss.eyebrow}</p>
-      <h2 class="section-heading-large">{c.oss.title}</h2>
-      <p class="section-heading-sub">{c.oss.subtitle}</p>
-    </div>
-
-    <div class="oss-grid-clean">
-      {#each c.oss.items as item (item.name)}
-        <div class="oss-item-card">
-          <div class="oss-card-top">
-            <div>
-              <h3 class="oss-card-name">{item.name}</h3>
-              <p class="oss-card-sub">{item.subtitle}</p>
-            </div>
-            <span class={`oss-badge-status status-${item.statusType}`}>
-              {item.status}
-            </span>
-          </div>
-
-          <p class="oss-card-desc">{item.desc}</p>
-
-          {#if item.prTitle && item.prUrl}
-            <div class="oss-card-footer">
-              <a
-                href={item.prUrl}
-                target="_blank"
-                rel="noreferrer"
-                class="oss-pr-link"
-              >
-                <GitPullRequest size={14} /> {item.prTitle}
-              </a>
-            </div>
-          {/if}
-        </div>
       {/each}
     </div>
   </section>

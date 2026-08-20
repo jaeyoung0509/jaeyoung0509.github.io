@@ -114,7 +114,7 @@ test("Makefile에서 Just로 이사오기 글의 다이어그램, 이미지, 코
   );
 });
 
-test("About 페이지에 Hero, Selected Work(ZENITH 포함), Engineering Approach, Open Source, 언어 전환이 렌더링된다", async () => {
+test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Source, 언어 전환이 렌더링된다", async () => {
   const aboutHtml = await readFile(
     new URL("../out/about/index.html", import.meta.url),
     "utf8",
@@ -130,18 +130,8 @@ test("About 페이지에 Hero, Selected Work(ZENITH 포함), Engineering Approac
   assert.match(aboutHtml, /class="lang-toggle-box"/, "언어 전환 버튼이 없습니다");
   assert.match(
     aboutHtml,
-    /Understanding systems/,
-    "엔지니어링 접근 방식 1이 없습니다",
-  );
-  assert.match(
-    aboutHtml,
-    /Communication first/,
-    "엔지니어링 접근 방식 2가 없습니다",
-  );
-  assert.match(
-    aboutHtml,
-    /Practical trade-offs/,
-    "엔지니어링 접근 방식 3이 없습니다",
+    /Turning manual and failure-prone workflows into reliable systems/,
+    "About Me 제목이 없습니다",
   );
   assert.match(
     aboutHtml,

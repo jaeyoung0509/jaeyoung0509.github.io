@@ -2100,6 +2100,22 @@ summary {
 
 /* Open Source Grid */
 
+.oss-subgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.oss-group-heading {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
 .oss-grid-clean {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
