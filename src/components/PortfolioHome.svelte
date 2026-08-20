@@ -135,8 +135,8 @@
     Q2 -->|Ordered by order_id| SWorker[Settlement Service Lambda]
     SWorker -->|Bank Transfer API| ExtBank[Bank VAN / Payment Gateway]
     
-    Q1 -.->|After 5 retries| DLQ1[Contract DLQ]
-    Q2 -.->|After 5 retries| DLQ2[Settlement DLQ]`,
+    Q1 -.->|Retries exhausted| DLQ1[Contract DLQ]
+    Q2 -.->|Retries exhausted| DLQ2[Settlement DLQ]`,
             failureModes: [
               {
                 q: "What if payment webhooks arrive multiple times due to network retries?",
@@ -144,7 +144,7 @@
               },
               {
                 q: "What if external banking or contract APIs experience intermittent outages?",
-                a: "The core payment state remains secured as PAYMENT_SUCCEEDED. Downstream tasks retry with exponential backoff in SQS and isolate to a DLQ if retries are exhausted.",
+                a: "The persisted payment state remains intact. Downstream tasks retry with exponential backoff in SQS and isolate to a DLQ if retries are exhausted.",
               },
             ],
             results: [
@@ -163,7 +163,7 @@
             title: "MOONBERG",
             subtitle: "Asynchronous architecture for long-running data collection",
             tagline:
-              "Financial filing collection jobs that can take minutes, coordinated by a Go API and Python workers.",
+              "Long-running Bloomberg data collection coordinated by a Go API and isolated Python workers.",
             domain: "Financial Data · Async Architecture",
             stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
             quickSummary: {
@@ -215,8 +215,8 @@
               },
             ],
             results: [
-              "Eliminated gateway timeout disconnects and enabled smooth client reconnects without losing progress.",
-              "Deduplicated identical concurrent scraping requests by caching active and completed job states.",
+              "Clients can reconnect and query persisted job state and results after the original request ends.",
+              "Resource-heavy collection stays isolated from the Go API process.",
             ],
             learning:
               "Long-running tasks must treat worker crashes and client disconnections as normal baseline conditions, not rare edge cases.",
@@ -286,7 +286,7 @@
             learning:
               "Developer tooling is an extension of system reliability. Automating repetitive operational workflows removes human error at the source.",
             differently:
-              "Extend beyond local CLI execution into a GitHub Actions CI bot that automatically spins up ephemeral database containers on pull requests and reports migration diffs.",
+              "Extend the library with a GitHub Actions integration that spins up ephemeral database containers on pull requests and reports migration diffs.",
           },
           {
             slug: "zenith",
@@ -300,27 +300,27 @@
             quickSummary: {
               problem: "Safely identifying reclaimable developer build caches without touching user data",
               solution: "Rust scanning core + Tauri/Svelte desktop UI",
-              impact: "Fast workspace cleanup backed by dry-run previews and safe Trash recovery",
+              impact: "Fast workspace cleanup backed by preview-first safety checks and guarded deletion",
             },
             context:
               "Developers accumulate gigabytes of hidden build artifacts (Cargo target/, node_modules, Docker unused caches) on macOS. The key engineering challenge is accurately identifying safe-to-delete artifacts while preventing any accidental data loss.",
             owned: [
               "Designed and developed the desktop app combining a high-performance Rust core with a modern Svelte UI via Tauri.",
               "Moved scan execution to a background worker so large directory walks do not block the UI.",
-              "Focused on preview-first and Trash-safe deletion experiences to guarantee deletion safety.",
+              "Designed preview-first safety checks and guarded deletion boundaries.",
             ],
             problem: {
               headline:
                 "Development caches are deeply nested and dangerous to clean with naive recursive deletes.",
               subheadline: "How do you scan and safely reclaim gigabytes of development artifacts?",
               details:
-                "Build artifacts spread across arbitrary folders. A deletion tool must provide deterministic pattern recognition, explicit dry-run previews, and safe recovery to protect uncommitted work.",
+                "Build artifacts spread across arbitrary folders. A deletion tool must provide deterministic pattern recognition, explicit dry-run previews, and guarded deletion checks.",
             },
             decisions: {
               considerations: [
                 {
                   title: "Electron + Node.js Desktop App",
-                  desc: "Familiar ecosystem, but heavy memory consumption and large binary size (>100MB).",
+                  desc: "Familiar ecosystem, but heavier memory consumption and a larger binary size.",
                 },
                 {
                   title: "Tauri (Rust) + Svelte",
@@ -336,21 +336,21 @@
     FS -->|Target / Cache Artifacts| Core
     Core -->|Calculated Sizes & Safety Check| UI
     UI -->|Confirm Clean| Core
-    Core -->|Safe Trash / Reclaim| FS`,
+    Core -->|Guarded deletion| FS`,
             failureModes: [
               {
                 q: "What if scanning a massive directory locks up the UI thread?",
-                a: "Scanning runs outside the UI thread in a background worker, while progress events are throttled and streamed over Tauri IPC to keep the Svelte UI responsive.",
+                a: "Scanning runs outside the UI thread in a background worker, with progress streamed over Tauri IPC to keep the Svelte UI responsive.",
               },
               {
                 q: "What if a user accidentally includes source files in a cleanup run?",
-                a: "ZENITH matches strict known artifact signatures (e.g. target/, .venv, node_modules) and defaults to macOS Trash rather than permanent unrecoverable deletion.",
+                a: "ZENITH matches registered artifact signatures and revalidates the target's filesystem identity immediately before deletion.",
               },
             ],
             results: [
-              "Lightweight distribution bundle with minimal idle memory usage (<30MB).",
+              "Lightweight distribution bundle with a small idle footprint.",
               "Fast scanning across deeply nested development directories without blocking the UI.",
-              "Safely reclaims disk space with preview-first checks and Trash-based recovery.",
+              "Preview-first checks and guarded deletion keep cleanup boundaries explicit.",
             ],
             learning:
               "Developer tools must prioritize safety and predictability above all else—accidental data loss destroys user trust immediately.",
@@ -363,7 +363,7 @@
         title: "Open source",
         subtitle:
           "Reading implementations, then contributing where the behavior needs to be clearer.",
-        contributionsTitle: "Contributions & tools",
+        contributionsTitle: "Open source work",
         contributions: [
           {
             name: "Temporal Python SDK",
@@ -392,8 +392,8 @@
             statusType: "active",
           },
           {
-            name: "Python Chalice",
-            subtitle: "AWS Lambda · SnapStart support",
+            name: "AWS Chalice",
+            subtitle: "Lambda SnapStart · Framework Support Discussion",
             prTitle: "Issue #2147 — SnapStart ↗",
             prUrl: "https://github.com/aws/chalice/issues/2147",
             desc: "Asked whether Chalice plans native AWS Lambda SnapStart support, since the deploy command and .chalice/config.json did not expose a configuration option.",
@@ -402,7 +402,7 @@
           },
           {
             name: "alembic-dump",
-            subtitle: "Database Migration Automation CLI",
+            subtitle: "Database Migration & Data Tooling",
             prTitle: "GitHub Repository ↗",
             prUrl: "https://github.com/jaeyoung0509/alembic-dump",
             desc: "Open-source Python library for Alembic synchronization, database dump/load, data masking, and SSH-based remote access.",
@@ -424,7 +424,7 @@
               "Built and operated 10+ event-driven serverless services across payment, credit, contract, and settlement workflows on AWS.",
               "Designed idempotent processing and transactional state guards around retryable bank and payment-provider integrations.",
               "Unified structured logging with correlation IDs, reducing distributed incident triage time from hours to minutes.",
-              "Created alembic-dump to automate private VPC database migration dry-runs, reducing staging check time from 30m to 2m.",
+              "Built the internal migration workflow that later evolved into alembic-dump, reducing staging verification from 30m to 2m.",
             ],
           },
         ],
@@ -518,8 +518,8 @@
     Q2 -->|정산 대기열| SWorker[Settlement Lambda]
     SWorker -->|정산 송금| ExtBank[은행 VAN / PG]
     
-    Q1 -.->|5회 실패 시| DLQ1[Contract DLQ]
-    Q2 -.->|5회 실패 시| DLQ2[Settlement DLQ]`,
+    Q1 -.->|재시도 소진| DLQ1[Contract DLQ]
+    Q2 -.->|재시도 소진| DLQ2[Settlement DLQ]`,
             failureModes: [
               {
                 q: "동일한 결제 완료 웹훅이나 이벤트가 네트워크 재시도로 중복 도착하면?",
@@ -527,7 +527,7 @@
               },
               {
                 q: "결제는 성공했으나 외부 전자계약 서비스나 은행 API가 일시 장애로 응답하지 않으면?",
-                a: "메인 결제 상태는 PAYMENT_SUCCEEDED로 안전하게 보존됩니다. 하위 작업은 지수 백오프를 통해 SQS에서 재시도되며, 최대 재시도 초과 시 DLQ로 격리되어 데이터가 오염되지 않습니다.",
+                a: "저장된 결제 상태는 그대로 유지됩니다. 하위 작업은 지수 백오프를 통해 SQS에서 재시도되며, 재시도가 소진되면 DLQ로 격리됩니다.",
               },
             ],
             results: [
@@ -546,7 +546,7 @@
             title: "MOONBERG",
             subtitle: "장시간 실행되는 데이터 수집 작업 처리 구조",
             tagline:
-              "수 분이 걸릴 수 있는 재무 데이터 수집 작업을 Go API와 Python 워커로 조율",
+              "Go API와 격리된 Python 워커가 조율하는 장시간 Bloomberg 데이터 수집",
             domain: "금융 데이터 · 비동기 아키텍처",
             stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
             quickSummary: {
@@ -669,7 +669,7 @@
             learning:
               "개발자 도구는 시스템 신뢰성의 연장선입니다. 반복적인 운영 마찰을 자동화하면 인적 실수를 원천 차단할 수 있습니다.",
             differently:
-              "로컬 CLI를 넘어 GitHub Actions CI 봇으로 확장하여 PR 생성 시 임시 DB 컨테이너에서 마이그레이션 락 분석 결과를 자동 코멘트하도록 발전시킬 것입니다.",
+              "라이브러리를 GitHub Actions와 연결해 PR 생성 시 임시 DB 컨테이너에서 마이그레이션 락 분석 결과를 자동 코멘트하도록 발전시킬 것입니다.",
           },
           {
             slug: "zenith",
@@ -683,21 +683,21 @@
             quickSummary: {
               problem: "사용자 데이터 손실 없이 대용량 개발 빌드 캐시를 안전하게 식별 및 정리",
               solution: "Rust scanning core + Tauri/Svelte 데스크톱 UI",
-              impact: "사전 프리뷰와 휴지통 안전 복구 기반의 빠른 로컬 개발 환경 정리",
+              impact: "사전 검사와 삭제 대상 재검증을 바탕으로 한 빠른 로컬 개발 환경 정리",
             },
             context:
               "개발을 진행하다 보면 수십 기가바이트의 target, node_modules, Docker 캐시가 시스템에 쌓입니다. 핵심 엔지니어링 과제는 소스코드 유실 없이 안전하게 삭제 가능한 대상을 정확히 식별하고 검증하는 것입니다.",
             owned: [
               "Rust 기반 고성능 파일 탐색 엔진과 Tauri + Svelte UI 구조 설계 및 개발",
               "UI를 막지 않도록 백그라운드 워커에서 대용량 개발 캐시(target/, node_modules, Docker 등)를 탐색하는 워크플로 구현",
-              "소스코드 유실 방지를 위한 사전 확인 및 휴지통 이동 중심의 안전한 삭제 경험 설계",
+              "사전 검사와 삭제 직전 대상 재검증을 중심으로 안전한 삭제 경계 설계",
             ],
             problem: {
               headline:
                 "개발 환경 캐시는 깊고 방대하여 단순 삭제 명령 시 중요한 소스코드 유실 위험이 있습니다.",
               subheadline: "수십 기가바이트의 개발 아티팩트를 어떻게 빠르고 안전하게 정리할 것인가?",
               details:
-                "빌드 아티팩트는 디렉터리 곳곳에 흩어져 있습니다. 삭제 도구는 명확한 패턴 인식과 사전 드라이런 확인, 복구 가능한 삭제 경로를 제공해야 합니다.",
+                "빌드 아티팩트는 디렉터리 곳곳에 흩어져 있습니다. 삭제 도구는 명확한 패턴 인식과 사전 드라이런, 삭제 직전 대상 재검증을 제공해야 합니다.",
             },
             decisions: {
               considerations: [
@@ -719,21 +719,21 @@
     FS -->|빌드 아티팩트 목록| Core
     Core -->|용량 계산 및 안전 검사| UI
     UI -->|삭제 확인| Core
-    Core -->|휴지통 이동 / 용량 확보| FS`,
+    Core -->|삭제 대상 재검증| FS`,
             failureModes: [
               {
                 q: "수십만 개의 대규모 디렉터리를 스캔할 때 UI 렌더링이 멈추면?",
-                a: "스캔 작업은 UI 스레드 밖의 백그라운드 워커에서 수행하고, 진행률 이벤트는 Tauri IPC로 스로틀링해 전송하여 Svelte UI의 반응성을 유지합니다.",
+                a: "스캔 작업은 UI 스레드 밖의 백그라운드 워커에서 수행하고, 진행률은 Tauri IPC로 전송해 Svelte UI의 반응성을 유지합니다.",
               },
               {
                 q: "사용자가 중요한 소스 코드를 실수로 삭제 대상에 포함하면?",
-                a: "ZENITH는 명확한 빌드 아티팩트 서명만 매칭하며, 영구 삭제가 아닌 OS 휴지통으로 이동시켜 언제든 복구할 수 있도록 방어합니다.",
+                a: "ZENITH는 등록된 아티팩트 시그니처만 매칭하고 삭제 직전에 파일 시스템 대상을 다시 검증합니다.",
               },
             ],
             results: [
-              "가벼운 번들 용량과 적은 메모리 사용량 유지 (<30MB)",
+              "가벼운 배포 번들과 적은 유휴 리소스 사용",
               "UI를 막지 않으면서 깊은 개발 디렉터리를 빠르게 탐색",
-              "사전 검사와 휴지통 이동을 통해 복구 가능한 디스크 정리 경험 제공",
+              "사전 검사와 삭제 직전 대상 재검증으로 정리 범위를 통제",
             ],
             learning:
               "개발자 도구는 무엇보다 안전성과 예측 가능성이 최우선이어야 합니다. 작은 데이터 유실도 사용자의 신뢰를 완전히 무너뜨립니다.",
@@ -746,7 +746,7 @@
         title: "오픈소스",
         subtitle:
           "구현을 따라가며 이해한 내용을 문서와 도구로 다시 남깁니다.",
-        contributionsTitle: "기여 및 도구",
+        contributionsTitle: "오픈소스 작업",
         contributions: [
           {
             name: "Temporal Python SDK",
@@ -775,8 +775,8 @@
             statusType: "active",
           },
           {
-            name: "Python Chalice",
-            subtitle: "AWS Lambda · SnapStart 지원 논의",
+            name: "AWS Chalice",
+            subtitle: "Lambda SnapStart · 프레임워크 지원 논의",
             prTitle: "Issue #2147 — SnapStart ↗",
             prUrl: "https://github.com/aws/chalice/issues/2147",
             desc: "Chalice의 deploy 명령과 .chalice/config.json에 설정 옵션이 없어 AWS Lambda SnapStart를 공식 지원할 계획이 있는지 문의했습니다.",
@@ -807,7 +807,7 @@
               "AWS에서 결제, 신용평가, 전자계약, 정산 워크플로를 지원하는 10개 이상의 이벤트 기반 서버리스 서비스 개발 및 운영",
               "재시도 가능한 외부 PG·은행 연동에 멱등성 처리와 트랜잭션 상태 전이 검증을 적용",
               "주문별 correlation_id 구조화 로깅 체계 확립으로 분산 장애 추적 시간 단축",
-              "Private VPC 데이터베이스 마이그레이션 도구(alembic-dump) 개발로 검증 시간을 30분에서 2분으로 단축",
+              "alembic-dump로 발전한 내부 마이그레이션 검증 워크플로를 구축해 스테이징 검증 시간을 30분에서 2분으로 단축",
             ],
           },
         ],

@@ -182,8 +182,8 @@ export const caseStudies: CaseStudy[] = [
     Q2 -->|Ordered by order_id| SWorker[Settlement Service Lambda]
     SWorker -->|Bank Transfer API| ExtBank[Bank VAN / Payment Gateway]
     
-    Q1 -.->|After 5 retries| DLQ1[Contract DLQ]
-    Q2 -.->|After 5 retries| DLQ2[Settlement DLQ]`,
+    Q1 -.->|Retries exhausted| DLQ1[Contract DLQ]
+    Q2 -.->|Retries exhausted| DLQ2[Settlement DLQ]`,
     },
     failureModes: [
       {
@@ -194,12 +194,12 @@ export const caseStudies: CaseStudy[] = [
       {
         scenario: "What if external e-signature or banking APIs fail after payment succeeds?",
         solution:
-          "The core payment state remains secured as PAYMENT_SUCCEEDED. Downstream tasks retry with exponential backoff in SQS. If an external service remains down past maximum retries, the message moves to a DLQ without polluting or rolling back payment state.",
+          "The persisted payment state remains intact. Downstream tasks retry with exponential backoff in SQS. If an external service remains down after retries are exhausted, the message moves to a DLQ without rolling back the payment state.",
       },
       {
         scenario: "What if a consumer encounters an unrecoverable runtime exception?",
         solution:
-          "After 5 failed attempts, SQS redrives the message to a Dead Letter Queue. CloudWatch Alarms immediately notify the on-call engineer with structured transaction metadata. Once the bug is patched, operators trigger controlled message replay.",
+          "When retries are exhausted, SQS redrives the message to a Dead Letter Queue. CloudWatch Alarms notify the on-call engineer with structured transaction metadata. Once the bug is patched, operators trigger controlled message replay.",
       },
     ],
     results: [
@@ -322,14 +322,9 @@ export const caseStudies: CaseStudy[] = [
           "The job remains in PostgreSQL and PGMQ with its current state. A later request can look up the job ID and read the persisted result instead of starting the collection again.",
       },
       {
-        scenario: "What if multiple users trigger the same filing report simultaneously?",
-        solution:
-          "Incoming requests generate a content hash key from (ticker, filing_date, report_type). If an identical job is already PENDING or RUNNING, the coordinator binds the new user to the existing job ID rather than spawning duplicate scraping workers.",
-      },
-      {
         scenario: "What if the user disconnects or refreshes the page while a job is running?",
         solution:
-          "The job continues execution independently on the server. When the user reconnects, the frontend queries by job ID and immediately receives the live progress or completed structured filing data.",
+          "The job continues execution independently on the server. When the user reconnects, the frontend queries by job ID and reads the persisted state and result.",
       },
     ],
     results: [
@@ -466,7 +461,7 @@ export const caseStudies: CaseStudy[] = [
       "A reusable library is only useful when its data boundaries, masking behavior, and failure cases are explicit.",
     ],
     differentlyToday: [
-      "Extend beyond local CLI execution into a GitHub Actions CI bot that automatically spins up ephemeral database containers on pull requests and comments with migration diffs and lock analysis.",
+      "Extend the library with a GitHub Actions integration that spins up ephemeral database containers on pull requests and comments with migration diffs and lock analysis.",
     ],
   },
   {
@@ -495,7 +490,7 @@ export const caseStudies: CaseStudy[] = [
     context: [
       "Developers accumulate gigabytes of hidden build artifacts, Docker daemon caches, node_modules directories, and package manager residue on macOS.",
       "Commercial cleanup utilities are often bloated, demand expensive recurring subscriptions, and collect telemetry.",
-      "ZENITH was designed as an ultra-fast, offline-first native tool that scans and cleans development workspaces in milliseconds.",
+      "ZENITH was designed as a fast, offline-first native tool that scans and cleans development workspaces without sending telemetry.",
     ],
     whatIOwned: [
       "Designed and developed the complete desktop application combining a high-performance Rust backend with a modern Svelte UI via Tauri.",
@@ -507,11 +502,11 @@ export const caseStudies: CaseStudy[] = [
       subheadline: "How do you scan and safely reclaim tens of gigabytes of build cache in seconds?",
       details: [
         "Traditional cleaning utilities target browser cookies and system caches, completely missing development artifacts like Target dirs, Gradle caches, or Docker unused volumes.",
-        "Electron-based desktop tools consume excessive memory (>300MB idle) and launch slowly.",
+        "Electron-based desktop tools can consume more memory and launch more slowly than a native utility.",
       ],
     },
     constraints: [
-      "Must remain extremely lightweight with near-zero idle memory footprint (<30MB).",
+      "Must remain lightweight with a small idle footprint.",
       "Must guarantee safe file deletions with explicit confirmation and safety dry-runs.",
       "Must operate completely offline with zero telemetry or tracking.",
     ],
@@ -520,7 +515,7 @@ export const caseStudies: CaseStudy[] = [
         name: "Option A",
         title: "Electron + Node.js Desktop App",
         pros: ["Familiar web ecosystem and rapid UI prototyping."],
-        cons: ["Bloated binary size (>100MB) and high memory/CPU usage."],
+        cons: ["Larger binary size and higher memory/CPU usage."],
       },
       {
         name: "Option B",
@@ -532,8 +527,8 @@ export const caseStudies: CaseStudy[] = [
         name: "Option C",
         title: "Tauri (Rust) + Svelte (Chosen)",
         pros: [
-          "Tiny binary footprint (<10MB), ultra-fast native filesystem scanning in Rust, and reactive Svelte UI.",
-          "OS-native webview with near-zero memory footprint.",
+          "Small native footprint, fast filesystem scanning in Rust, and a reactive Svelte UI.",
+          "OS-native webview with a lower runtime footprint.",
         ],
         cons: ["Requires bridging async commands between Rust IPC and frontend state."],
       },
@@ -542,7 +537,7 @@ export const caseStudies: CaseStudy[] = [
       "Decision: Option C — Combine a Rust scanning core with Tauri's lightweight IPC and Svelte's reactive frontend to build an offline-first developer desktop tool.",
     whyChosen: [
       "Scanning hundreds of thousands of files in deeply nested node_modules or Cargo target folders requires native file I/O speed.",
-      "Tauri leverages macOS WebKit, keeping the final application binary tiny and memory consumption under 30MB.",
+      "Tauri leverages macOS WebKit, keeping the final application binary and runtime footprint small.",
     ],
     architecture: {
       caption: "ZENITH Architecture (Tauri + Rust + Svelte)",
@@ -552,24 +547,24 @@ export const caseStudies: CaseStudy[] = [
     FS -->|Target / Cache Artifacts| Core
     Core -->|Calculated Sizes & Safety Check| UI
     UI -->|Confirm Clean| Core
-    Core -->|Safe Trash / Reclaim| FS`,
+    Core -->|Guarded deletion| FS`,
     },
     failureModes: [
       {
         scenario: "What if scanning a massive directory locks up the UI thread?",
         solution:
-          "Scanning runs outside the UI thread in a background worker, while progress events are throttled and streamed over Tauri IPC to keep the Svelte UI responsive.",
+          "Scanning runs outside the UI thread in a background worker, with progress streamed over Tauri IPC to keep the Svelte UI responsive.",
       },
       {
         scenario: "What if a user accidentally deletes uncommitted source code?",
         solution:
-          "ZENITH identifies known artifact patterns (e.g. target/, .venv, node_modules) and defaults to macOS Trash rather than permanent unrecoverable deletion.",
+          "ZENITH identifies registered artifact patterns and revalidates the target's filesystem identity immediately before deletion.",
       },
     ],
     results: [
-      "Under 10MB distribution bundle and <30MB idle RAM usage.",
+      "Lightweight distribution bundle with a small idle footprint.",
       "Fast scanning across deeply nested development directories without blocking the UI.",
-      "Safely reclaims disk space with preview-first checks and Trash-based recovery.",
+      "Preview-first checks and guarded deletion keep cleanup boundaries explicit.",
     ],
     learnings: [
       "Tauri and Rust offer a compelling alternative to Electron for desktop developer utilities where performance and binary size matter.",

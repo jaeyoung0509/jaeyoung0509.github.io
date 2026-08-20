@@ -156,7 +156,7 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     /genkit-ai\/genkit\/issues\/3748/,
     "Genkit 이슈 링크가 없습니다",
   );
-  assert.match(aboutHtml, /Python Chalice/, "Python Chalice 항목이 없습니다");
+  assert.match(aboutHtml, /AWS Chalice/, "AWS Chalice 항목이 없습니다");
   assert.match(
     aboutHtml,
     /genkit-ai\/genkit\/pull\/3813/,
@@ -170,11 +170,11 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(
     aboutHtml,
     /aws\/chalice\/issues\/2147/,
-    "Python Chalice 이슈 링크가 없습니다",
+    "AWS Chalice 이슈 링크가 없습니다",
   );
   assert.doesNotMatch(
     aboutHtml,
-    /Currently Exploring|15\+ microservices|25\+ asynchronous|0 financial loss|Rust Multi-Threaded Scanning Engine|genkit-readability|chalice-snap/,
+    /Currently Exploring|15\+ microservices|25\+ asynchronous|0 financial loss|Rust Multi-Threaded Scanning Engine|genkit-readability|chalice-snap|Trash|throttled|<30MB|After 5 retries|PAYMENT_SUCCEEDED|Database Migration Automation CLI|Python Chalice|Contributions & tools/,
     "검증되지 않은 수치나 탐색 섹션이 남아 있습니다",
   );
   assert.doesNotMatch(
