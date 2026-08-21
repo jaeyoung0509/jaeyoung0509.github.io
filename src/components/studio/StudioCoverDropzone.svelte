@@ -4,11 +4,13 @@
   let {
     cover = $bindable(),
     coverAlt = $bindable(),
+    coverYoutubeId = $bindable(),
     onUpload,
     onChanged,
   }: {
     cover: string | undefined;
     coverAlt?: string;
+    coverYoutubeId?: string;
     onUpload: (file: File) => Promise<string | null>;
     onChanged?: () => void;
   } = $props();
@@ -16,6 +18,10 @@
   let isDragging = $state(false);
   let isUploading = $state(false);
   let fileInputRef = $state<HTMLInputElement | null>(null);
+
+  const effectiveCover = $derived(
+    cover || (coverYoutubeId ? `https://i.ytimg.com/vi/${coverYoutubeId}/hqdefault.jpg` : undefined),
+  );
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -27,6 +33,7 @@
       const url = await onUpload(file);
       if (url) {
         cover = url;
+        coverYoutubeId = undefined;
         if (!coverAlt) {
           coverAlt = file.name.replace(/\.[^/.]+$/, "");
         }
@@ -56,14 +63,15 @@
 
   function handleRemove() {
     cover = undefined;
+    coverYoutubeId = undefined;
     onChanged?.();
   }
 </script>
 
 <div class="cover-dropzone-wrapper">
-  {#if cover}
+  {#if effectiveCover}
     <div class="cover-preview-card">
-      <img src={cover} alt={coverAlt || "Cover"} class="cover-image" />
+      <img src={effectiveCover} alt={coverAlt || "Cover"} class="cover-image" />
       <div class="cover-overlay">
         <label class="overlay-btn" title="커버 이미지 변경">
           <RefreshCw size={13} class={isUploading ? "animate-spin" : ""} />

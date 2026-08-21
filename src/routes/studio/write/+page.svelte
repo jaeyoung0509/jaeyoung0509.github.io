@@ -575,6 +575,7 @@
           <StudioCoverDropzone
             bind:cover={post.cover}
             bind:coverAlt={post.coverAlt}
+            bind:coverYoutubeId={post.coverYoutubeId}
             onUpload={uploadImageFile}
             onChanged={triggerAutoSave}
           />
@@ -670,6 +671,7 @@
         tags={post.tags}
         cover={post.cover}
         coverAlt={post.coverAlt}
+        coverYoutubeId={post.coverYoutubeId}
         content={post.content}
         bind:scrollRef={previewScrollRef}
       />

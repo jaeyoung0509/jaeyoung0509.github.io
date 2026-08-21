@@ -346,10 +346,11 @@
     {:else}
       <div class="posts-table">
         {#each filteredPosts as post (post.slug)}
+          {@const coverUrl = post.cover || (post.coverYoutubeId ? `https://i.ytimg.com/vi/${post.coverYoutubeId}/hqdefault.jpg` : null)}
           <div class="post-row {post.draft ? 'is-draft' : ''}">
-            {#if post.cover}
+            {#if coverUrl}
               <div class="post-cover-thumb">
-                <img src={post.cover} alt={post.title} />
+                <img src={coverUrl} alt={post.title} />
               </div>
             {/if}
 

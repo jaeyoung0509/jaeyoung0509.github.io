@@ -27,7 +27,7 @@
     return text
       .toLowerCase()
       .trim()
-      .replace(/[^\w\s-가-힣]/g, "")
+      .replace(/[^\w\s가-힣-]/gu, "")
       .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "");
   }
@@ -66,6 +66,7 @@
             <StudioCoverDropzone
               bind:cover={post.cover}
               bind:coverAlt={post.coverAlt}
+              bind:coverYoutubeId={post.coverYoutubeId}
               {onUpload}
             />
 

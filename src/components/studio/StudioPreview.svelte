@@ -10,6 +10,7 @@
     tags,
     cover,
     coverAlt,
+    coverYoutubeId,
     content,
     scrollRef = $bindable(),
   }: {
@@ -20,9 +21,14 @@
     tags: string[];
     cover?: string;
     coverAlt?: string;
+    coverYoutubeId?: string;
     content: string;
     scrollRef?: HTMLElement | null;
   } = $props();
+
+  const effectiveCover = $derived(
+    cover || (coverYoutubeId ? `https://i.ytimg.com/vi/${coverYoutubeId}/hqdefault.jpg` : undefined),
+  );
 
   let html = $state("");
   let headings = $state<{ depth: number; id: string; text: string }[]>([]);
@@ -169,9 +175,9 @@
   {/if}
 
   <div class="preview-inner">
-    {#if cover}
+    {#if effectiveCover}
       <div class="preview-cover-box">
-        <img src={cover} alt={coverAlt || title} class="preview-cover-img" />
+        <img src={effectiveCover} alt={coverAlt || title} class="preview-cover-img" />
       </div>
     {:else}
       <div class="preview-no-cover-box" aria-hidden="true">
