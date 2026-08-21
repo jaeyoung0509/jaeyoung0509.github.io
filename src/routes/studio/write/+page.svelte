@@ -424,52 +424,28 @@
     }
   }
 
-  let scrollSyncTimer: any = null;
+  let activeScrollPane: "editor" | "preview" = "editor";
 
   function handleEditorScroll() {
-    if (!editorScrollRef || !previewScrollRef || viewMode !== "split" || isSyncingScroll) return;
+    if (activeScrollPane !== "editor" || !editorScrollRef || !previewScrollRef || viewMode !== "split") return;
 
-    isSyncingScroll = true;
-    if (scrollSyncTimer) clearTimeout(scrollSyncTimer);
+    const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
+    const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
+    if (editorMax <= 0 || previewMax <= 0) return;
 
-    requestAnimationFrame(() => {
-      if (!editorScrollRef || !previewScrollRef) {
-        isSyncingScroll = false;
-        return;
-      }
-      const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
-      const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
-      if (editorMax > 0 && previewMax > 0) {
-        const ratio = editorScrollRef.scrollTop / editorMax;
-        previewScrollRef.scrollTop = ratio * previewMax;
-      }
-      scrollSyncTimer = setTimeout(() => {
-        isSyncingScroll = false;
-      }, 50);
-    });
+    const ratio = editorScrollRef.scrollTop / editorMax;
+    previewScrollRef.scrollTop = ratio * previewMax;
   }
 
   function handlePreviewScroll() {
-    if (!editorScrollRef || !previewScrollRef || viewMode !== "split" || isSyncingScroll) return;
+    if (activeScrollPane !== "preview" || !editorScrollRef || !previewScrollRef || viewMode !== "split") return;
 
-    isSyncingScroll = true;
-    if (scrollSyncTimer) clearTimeout(scrollSyncTimer);
+    const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
+    const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
+    if (previewMax <= 0 || editorMax <= 0) return;
 
-    requestAnimationFrame(() => {
-      if (!editorScrollRef || !previewScrollRef) {
-        isSyncingScroll = false;
-        return;
-      }
-      const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
-      const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
-      if (previewMax > 0 && editorMax > 0) {
-        const ratio = previewScrollRef.scrollTop / previewMax;
-        editorScrollRef.scrollTop = ratio * editorMax;
-      }
-      scrollSyncTimer = setTimeout(() => {
-        isSyncingScroll = false;
-      }, 50);
-    });
+    const ratio = previewScrollRef.scrollTop / previewMax;
+    editorScrollRef.scrollTop = ratio * editorMax;
   }
 
   function autoResizeTextarea() {
@@ -605,6 +581,8 @@
       class="editor-column"
       bind:this={editorScrollRef}
       onscroll={handleEditorScroll}
+      onmouseenter={() => (activeScrollPane = "editor")}
+      ontouchstart={() => (activeScrollPane = "editor")}
     >
       <div class="editor-inner">
         <!-- Drag & Drop Cover Section -->
@@ -712,6 +690,8 @@
         content={post.content}
         bind:scrollRef={previewScrollRef}
         onScroll={handlePreviewScroll}
+        onMouseEnter={() => (activeScrollPane = "preview")}
+        onTouchStart={() => (activeScrollPane = "preview")}
       />
     </div>
   </div>
@@ -963,6 +943,9 @@
     overflow-y: auto;
     box-sizing: border-box;
     padding: 32px 36px 140px;
+    will-change: scroll-position;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   .preview-column {

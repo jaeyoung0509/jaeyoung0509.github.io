@@ -14,6 +14,8 @@
     content,
     scrollRef = $bindable(),
     onScroll,
+    onMouseEnter,
+    onTouchStart,
   }: {
     title: string;
     description: string;
@@ -26,6 +28,8 @@
     content: string;
     scrollRef?: HTMLElement | null;
     onScroll?: () => void;
+    onMouseEnter?: () => void;
+    onTouchStart?: () => void;
   } = $props();
 
   const effectiveCover = $derived(
@@ -132,6 +136,8 @@
   class="studio-preview-pane"
   bind:this={scrollRef}
   onscroll={onScroll}
+  onmouseenter={onMouseEnter}
+  ontouchstart={onTouchStart}
 >
   <!-- Floating TOC Button & Dropdown -->
   {#if headings.length > 0}
@@ -230,6 +236,9 @@
     padding: 32px 36px 140px;
     box-sizing: border-box;
     position: relative;
+    will-change: scroll-position;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 
   /* Floating TOC */
