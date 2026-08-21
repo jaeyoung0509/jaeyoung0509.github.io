@@ -150,7 +150,7 @@
             results: [
               "Operated reliably without payout discrepancies or duplicate settlement issues during production.",
               "Structured correlation_id logging significantly reduced incident triage time across asynchronous queues.",
-              "Decoupled slow external partner API calls (3–5s) from user-facing checkout response paths.",
+              "Decoupled slow external partner API calls from user-facing checkout response paths.",
             ],
             learning:
               "Queue ordering alone does not guarantee correctness. In distributed systems, at-least-once delivery is the baseline; integrity must be guarded at the database state transition boundary.",
@@ -189,7 +189,7 @@
               considerations: [
                 {
                   title: "Synchronous HTTP with Long Timeout",
-                  desc: "Simple, but gateway timeouts and network blips drop connections and discard all progress.",
+                  desc: "Simple, but gateway timeouts and network failures disconnect clients from in-flight work and make recovery difficult.",
                 },
                 {
                   title: "Go API + PostgreSQL Queue + Python Bloomberg Workers",
@@ -328,7 +328,7 @@
                 },
               ],
               choice:
-                "Decision: Combine a Rust scanning core with Tauri's lightweight IPC and Svelte's reactive frontend to build an offline-first developer desktop tool.",
+                "Decision: Combine a Rust scanning core with Tauri's lightweight IPC and Svelte's reactive frontend to build a local-first macOS developer utility.",
             },
             architectureDiagram: `flowchart LR
     UI[Svelte 5 UI] -->|Tauri IPC invoke| Core[Rust Core Engine]
