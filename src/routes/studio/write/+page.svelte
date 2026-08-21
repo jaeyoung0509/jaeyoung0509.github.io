@@ -583,6 +583,8 @@
       onscroll={handleEditorScroll}
       onmouseenter={() => (activeScrollPane = "editor")}
       ontouchstart={() => (activeScrollPane = "editor")}
+      onwheel={() => (activeScrollPane = "editor")}
+      onpointerdown={() => (activeScrollPane = "editor")}
     >
       <div class="editor-inner">
         <!-- Drag & Drop Cover Section -->
@@ -692,6 +694,8 @@
         onScroll={handlePreviewScroll}
         onMouseEnter={() => (activeScrollPane = "preview")}
         onTouchStart={() => (activeScrollPane = "preview")}
+        onWheel={() => (activeScrollPane = "preview")}
+        onPointerDown={() => (activeScrollPane = "preview")}
       />
     </div>
   </div>
@@ -1067,6 +1071,8 @@
     background: transparent;
     color: var(--ink);
     box-sizing: border-box;
+    overflow: hidden;
+    field-sizing: content;
   }
 
   .animate-spin {

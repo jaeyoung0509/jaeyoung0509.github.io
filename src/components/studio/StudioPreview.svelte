@@ -16,6 +16,8 @@
     onScroll,
     onMouseEnter,
     onTouchStart,
+    onWheel,
+    onPointerDown,
   }: {
     title: string;
     description: string;
@@ -30,6 +32,8 @@
     onScroll?: () => void;
     onMouseEnter?: () => void;
     onTouchStart?: () => void;
+    onWheel?: () => void;
+    onPointerDown?: () => void;
   } = $props();
 
   const effectiveCover = $derived(
@@ -138,6 +142,8 @@
   onscroll={onScroll}
   onmouseenter={onMouseEnter}
   ontouchstart={onTouchStart}
+  onwheel={onWheel}
+  onpointerdown={onPointerDown}
 >
   <!-- Floating TOC Button & Dropdown -->
   {#if headings.length > 0}
