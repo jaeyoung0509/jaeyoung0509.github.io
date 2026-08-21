@@ -49,11 +49,13 @@
     onclick={() => onSelect("text")}
     role="presentation"
   >
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
     <div
       class="paste-popover-card"
       onclick={(e) => e.stopPropagation()}
       role="dialog"
       aria-modal="true"
+      tabindex="-1"
     >
       <header class="popover-header">
         <span class="header-label">URL 붙여넣기 옵션</span>

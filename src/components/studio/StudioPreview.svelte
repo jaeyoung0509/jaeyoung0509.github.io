@@ -13,6 +13,7 @@
     coverYoutubeId,
     content,
     scrollRef = $bindable(),
+    onScroll,
   }: {
     title: string;
     description: string;
@@ -24,6 +25,7 @@
     coverYoutubeId?: string;
     content: string;
     scrollRef?: HTMLElement | null;
+    onScroll?: () => void;
   } = $props();
 
   const effectiveCover = $derived(
@@ -126,7 +128,11 @@
   });
 </script>
 
-<div class="studio-preview-pane" bind:this={scrollRef}>
+<div
+  class="studio-preview-pane"
+  bind:this={scrollRef}
+  onscroll={onScroll}
+>
   <!-- Floating TOC Button & Dropdown -->
   {#if headings.length > 0}
     <div class="preview-toc-anchor">

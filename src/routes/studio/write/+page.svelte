@@ -424,28 +424,65 @@
     }
   }
 
+  let scrollSyncTimer: any = null;
+
   function handleEditorScroll() {
-    if (
-      !editorScrollRef ||
-      !previewScrollRef ||
-      viewMode !== "split" ||
-      isSyncingScroll
-    )
-      return;
+    if (!editorScrollRef || !previewScrollRef || viewMode !== "split" || isSyncingScroll) return;
+
     isSyncingScroll = true;
+    if (scrollSyncTimer) clearTimeout(scrollSyncTimer);
+
     requestAnimationFrame(() => {
       if (!editorScrollRef || !previewScrollRef) {
         isSyncingScroll = false;
         return;
       }
-      const percentage =
-        editorScrollRef.scrollTop /
-        Math.max(1, editorScrollRef.scrollHeight - editorScrollRef.clientHeight);
-      previewScrollRef.scrollTop =
-        percentage * (previewScrollRef.scrollHeight - previewScrollRef.clientHeight);
-      isSyncingScroll = false;
+      const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
+      const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
+      if (editorMax > 0 && previewMax > 0) {
+        const ratio = editorScrollRef.scrollTop / editorMax;
+        previewScrollRef.scrollTop = ratio * previewMax;
+      }
+      scrollSyncTimer = setTimeout(() => {
+        isSyncingScroll = false;
+      }, 50);
     });
   }
+
+  function handlePreviewScroll() {
+    if (!editorScrollRef || !previewScrollRef || viewMode !== "split" || isSyncingScroll) return;
+
+    isSyncingScroll = true;
+    if (scrollSyncTimer) clearTimeout(scrollSyncTimer);
+
+    requestAnimationFrame(() => {
+      if (!editorScrollRef || !previewScrollRef) {
+        isSyncingScroll = false;
+        return;
+      }
+      const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
+      const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
+      if (previewMax > 0 && editorMax > 0) {
+        const ratio = previewScrollRef.scrollTop / previewMax;
+        editorScrollRef.scrollTop = ratio * editorMax;
+      }
+      scrollSyncTimer = setTimeout(() => {
+        isSyncingScroll = false;
+      }, 50);
+    });
+  }
+
+  function autoResizeTextarea() {
+    if (!textareaRef) return;
+    textareaRef.style.height = "auto";
+    textareaRef.style.height = Math.max(600, textareaRef.scrollHeight) + "px";
+  }
+
+  $effect(() => {
+    if (post.content !== undefined) {
+      tick().then(autoResizeTextarea);
+    }
+  });
 
   onMount(() => {
     try {
@@ -674,6 +711,7 @@
         coverYoutubeId={post.coverYoutubeId}
         content={post.content}
         bind:scrollRef={previewScrollRef}
+        onScroll={handlePreviewScroll}
       />
     </div>
   </div>
