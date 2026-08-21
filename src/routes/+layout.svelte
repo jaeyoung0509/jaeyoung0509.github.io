@@ -3,9 +3,12 @@
   import SiteHeader from "$components/SiteHeader.svelte";
   import SiteFooter from "$components/SiteFooter.svelte";
   import { siteConfig } from "$lib/site";
+  import { page } from "$app/state";
   import type { Snippet } from "svelte";
 
   let { children }: { children: Snippet } = $props();
+
+  let isStudio = $derived(page.url.pathname.startsWith("/studio"));
 </script>
 
 <svelte:head>
@@ -33,8 +36,15 @@
   />
 </svelte:head>
 
-<SiteHeader />
-<main>
+{#if isStudio}
   {@render children()}
-</main>
-<SiteFooter />
+{:else}
+  <SiteHeader />
+  <main>
+    {@render children()}
+  </main>
+  <SiteFooter />
+{/if}
+
+
+

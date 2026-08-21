@@ -205,7 +205,7 @@ export const caseStudies: CaseStudy[] = [
     results: [
       "Handled retries and downstream failures without duplicate payout issues reported during the production period.",
       "Standardized correlation_id tracing across asynchronous services, making incident triage faster.",
-      "Decoupled slow external partner API calls (3–5s) from user-facing checkout response paths, ensuring snappy client responsiveness.",
+      "Decoupled slow external partner API calls from user-facing checkout response paths, keeping client requests responsive.",
     ],
     learnings: [
       "Queue ordering does not replace application-level idempotency. In distributed systems, at-least-once delivery is the only realistic baseline; correctness must live at the database state transition boundary.",
@@ -273,7 +273,7 @@ export const caseStudies: CaseStudy[] = [
         title: "Synchronous HTTP with Extended Timeout",
         pros: ["Simplest possible implementation."],
         cons: [
-          "Gateway and browser timeout drops; network blips discard all partial scraping work.",
+          "Gateway timeouts and network failures disconnect clients from in-flight work and make recovery difficult.",
         ],
       },
       {
@@ -490,7 +490,7 @@ export const caseStudies: CaseStudy[] = [
     context: [
       "Developers accumulate gigabytes of hidden build artifacts, Docker daemon caches, node_modules directories, and package manager residue on macOS.",
       "Commercial cleanup utilities are often bloated, demand expensive recurring subscriptions, and collect telemetry.",
-      "ZENITH was designed as a fast, offline-first native tool that scans and cleans development workspaces without sending telemetry.",
+      "ZENITH was designed as a fast, local-first native tool that scans and cleans development workspaces without sending telemetry.",
     ],
     whatIOwned: [
       "Designed and developed the complete desktop application combining a Rust core with a modern Svelte UI via Tauri.",
@@ -534,7 +534,7 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
     decision:
-      "Decision: Option C — Combine a Rust scanning core with Tauri's lightweight IPC and Svelte's reactive frontend to build an offline-first developer desktop tool.",
+      "Decision: Option C — Combine a Rust scanning core with Tauri's lightweight IPC and Svelte's reactive frontend to build a local-first macOS developer utility.",
     whyChosen: [
       "Scanning hundreds of thousands of files in deeply nested node_modules or Cargo target folders requires native file I/O speed.",
       "Tauri leverages macOS WebKit, keeping the final application binary and runtime footprint small.",

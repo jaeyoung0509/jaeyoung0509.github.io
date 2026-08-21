@@ -4,6 +4,7 @@
  * nav: N1a minimal · footer: Ft2 inline · design-system: DESIGN.md
  * contrast: pass · mobile: pass (34, 49–57)
  */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400..700;1,400..700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -32,7 +33,7 @@
     "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --font-display: var(--font-body);
   --font-mono:
-    "SFMono-Regular", "JetBrains Mono", Menlo, Monaco, ui-monospace, monospace;
+    "JetBrains Mono", "SFMono-Regular", Menlo, Monaco, Consolas, ui-monospace, monospace;
   --space-3xs: 4px;
   --space-2xs: 8px;
   --space-xs: 12px;
@@ -966,22 +967,34 @@ summary {
   padding: 24px;
   overflow: auto;
   border: 1px solid var(--code-border);
-  border-radius: 2px;
+  border-radius: 4px;
   background: var(--code);
   color: var(--code-ink);
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
   line-height: 1.75;
   tab-size: 2;
+  font-variant-ligatures: normal;
+  font-feature-settings: "liga" 1, "calt" 1;
 }
 
 .prose pre code {
   display: block;
   min-width: max-content;
   background: transparent;
+  font-family: var(--font-mono);
+  font-variant-ligatures: normal;
+  font-feature-settings: "liga" 1, "calt" 1;
 }
 
 .prose pre code span {
   color: var(--shiki-dark, inherit);
+}
+
+.prose pre code .comment,
+.prose pre code [style*="#768390"],
+.prose pre code [style*="#636e7b"] {
+  font-style: italic;
 }
 
 .copy-code {

@@ -1,19 +1,21 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { dev } from "$app/environment";
 
   const fullText = "jaeyoung lee";
   let displayedText = $state(fullText);
   let isClient = $state(false);
 
-  const navigation = [
+  const navigation = $derived([
     { href: "/", label: "Writing" },
     { href: "/about/", label: "About" },
+    ...(dev ? [{ href: "/studio", label: "Studio", isExternal: false }] : []),
     {
       href: "https://github.com/jaeyoung0509",
       label: "GitHub ↗",
       isExternal: true,
     },
-  ];
+  ]);
 
   let typingTimeout: ReturnType<typeof setTimeout> | null = null;
 

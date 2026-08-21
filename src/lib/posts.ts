@@ -55,14 +55,27 @@ function parsePostFile(slug: string): Post {
   const file = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(file);
 
-  if (!data.title || !data.description || !data.publishedAt) {
+  if (!data.title || !data.publishedAt) {
     throw new Error(`Required frontmatter is missing: ${filePath}`);
   }
+
+  const description = String(
+    data.description ||
+      content
+        .replace(/#+ /g, "")
+        .replace(/!\[.*?\]\(.*?\)/g, "")
+        .replace(/\[.*?\]\(.*?\)/g, "$1")
+        .replace(/[`*_~]/g, "")
+        .replace(/\n+/g, " ")
+        .trim()
+        .slice(0, 140) ||
+      data.title,
+  );
 
   return {
     slug,
     title: String(data.title),
-    description: String(data.description),
+    description,
     publishedAt: String(data.publishedAt),
     updatedAt: data.updatedAt ? String(data.updatedAt) : undefined,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
