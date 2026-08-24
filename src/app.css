@@ -1695,12 +1695,28 @@ summary {
 }
 
 .work-domain-badge {
+  display: inline-block;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 650;
-  color: var(--accent);
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.work-domain-badge.badge-experience {
+  color: #1e3a8a;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.work-domain-badge.badge-project {
+  color: var(--accent-strong);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 2px 7px;
+  border-radius: 3px;
 }
 
 .work-title {
@@ -1921,6 +1937,24 @@ summary {
   color: var(--ink);
   font-weight: 650;
   margin-right: 4px;
+}
+
+.cs-abstract-note {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--faint);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.cs-confidential-note {
+  margin: 8px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  font-size: 12px;
+  color: var(--faint);
+  font-style: italic;
+  line-height: 1.6;
 }
 
 /* Open Source Records */

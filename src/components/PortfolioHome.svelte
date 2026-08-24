@@ -71,7 +71,7 @@
       meta: {
         title: "Jaeyoung Lee — Backend Software Engineer",
         description:
-          "Backend engineer with 3.5+ years building and operating payment, credit, contract, and settlement backends. Portfolio covering architecture tradeoffs, failure scenarios, and open source contributions.",
+          "Backend engineer with 3.5+ years building and operating payment, credit, contract, and settlement backends. Portfolio covering engineering judgment, systems architecture, developer tooling, and open source contributions.",
       },
       hero: {
         role: "Software Engineer",
@@ -93,10 +93,14 @@
       work: {
         title: "Selected Engineering Work",
         subtitle:
-          "Systems I built, the failure modes they had to handle, and what I would change now.",
-        expandCTA: "View details ↓",
-        collapseCTA: "Close ↑",
-        coreQuestionLabel: "Core Question",
+          "Core problems I worked on, design judgment from production systems, and tools built to automate friction.",
+        experienceExpandCTA: "View experience ↓",
+        experienceCollapseCTA: "Close ↑",
+        projectExpandCTA: "View implementation ↓",
+        projectCollapseCTA: "Close ↑",
+        coreQuestionLabel: "Core Problem",
+        confidentialityNote:
+          "*Implementation details and architecture topology are intentionally abstracted to protect proprietary company information.",
       },
       oss: {
         title: "Open Source",
@@ -183,10 +187,14 @@
       work: {
         title: "주요 작업",
         subtitle:
-          "실제 운영과 제작 과정에서 만난 문제, 선택한 구조, 그리고 지금 다시 만든다면 바꿀 점을 정리했습니다.",
-        expandCTA: "자세히 보기 ↓",
-        collapseCTA: "닫기 ↑",
-        coreQuestionLabel: "핵심 질문",
+          "실무에서 맞닥뜨린 복잡한 도메인과 운영 경험, 그리고 직접 구현한 시스템과 개발 도구들을 정리했습니다.",
+        experienceExpandCTA: "경험 자세히 보기 ↓",
+        experienceCollapseCTA: "닫기 ↑",
+        projectExpandCTA: "구현 자세히 보기 ↓",
+        projectCollapseCTA: "닫기 ↑",
+        coreQuestionLabel: "제가 주로 다룬 문제",
+        confidentialityNote:
+          "*회사 내부 구현과 운영 정보를 보호하기 위해 architecture와 세부 수치는 추상화했습니다.",
       },
       oss: {
         title: "오픈소스",
@@ -366,10 +374,10 @@
     </div>
 
     <div class="work-showcase">
-      <!-- 01. PAYMONTHS -->
+      <!-- 01. PAYMONTHS (Professional Experience) -->
       <article
         id="paymonths"
-        class="work-item"
+        class="work-item work-experience-item"
         class:is-expanded={expandedWork.paymonths}
       >
         <div class="work-num-col">
@@ -378,151 +386,121 @@
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge">B2B FinTech · Event-Driven</span>
+            <span class="work-domain-badge badge-experience">
+              {lang === "ko"
+                ? "실무 경험 · B2B FinTech"
+                : "Professional Experience · B2B FinTech"}
+            </span>
           </div>
 
           <h3 class="work-title">PAYMONTHS</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "결제부터 정산까지 이어지는 금융 워크플로의 상태와 부분 실패(Partial Failure)를 다룬 백엔드 시스템."
-              : "Backend system handling financial state and partial failure from payment to merchant settlement."}
+              ? "결제 승인부터 신용평가, 전자계약, 정산까지 이어지는 B2B BNPL 서비스의 백엔드를 개발하고 운영했습니다. Python과 AWS 기반의 이벤트 중심 시스템에서 결제 이후의 업무 흐름, 외부 금융 서비스 연동, 상태 관리와 장애 대응을 주로 다뤘습니다."
+              : "Built and operated core backends for a B2B BNPL platform spanning authorization, credit evaluation, digital contracting, and merchant settlement. Handled post-payment event-driven workflows, financial partner integrations, state management, and operational failure resilience."}
           </p>
 
           <div class="work-focus-pill">
-            <span class="focus-label">{lang === "ko" ? "핵심 과제" : "Core Focus"}</span>
+            <span class="focus-label">{c.work.coreQuestionLabel}</span>
             <span class="focus-text">
               {lang === "ko"
-                ? "외부 시스템 부분 실패 시 내부 상태 안전 복구"
-                : "Safe internal state recovery upon external partial failures"}
+                ? "여러 단계와 외부 시스템이 연결된 금융 업무를 어떻게 이해하기 쉽고 운영 가능한 구조로 만들 것인가?"
+                : "How do you turn multi-stage financial workflows connected to external partners into understandable, operable systems?"}
             </span>
           </div>
 
-          <!-- Expanded Editorial Case Study -->
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Python</span> <span aria-hidden="true">/</span>
+            <span>FastAPI</span> <span aria-hidden="true">/</span>
+            <span>AWS Lambda</span> <span aria-hidden="true">/</span>
+            <span>EventBridge</span> <span aria-hidden="true">/</span>
+            <span>SQS</span> <span aria-hidden="true">/</span>
+            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
+            <span>DynamoDB</span>
+          </p>
+
+          <!-- Expanded Editorial Experience Study -->
           {#if expandedWork.paymonths}
             <div
               id="work-details-paymonths"
               class="work-deep-dive-panel"
               transition:slide={{ duration: disclosureDuration() }}
             >
-              <!-- Context -->
+              <!-- 1. Domain Language & DDD -->
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "배경: 금융 거래의 연결된 라이프사이클"
-                    : "Context: Connected Financial Workflows"}
+                    ? "복잡해지는 금융 업무를 코드로 어떻게 표현할 것인가"
+                    : "Expressing Complex Financial Rules in Code"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "PAYMONTHS는 B2B BNPL(선구매 후지불) 서비스로, 결제 승인 이후 신용평가, 전자계약 체결, 판매자 정산, 사후 운영 라이프사이클이 얽혀 있는 시스템이었습니다. 서비스가 성장함에 따라 상태 모델과 비즈니스 규칙이 복잡해졌고, 각 단계마다 외부 파트너사 연동 실패에 대한 안전한 복구 전략이 요구되었습니다."
-                    : "PAYMONTHS is a B2B BNPL platform coordinating checkout authorization, credit evaluation, digital contracting, merchant settlement, and post-transaction lifecycles. As transaction volume grew, failure handling across external partner APIs required strict state consistency."}
+                    ? "서비스가 성장하면서 결제, 계약, 정산을 둘러싼 상태와 업무 규칙도 함께 늘어났습니다. 개발자끼리 코드 구조를 맞추는 것만으로는 충분하지 않았습니다. PM, 운영 담당자와 개발자가 같은 업무 용어를 서로 다른 의미로 사용하는 경우가 있었고, 그 차이는 요구사항이나 예외 상황을 논의할 때 혼선으로 이어졌습니다. 주요 업무 용어와 상태의 의미를 함께 정리하고, 실제 코드의 도메인 모델에서도 같은 언어를 사용했습니다. DDD의 Ubiquitous Language를 실무에서 사용하게 된 배경도 여기에 있었습니다."
+                    : "As transaction scale grew, business rules and lifecycle states across payment, contracting, and settlement expanded rapidly. Simply organizing code within engineering was not enough. PMs, operations, and engineers occasionally used identical business terms to mean different workflow states, creating confusion during edge-case discussions. We standardized core business terms and state transitions together and reflected the same ubiquitous language inside domain models."}
                 </p>
               </div>
 
-              <!-- Domain Language (DDD) -->
+              <!-- 2. Hexagonal Architecture / Domain Isolation -->
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "같은 업무 용어, 다른 이해"
-                    : "Shared Domain Terms, Different Understandings"}
+                    ? "업무 규칙과 인프라 변경을 가능한 한 분리했습니다"
+                    : "Decoupling Business Rules from Infrastructure Changes"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "기획, 운영, 개발이 같은 업무 용어를 서로 다른 단계나 상태를 가리키는 데 사용하는 경우가 있었습니다. 예를 들어 '결제 취소', '계약 철회', '정산 보류'가 어떤 상태를 의미하는지 팀마다 이해가 달라 요구사항과 예외 상황을 논의할 때 혼선이 생겼습니다. 주요 용어와 상태 전이 기준을 함께 맞추고, 도메인 모델과 상태 변경 로직에도 동일한 상태 전이 규칙을 반영했습니다. 이를 DDD의 Ubiquitous Language로 관리했습니다."
-                    : "Product, Operations, and Engineering occasionally used the same business terms to describe different workflow stages. Terms like 'Payment Cancellation', 'Contract Revocation', and 'Payout Hold' caused confusion during exception handling discussions. We standardized core terms and state transition rules together, aligning domain models and update logic with a shared Ubiquitous Language."}
+                    ? "서비스는 AWS의 serverless 구성요소를 적극적으로 사용하고 있었지만, 결제와 계약 같은 핵심 업무 규칙까지 Lambda나 특정 외부 서비스 구현에 직접 의존하도록 만들고 싶지는 않았습니다. 도메인 로직과 외부 연동 영역의 경계를 나누고, 인프라 또는 외부 사업자 연동 방식이 바뀌었을 때 핵심 업무 규칙까지 함께 흔들리지 않도록 구조를 관리했습니다. 이 경험을 통해 Hexagonal Architecture를 단순한 코드 구조가 아니라 변경 이유가 다른 코드를 분리하기 위한 수단으로 이해하게 됐습니다."
+                    : "While the platform leveraged AWS serverless components, we avoided coupling core financial domain logic directly to Lambda handlers or specific cloud primitives. By separating domain logic from external integration adapters, infrastructure and external provider changes did not affect core business rules. This reinforced Hexagonal Architecture as a practical means to decouple code with differing reasons to change."}
                 </p>
               </div>
 
-              <!-- Sync vs Async Boundary -->
+              <!-- 3. Async Pipelines & Failure Lessons -->
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "동기 처리 범위와 이벤트 분리"
-                    : "Synchronous Scope vs. Event-Driven Workflow"}
+                    ? "비동기 처리는 성능보다 실패 이후가 더 어려웠습니다"
+                    : "Async Pipelines: Failure Recovery Over Raw Performance"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "초기에는 하나의 API 요청에서 모든 후속 업무를 처리하는 동기 체이닝 방식이 단순해 보였습니다. 하지만 전자계약과 정산 API는 외부 금융사 및 결제 파트너 시스템에 의존해 응답 지연과 일시 장애가 발생할 수 있었습니다. 따라서 결제 승인 응답에 필요한 최소한의 처리(PAID 상태 영속화)만 즉시 처리하고, 전자계약 체결과 판매자 정산은 EventBridge와 SQS FIFO를 통한 비동기 워크플로로 분리했습니다."
-                    : "Initially, chaining every step synchronously inside one HTTP request seemed simple. However, downstream partner calls like digital contracting and bank payout APIs had higher latency and occasional outages. We split the boundary: immediate payment auth and PAID state persistence remained synchronous, while downstream contracting and settlement were decoupled into an EventBridge and SQS FIFO workflow."}
+                    ? "결제 이후의 모든 업무가 같은 응답 시간과 장애 특성을 갖지는 않았습니다. 사용자 응답에 필요한 처리와 독립적으로 지연하거나 다시 실행할 수 있는 후속 업무를 구분하면서 이벤트 기반 처리를 사용했습니다. 운영하면서 특히 신경 쓴 것은 동일한 업무 이벤트가 다시 들어오는 경우, 외부 서비스가 일시적으로 실패하는 경우, 여러 단계 중 일부만 완료되는 경우, 작업 실패 후 어느 상태부터 다시 처리해야 하는지 판단해야 하는 경우였습니다. 이 과정에서 idempotency, ordering, retry, DLQ 같은 패턴을 실제 운영 문제와 연결해서 경험했습니다."
+                    : "Post-payment tasks did not share identical latency requirements or failure profiles. We separated immediate user-facing authorizations from deferred or retryable background operations using event-driven pipelines. Key operational considerations included duplicate inbound events, temporary partner outages, partial multi-step completions, and determining recovery resume points. This provided practical experience with idempotency, ordering, retry strategies, and DLQ handling."}
+                </p>
+                <p class="cs-abstract-note">
+                  {lang === "ko"
+                    ? "*(구체적인 production topology와 내부 복구 절차는 회사 시스템에 해당하여 생략합니다.)*"
+                    : "*(Specific production topology and internal recovery procedures are omitted to protect proprietary company systems.)*"}
                 </p>
               </div>
 
-              <!-- Architecture Diagram -->
-              <div class="cs-block">
-                <h4 class="cs-heading">
-                  {lang === "ko" ? "주요 처리 흐름 · Simplified" : "Core Workflow · Simplified"}
-                </h4>
-                <figure
-                  class="mermaid-diagram"
-                  data-chart={`flowchart TD
-    Client[Client / PG Webhook] -->|1. Submit Payment| API[Payment API Lambda]
-    API -->|2. Persist PAID State| DB[(PostgreSQL)]
-    API -->|3. Emit Order Paid Event| EB[AWS EventBridge]
-    
-    EB -->|Rule: Contract Event| Q1[SQS FIFO: Contract Queue]
-    EB -->|Rule: Settlement Event| Q2[SQS FIFO: Settlement Queue]
-    
-    Q1 -->|Ordered by order_id| CWorker[Contract Service Lambda]
-    CWorker -->|E-Signature API| ExtContract[External Contract Gateway]
-    CWorker -->|Emit Contract Signed| EB
-    
-    Q2 -->|Ordered by order_id| SWorker[Settlement Service Lambda]
-    SWorker -->|Bank Transfer API| ExtBank[Bank VAN / Payment Gateway]
-    
-    Q1 -.->|Retries exhausted| DLQ1[Contract DLQ]
-    Q2 -.->|Retries exhausted| DLQ2[Settlement DLQ]`}
-                >
-                  <div class="mermaid-loading">
-                    {lang === "ko"
-                      ? "다이어그램 로딩 중..."
-                      : "Rendering architecture diagram..."}
-                  </div>
-                </figure>
-              </div>
-
-              <!-- Failure Scenarios -->
+              <!-- 4. Observability & Operability -->
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "실제로 신경 쓴 실패 상황"
-                    : "Handling Failure Scenarios"}
+                    ? "운영할 수 있어야 시스템이 완성된다고 배웠습니다"
+                    : "A System Is Only Complete When It Is Operable"}
                 </h4>
-                <div class="cs-failure-group">
-                  <div class="cs-failure-item">
-                    <p class="cs-fail-q">
-                      {lang === "ko"
-                        ? "같은 결제 이벤트가 네트워크 재시도로 중복 도착하면?"
-                        : "What if duplicate payment events arrive due to network retries?"}
-                    </p>
-                    <p class="cs-fail-a">
-                      {lang === "ko"
-                        ? "Consumer가 같은 이벤트를 다시 받을 수 있다고 가정하고 중복 처리를 방어했습니다. 이벤트의 멱등성 키에 유일성 제약을 두고, 동일 이벤트가 다시 들어와도 상태 변경이나 외부 호출이 중복되지 않도록 방어했습니다."
-                        : "Assuming consumers may receive duplicate events, we enforced database unique constraints on idempotency keys to prevent duplicate state mutations or redundant external calls."}
-                    </p>
-                  </div>
-                  <div class="cs-failure-item">
-                    <p class="cs-fail-q">
-                      {lang === "ko"
-                        ? "외부 API는 성공했는데 내부 저장이 실패하거나 파트너사가 일시 장애라면?"
-                        : "What if external partner APIs succeed but internal state persistence fails or encounters an outage?"}
-                    </p>
-                    <p class="cs-fail-a">
-                      {lang === "ko"
-                        ? "외부 호출과 내부 상태가 어긋날 수 있는 경우를 별도 실패 시나리오로 관리하고, 처리 단계와 외부 요청 정보를 남겨 운영자가 상태를 확인하고 재처리할 수 있게 했습니다. 일시적 장애는 재시도하고, 반복적으로 실패한 메시지는 DLQ로 격리했습니다."
-                        : "We managed edge cases where external calls and internal records could diverge as dedicated failure scenarios, recording execution stages and transaction metadata so operators could inspect and reprocess them safely. Temporary failures retried automatically, while persistently failing messages were routed to a DLQ."}
-                    </p>
-                  </div>
-                </div>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "비동기 처리가 늘어나면서 하나의 업무 흐름이 여러 실행 단위를 거치게 되었고, 장애가 발생했을 때 원인을 추적하는 일도 어려워졌습니다. 업무 단위의 식별자를 로그와 이벤트에 함께 남기고 structured logging, metrics, tracing을 이용해 하나의 금융 workflow를 연결해서 볼 수 있도록 개선했습니다. 운영팀과도 고객 lifecycle에서 반복적으로 확인하던 업무를 함께 정리해 알림과 상태 확인의 일부를 자동화했습니다."
+                    : "As asynchronous components multiplied, single business workflows spanned multiple execution contexts, complicating root-cause analysis. We embedded business correlation IDs across logs and events, leveraging structured logging, metrics, and tracing to visualize end-to-end financial workflows. We also collaborated with operations to automate routine lifecycle notifications and verification checks."}
+                </p>
               </div>
 
-              <!-- Retrospective -->
+              <!-- 5. Retrospective -->
               <div class="cs-retro-block">
                 <p>
-                  <strong>{lang === "ko" ? "지금 다시 만든다면:" : "Retrospective:"}</strong>
+                  <strong>{lang === "ko" ? "이 경험 이후 달라진 점:" : "Key Takeaways & Retrospective:"}</strong>
                   {lang === "ko"
-                    ? "당시에는 도메인 분리를 빠르게 추진하기 위해 여러 서버리스 마이크로서비스로 구성했지만, 지금 다시 시작한다면 모듈러 모놀리스(Modular Monolith)로 시작해 실제 장애 및 스케일링 경계가 확인된 뒤 서비스 추출을 검토할 것 같습니다."
-                    : "While serverless microservices provided rapid early domain separation, if designing this today, I would start with a modular monolith and evaluate service extraction only after actual scaling and fault boundaries are clearly proven."}
+                    ? "처음에는 서비스를 기능 단위로 빠르게 분리하는 것이 중요하다고 생각했습니다. 하지만 여러 serverless component와 service를 운영하면서 분산 자체가 비용이라는 것도 경험했습니다. 지금 같은 시스템을 처음부터 설계한다면 우선 하나의 deployable unit 안에서 도메인 경계를 명확하게 나누고, 장애 격리나 독립적인 scaling이 실제로 필요한 지점이 확인됐을 때 서비스 분리를 검토할 것 같습니다."
+                    : "Initially, rapid microservice decomposition seemed paramount. However, operating multiple distributed components demonstrated that distribution itself carries significant operational overhead. Today, I would start within a single deployable modular monolith with strict domain boundaries, evaluating service extraction only when fault isolation or independent scaling boundaries are proven."}
                 </p>
               </div>
+
+              <!-- Confidentiality Note -->
+              <p class="cs-confidential-note">
+                {c.work.confidentialityNote}
+              </p>
             </div>
           {/if}
         </div>
@@ -536,18 +514,20 @@
             aria-expanded={expandedWork.paymonths}
             aria-controls="work-details-paymonths"
             aria-label={expandedWork.paymonths
-              ? c.work.collapseCTA
-              : c.work.expandCTA}
+              ? c.work.experienceCollapseCTA
+              : c.work.experienceExpandCTA}
           >
             <span class="toggle-label">
-              {expandedWork.paymonths ? c.work.collapseCTA : c.work.expandCTA}
+              {expandedWork.paymonths
+                ? c.work.experienceCollapseCTA
+                : c.work.experienceExpandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
         </div>
       </article>
 
-      <!-- 02. MOONBERG -->
+      <!-- 02. MOONBERG (Selected Project) -->
       <article
         id="moonberg"
         class="work-item"
@@ -559,7 +539,11 @@
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge">Financial Data · Async Architecture</span>
+            <span class="work-domain-badge badge-project">
+              {lang === "ko"
+                ? "선정 프로젝트 · 재무 데이터 비동기 파이프라인"
+                : "Selected Project · Financial Data & Async Pipeline"}
+            </span>
           </div>
 
           <h3 class="work-title">MOONBERG</h3>
@@ -577,6 +561,15 @@
                 : "Reduced repetitive data extraction & reconciliation tasks by ~60–80%"}
             </span>
           </div>
+
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Go</span> <span aria-hidden="true">/</span>
+            <span>Python</span> <span aria-hidden="true">/</span>
+            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
+            <span>PGMQ</span> <span aria-hidden="true">/</span>
+            <span>Docker</span> <span aria-hidden="true">/</span>
+            <span>Vue</span>
+          </p>
 
           <!-- Expanded Editorial Case Study -->
           {#if expandedWork.moonberg}
@@ -683,18 +676,20 @@
             aria-expanded={expandedWork.moonberg}
             aria-controls="work-details-moonberg"
             aria-label={expandedWork.moonberg
-              ? c.work.collapseCTA
-              : c.work.expandCTA}
+              ? c.work.projectCollapseCTA
+              : c.work.projectExpandCTA}
           >
             <span class="toggle-label">
-              {expandedWork.moonberg ? c.work.collapseCTA : c.work.expandCTA}
+              {expandedWork.moonberg
+                ? c.work.projectCollapseCTA
+                : c.work.projectExpandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
         </div>
       </article>
 
-      <!-- 03. ALEMBIC-DUMP -->
+      <!-- 03. ALEMBIC-DUMP (Selected Project) -->
       <article
         id="alembic-dump"
         class="work-item"
@@ -706,7 +701,11 @@
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge">Developer Tooling · Open Source</span>
+            <span class="work-domain-badge badge-project">
+              {lang === "ko"
+                ? "선정 프로젝트 · 개발자 도구 및 오픈소스"
+                : "Selected Project · Developer Tooling & Open Source"}
+            </span>
           </div>
 
           <h3 class="work-title">ALEMBIC-DUMP</h3>
@@ -724,6 +723,15 @@
                 : "Migration pre-flight verification from ~30 min to under 2 min"}
             </span>
           </div>
+
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Python</span> <span aria-hidden="true">/</span>
+            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
+            <span>Alembic</span> <span aria-hidden="true">/</span>
+            <span>SSH Tunnel</span> <span aria-hidden="true">/</span>
+            <span>Data Masking</span> <span aria-hidden="true">/</span>
+            <span>AWS Secrets Manager</span>
+          </p>
 
           <!-- Expanded Editorial Case Study -->
           {#if expandedWork.alembic_dump}
@@ -817,20 +825,20 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
             aria-expanded={expandedWork.alembic_dump}
             aria-controls="work-details-alembic-dump"
             aria-label={expandedWork.alembic_dump
-              ? c.work.collapseCTA
-              : c.work.expandCTA}
+              ? c.work.projectCollapseCTA
+              : c.work.projectExpandCTA}
           >
             <span class="toggle-label">
               {expandedWork.alembic_dump
-                ? c.work.collapseCTA
-                : c.work.expandCTA}
+                ? c.work.projectCollapseCTA
+                : c.work.projectExpandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
         </div>
       </article>
 
-      <!-- 04. ZENITH -->
+      <!-- 04. ZENITH (Selected Project) -->
       <article
         id="zenith"
         class="work-item"
@@ -842,7 +850,11 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge">Developer Tooling · macOS</span>
+            <span class="work-domain-badge badge-project">
+              {lang === "ko"
+                ? "선정 프로젝트 · 시스템 & 세이프티 엔지니어링"
+                : "Selected Project · Systems & Safety Engineering"}
+            </span>
           </div>
 
           <h3 class="work-title">ZENITH</h3>
@@ -860,6 +872,13 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 : "No frontend delete authority & Rust SafetyPlanner verification"}
             </span>
           </div>
+
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Rust</span> <span aria-hidden="true">/</span>
+            <span>Tauri</span> <span aria-hidden="true">/</span>
+            <span>Svelte 5</span> <span aria-hidden="true">/</span>
+            <span>macOS</span>
+          </p>
 
           <!-- Expanded Editorial Case Study -->
           {#if expandedWork.zenith}
@@ -982,11 +1001,13 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
             aria-expanded={expandedWork.zenith}
             aria-controls="work-details-zenith"
             aria-label={expandedWork.zenith
-              ? c.work.collapseCTA
-              : c.work.expandCTA}
+              ? c.work.projectCollapseCTA
+              : c.work.projectExpandCTA}
           >
             <span class="toggle-label">
-              {expandedWork.zenith ? c.work.collapseCTA : c.work.expandCTA}
+              {expandedWork.zenith
+                ? c.work.projectCollapseCTA
+                : c.work.projectExpandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
