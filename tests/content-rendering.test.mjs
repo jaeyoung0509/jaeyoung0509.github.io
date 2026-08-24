@@ -172,6 +172,11 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     /aws\/chalice\/issues\/2147/,
     "AWS Chalice 이슈 링크가 없습니다",
   );
+  assert.match(
+    aboutHtml,
+    /aws\/chalice\/pull\/2173/,
+    "AWS Chalice PR 리뷰 링크가 없습니다",
+  );
   const ossNames = [...aboutHtml.matchAll(/class="oss-card-name">([^<]+)</g)].map(
     ([, name]) => name,
   );
