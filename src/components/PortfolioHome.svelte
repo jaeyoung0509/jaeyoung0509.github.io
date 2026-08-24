@@ -77,7 +77,7 @@
         role: "Software Engineer",
         location: "Seoul, South Korea",
         name: "Jaeyoung Lee",
-        headline: "I focus on backend systems with\ncomplex state and failure recovery.",
+        headline: "I build and operate backend systems that manage\ncomplex state and failure recovery.",
         subheadline:
           "Built and operated payment, credit evaluation, digital contracting, and merchant settlement backends for over 3.5 years. Outside work, I build small developer tools for repetitive friction and trace libraries and open source code to their implementation.",
         ctaWork: "Selected Work",
@@ -86,7 +86,7 @@
       about: {
         eyebrow: "Approach",
         title: "How I Work",
-        p1: "In production, handling failures after the happy path has consistently been the most challenging and critical problem.",
+        p1: "In production, handling failure recovery rather than the happy path has consistently been the most critical problem.",
         p2: "Whether duplicate inbound payment events, long-running data extraction jobs, or repetitive manual migration steps, I trace actual implementations when documentation is ambiguous and turn recurring recovery procedures into code and tools.",
       },
       work: {
@@ -162,17 +162,17 @@
         role: "소프트웨어 엔지니어",
         location: "대한민국 서울",
         name: "이재영",
-        headline: "상태가 복잡하고 실패할 수 있는\n백엔드 시스템을 주로 다뤄왔습니다.",
+        headline: "복잡한 상태와 실패를 다루는\n백엔드 시스템을 만들고 운영해왔습니다.",
         subheadline:
-          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 업무에서 반복되는 문제는 작은 도구로 만들어보고, 동작이 궁금한 부분은 라이브러리와 오픈소스 구현까지 확인하는 편입니다.",
+          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 반복되는 문제는 작은 도구로 만들고, 동작이 궁금한 부분은 라이브러리와 오픈소스 구현까지 확인합니다.",
         ctaWork: "주요 작업 보기",
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
         eyebrow: "작업 방식",
         title: "어떻게 일하는가",
-        p1: "업무에서는 정상적으로 동작하는 경우보다 실패한 뒤의 처리가 더 어려운 문제를 자주 만났습니다.",
-        p2: "중복으로 들어오는 결제 이벤트, 오래 실행되는 데이터 수집 작업, 사람이 반복해서 확인하던 migration 작업 등이 그랬습니다. 문서만으로 동작이 명확하지 않을 때는 실제 구현을 확인하고, 반복되는 해결 과정은 코드나 도구로 옮겨 왔습니다.",
+        p1: "정상 경로보다 실패 이후가 더 어려운 문제를 많이 다뤘습니다.",
+        p2: "중복으로 들어오는 결제 이벤트, 오래 실행되는 데이터 수집 작업, 사람이 반복해서 확인하던 migration 작업 등이 그랬습니다. 문서만으로 동작이 명확하지 않으면 실제 구현까지 확인하고, 반복되는 해결 과정은 코드나 도구로 옮겨 왔습니다.",
       },
       work: {
         title: "주요 작업",
@@ -191,7 +191,7 @@
           {
             name: "Temporal Python SDK",
             meta: "OpenAI Agents integration · PR #1741 · Merged",
-            desc: "Temporal OpenAI Agents integration을 사용하면서 FunctionTool과 Activity 기반 tool의 실행 위치가 다르다는 점을 SDK 구현에서 확인했습니다. 외부 I/O가 필요한 tool을 Activity로 분리하는 기준을 문서와 diagram에서 더 명확하게 설명하는 PR을 기여했습니다.",
+            desc: "Temporal OpenAI Agents integration을 사용하면서 FunctionTool과 Activity 기반 tool의 실행 위치가 다르다는 점을 SDK 구현에서 확인했습니다. 문서와 diagram을 보완한 PR #1741이 merged되었습니다.",
             linkText: "PR #1741 ↗",
             linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
           },
@@ -387,8 +387,8 @@
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
-              ? "여러 단계와 외부 시스템이 연결된 금융 업무의 상태와 규칙을 어떻게 관리할지 고민했습니다."
-              : "Focused on managing multi-stage financial lifecycle states and business rules connected to external partners."}
+              ? "결제 이후 이어지는 상태 전이, 외부 연동 실패와 재처리 문제를 주로 다뤘습니다."
+              : "Focused on state transitions, external partner failure handling, and idempotent re-processing after payments."}
           </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
@@ -412,13 +412,13 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "복잡해지는 금융 업무를 코드로 어떻게 표현할 것인가"
-                    : "Expressing Complex Financial Rules in Code"}
+                    ? "도메인 언어와 상태 모델"
+                    : "Domain Language & State Models"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "서비스가 성장하면서 결제, 계약, 정산을 둘러싼 상태와 업무 규칙도 함께 늘어났습니다. 개발자끼리 코드 구조를 맞추는 것만으로는 충분하지 않았습니다. PM, 운영 담당자와 개발자가 같은 업무 용어를 서로 다른 의미로 사용하는 경우가 있었고, 그 차이는 요구사항이나 예외 상황을 논의할 때 혼선으로 이어졌습니다. 주요 업무 용어와 상태의 의미를 함께 정리하고, 실제 코드의 도메인 모델에서도 같은 언어를 사용했습니다. DDD의 Ubiquitous Language를 실무에서 사용하게 된 배경도 여기에 있었습니다."
-                    : "As transaction scale grew, business rules and lifecycle states across payment, contracting, and settlement expanded rapidly. Simply organizing code within engineering was not enough. PMs, operations, and engineers occasionally used identical business terms to mean different workflow states, creating confusion during edge-case discussions. We standardized core business terms and state transitions together and reflected the same ubiquitous language inside domain models."}
+                    ? "서비스가 성장하면서 결제, 계약, 정산을 둘러싼 상태와 업무 규칙도 늘어났습니다. PM, 운영 담당자와 개발자가 같은 업무 용어를 서로 다른 의미로 사용하는 경우가 있어 주요 용어와 상태의 의미를 함께 정리하고 코드의 도메인 모델에도 같은 언어를 사용했습니다. 이 과정에서 DDD의 Ubiquitous Language를 실무에 적용했습니다."
+                    : "As transaction scale grew, business rules and lifecycle states across payment, contracting, and settlement expanded. To avoid misalignment across PMs, operations, and engineering, we standardized core business terms and state transitions together, directly reflecting Ubiquitous Language inside the codebase's domain models."}
                 </p>
               </div>
 
@@ -426,13 +426,13 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "업무 규칙과 인프라 변경을 가능한 한 분리했습니다"
-                    : "Decoupling Business Rules from Infrastructure Changes"}
+                    ? "도메인 로직과 인프라 분리"
+                    : "Decoupling Domain Logic from Infrastructure"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "서비스는 AWS의 serverless 구성요소를 적극적으로 사용하고 있었지만, 결제와 계약 같은 핵심 업무 규칙까지 Lambda나 특정 외부 서비스 구현에 직접 의존하도록 만들고 싶지는 않았습니다. 도메인 로직과 외부 연동 영역의 경계를 나누고, 인프라 또는 외부 사업자 연동 방식이 바뀌었을 때 핵심 업무 규칙까지 함께 흔들리지 않도록 구조를 관리했습니다. 이 경험을 통해 Hexagonal Architecture를 단순한 코드 구조가 아니라 변경 이유가 다른 코드를 분리하기 위한 수단으로 이해하게 됐습니다."
-                    : "While the platform leveraged AWS serverless components, we avoided coupling core financial domain logic directly to Lambda handlers or specific cloud primitives. By separating domain logic from external integration adapters, infrastructure and external provider changes did not affect core business rules. This reinforced Hexagonal Architecture as a practical means to decouple code with differing reasons to change."}
+                    ? "AWS의 serverless 구성요소를 사용하면서도 결제와 계약 같은 핵심 업무 규칙이 Lambda나 특정 외부 서비스 구현에 직접 의존하지 않도록 도메인 로직과 외부 연동 영역의 경계를 나눴습니다. 이 경험을 통해 Hexagonal Architecture를 변경 이유가 다른 코드를 분리하기 위한 수단으로 이해하게 됐습니다."
+                    : "While leveraging AWS serverless primitives, we ensured core financial domain logic did not couple directly to Lambda handlers or third-party SDKs. Structuring clear boundaries between domain rules and external adapters reinforced Hexagonal Architecture as a practical means to separate code with different reasons to change."}
                 </p>
               </div>
 
@@ -440,17 +440,17 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "비동기 처리에서 신경 쓴 실패 상황"
-                    : "Failure Scenarios in Asynchronous Processing"}
+                    ? "비동기 처리와 실패 복구"
+                    : "Asynchronous Processing & Failure Recovery"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "결제 이후의 모든 업무가 같은 응답 시간과 장애 특성을 갖지는 않았습니다. 사용자 응답에 필요한 처리와 독립적으로 지연하거나 다시 실행할 수 있는 후속 업무를 구분하면서 이벤트 기반 처리를 사용했습니다. 운영하면서 특히 신경 쓴 것은 동일한 업무 이벤트가 다시 들어오는 경우, 외부 서비스가 일시적으로 실패하는 경우, 여러 단계 중 일부만 완료되는 경우, 작업 실패 후 어느 상태부터 다시 처리해야 하는지 판단해야 하는 경우였습니다. 이 과정에서 idempotency, ordering, retry, DLQ 같은 패턴을 실제 운영 문제와 연결해서 경험했습니다."
-                    : "Post-payment tasks did not share identical latency requirements or failure profiles. We separated immediate user-facing authorizations from deferred or retryable background operations using event-driven pipelines. Key operational considerations included duplicate inbound events, temporary partner outages, partial multi-step completions, and determining recovery resume points. This provided practical experience with idempotency, ordering, retry strategies, and DLQ handling."}
+                    ? "결제 이후 업무 중 즉시 응답에 필요한 처리와 독립적으로 지연하거나 다시 실행할 수 있는 후속 업무를 구분했습니다. 중복 이벤트, 외부 서비스의 일시 장애, 일부 단계만 완료되는 경우와 재처리 지점을 주로 다뤘고, 이 과정에서 idempotency, ordering, retry, DLQ를 실제 운영 문제와 연결해 경험했습니다."
+                    : "We distinguished immediate client-facing authorizations from deferred or retryable background operations. Managing duplicate events, temporary partner outages, partial workflow completion, and recovery resume points provided practical experience with idempotency, ordering, retry strategies, and DLQ handling."}
                 </p>
                 <p class="cs-abstract-note">
                   {lang === "ko"
-                    ? "*(구체적인 production topology와 내부 복구 절차는 회사 시스템에 해당하여 생략합니다.)*"
+                    ? "*(구체적인 실제 운영 구조와 내부 복구 절차는 회사 자산에 해당하여 생략합니다.)*"
                     : "*(Specific production topology and internal recovery procedures are omitted to protect proprietary company systems.)*"}
                 </p>
               </div>
@@ -459,23 +459,23 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "장애 추적과 운영 자동화"
-                    : "Failure Tracing & Operations Automation"}
+                    ? "관측성과 운영 자동화"
+                    : "Observability & Operations Automation"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "비동기 처리가 늘어나면서 하나의 업무 흐름이 여러 실행 단위를 거치게 되었고, 장애가 발생했을 때 원인을 추적하는 일도 어려워졌습니다. 업무 단위의 식별자를 로그와 이벤트에 함께 남기고 structured logging, metrics, tracing을 이용해 하나의 금융 workflow를 연결해서 볼 수 있도록 개선했습니다. 운영팀과도 고객 lifecycle에서 반복적으로 확인하던 업무를 함께 정리해 알림과 상태 확인의 일부를 자동화했습니다."
-                    : "As asynchronous components multiplied, single business workflows spanned multiple execution contexts, complicating root-cause analysis. We embedded business correlation IDs across logs and events, leveraging structured logging, metrics, and tracing to visualize end-to-end financial workflows. We also collaborated with operations to automate routine lifecycle notifications and verification checks."}
+                    ? "비동기 업무가 늘면서 하나의 흐름을 여러 실행 단위에 걸쳐 추적해야 했습니다. 업무 단위 식별자를 로그와 이벤트에 함께 남기고 structured logging, metrics, tracing을 적용했습니다. 운영팀과 반복적으로 확인하던 알림과 상태 확인 업무도 일부 자동화했습니다."
+                    : "As asynchronous workflows spanned multiple execution contexts, correlation IDs were embedded across logs and events to enable end-to-end tracing. Routine operational verification and notifications were also automated in collaboration with operations teams."}
                 </p>
               </div>
 
               <!-- 5. Retrospective -->
               <div class="cs-retro-block">
                 <p>
-                  <strong>{lang === "ko" ? "이 경험 이후 달라진 점:" : "Key Takeaways & Retrospective:"}</strong>
+                  <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
-                    ? "처음에는 서비스를 기능 단위로 빠르게 분리하는 것이 중요하다고 생각했습니다. 하지만 여러 serverless component와 service를 운영하면서 분산 자체가 비용이라는 것도 경험했습니다. 지금 같은 시스템을 처음부터 설계한다면 우선 하나의 deployable unit 안에서 도메인 경계를 명확하게 나누고, 장애 격리나 독립적인 scaling이 실제로 필요한 지점이 확인됐을 때 서비스 분리를 검토할 것 같습니다."
-                    : "Initially, rapid microservice decomposition seemed paramount. However, operating multiple distributed components demonstrated that distribution itself carries significant operational overhead. Today, I would start within a single deployable modular monolith with strict domain boundaries, evaluating service extraction only when fault isolation or independent scaling boundaries are proven."}
+                    ? "처음에는 서비스를 기능 단위로 빠르게 분리하는 것이 중요하다고 생각했습니다. 하지만 여러 serverless 구성요소와 분산 서비스를 운영하면서 분산 자체가 비용이라는 것도 경험했습니다. 지금 같은 시스템을 처음부터 설계한다면 우선 하나의 배포 단위 안에서 도메인 경계를 명확하게 나누고, 장애 격리나 독립적인 확장이 실제로 필요한 지점이 확인됐을 때 서비스 분리를 검토할 것 같습니다."
+                    : "Initially, decomposing into microservices seemed paramount. However, operating multiple serverless and distributed services demonstrated that distribution itself incurs high operational cost. Today, I would structure a single deployable unit with clean domain boundaries, evaluating service extraction only when fault isolation or independent scaling boundaries are proven."}
                 </p>
               </div>
 
@@ -536,8 +536,8 @@
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "Go API가 작업 상태를 관리하고 별도의 Python worker가 데이터 수집을 처리합니다."
-              : "A Go API manages persistent job lifecycles while a separate Python worker executes data collection."}
+              ? "HTTP 요청과 작업 수명을 분리하고, Go API와 PostgreSQL에 작업 상태를 남긴 뒤 Python worker가 장시간 수집을 처리하도록 구성했습니다."
+              : "Decoupled HTTP request lifecycles from extraction workloads, persisting job state in Go API and PostgreSQL while a Python worker executes long-running data collection."}
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
@@ -565,8 +565,8 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "배경: 요청 생명주기를 벗어난 데이터 수집"
-                    : "Context: Extractions Outliving Request Lifecycles"}
+                    ? "장시간 실행되는 작업의 상태 관리"
+                    : "State Management for Long-Running Jobs"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
@@ -640,7 +640,7 @@
               <!-- Retrospective -->
               <div class="cs-retro-block">
                 <p>
-                  <strong>{lang === "ko" ? "규모가 더 커진다면:" : "Scaling Considerations:"}</strong>
+                  <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
                     ? "작업 단계가 더 늘어나고 단계별 보상(compensation) 처리까지 필요해진다면, 그때는 PGMQ와 직접 관리하는 상태 테이블 대신 Temporal 같은 워크플로 엔진을 검토할 것 같습니다."
                     : "If workflow steps grow further and require multi-stage compensation handling, evaluating a dedicated workflow engine like Temporal would be a logical next step."}
@@ -704,8 +704,8 @@
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
-              ? "마이그레이션 사전 검증에 걸리던 시간을 약 30분에서 2분 내외로 줄였습니다."
-              : "Reduced migration pre-flight verification time from ~30 minutes to under 2 minutes."}
+              ? "마이그레이션 사전 검증에 걸리던 시간을 약 10분에서 2분 내외로 줄였습니다."
+              : "Reduced migration pre-flight verification time from ~10 minutes to under 2 minutes."}
           </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
@@ -787,13 +787,13 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 </div>
               </div>
 
-              <!-- Retrospective -->
+              <!-- Retrospective / Next Steps -->
               <div class="cs-retro-block">
                 <p>
-                  <strong>{lang === "ko" ? "현재 아쉬운 점과 다음 계획:" : "Current Limitations & Next Steps:"}</strong>
+                  <strong>{lang === "ko" ? "다음 단계:" : "Next Steps:"}</strong>
                   {lang === "ko"
-                    ? "사람이 매번 같은 절차를 따라야 하는 부분을 코드로 옮기면, 빠뜨릴 단계 자체를 줄일 수 있었습니다. 향후에는 GitHub Actions 등 CI 파이프라인에서 마이그레이션 적용을 사전에 검증할 수 있도록 확장하고 싶습니다."
-                    : "Turning manual operational steps into code reduced missed migration checks. Future plans include expanding this into CI pipelines like GitHub Actions for automated pre-deployment schema verification."}
+                    ? "GitHub Actions 등 CI 파이프라인에서 마이그레이션 적용을 사전에 검증할 수 있도록 확장할 계획입니다."
+                    : "Planning to expand pre-flight schema verification directly into CI pipelines such as GitHub Actions."}
                 </p>
               </div>
             </div>
@@ -871,8 +871,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "배경: 안전한 삭제 경계 설계"
-                    : "Context: Designing Safety Boundaries"}
+                    ? "삭제 대상 검증"
+                    : "Validating Deletion Targets"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
@@ -962,7 +962,7 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
               <!-- Retrospective -->
               <div class="cs-retro-block">
                 <p>
-                  <strong>{lang === "ko" ? "다음으로 풀고 싶은 문제:" : "Next Challenges:"}</strong>
+                  <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
                     ? "현재는 검토된 TOML signature를 코드와 함께 배포하고 있습니다. 향후에는 safety boundary를 엄격하게 유지하면서도 사용자 정의 cleanup rule을 유연하게 확장할 수 있는 방식을 고민하고 있습니다."
                     : "Currently, verified TOML signatures are distributed with the application. Moving forward, I am exploring ways to allow custom cleanup rules while strictly maintaining the core safety boundaries."}

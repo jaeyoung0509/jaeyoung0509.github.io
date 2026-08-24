@@ -123,7 +123,7 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(aboutHtml, /이재영/, "작성자 이름이 없습니다");
   assert.match(
     aboutHtml,
-    /상태가 복잡하고 실패할 수 있는/,
+    /복잡한 상태와 실패를 다루는/,
     "Hero 핵심 태그라인이 없습니다",
   );
   assert.match(aboutHtml, /대한민국 서울/, "위치 정보가 없습니다");
