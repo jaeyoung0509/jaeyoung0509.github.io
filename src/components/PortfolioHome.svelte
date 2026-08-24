@@ -792,8 +792,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 <p>
                   <strong>{lang === "ko" ? "다음 단계:" : "Next Steps:"}</strong>
                   {lang === "ko"
-                    ? "현재는 개발자가 로컬 환경에서 직접 실행해 검증하는 방식입니다. 향후에는 GitHub Actions 등 CI 파이프라인과 연동하여 PR 단계에서 마이그레이션 적용과 롤백을 자동으로 사전 검증하도록 확장할 계획입니다."
-                    : "Currently, verification runs locally via developer execution. The next step is integrating with CI pipelines like GitHub Actions to automatically validate migrations and rollbacks on pull requests."}
+                    ? "현재는 PostgreSQL과 Alembic 중심 구조입니다. 향후에는 MySQL, SQLite, DuckDB, Oracle 등 다양한 데이터베이스 간 마스킹 및 데이터 이관을 지원하고, CI 파이프라인과도 연동하여 마이그레이션 사전 검증을 자동화할 계획입니다."
+                    : "Currently tailored for PostgreSQL and Alembic. Future plans include supporting data migration and masking across heterogeneous databases (MySQL, SQLite, DuckDB, Oracle, etc.), as well as automated CI pre-flight verification."}
                 </p>
               </div>
             </div>
@@ -964,8 +964,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 <p>
                   <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
-                    ? "현재는 검토된 TOML signature를 코드와 함께 배포하고 있습니다. 향후에는 safety boundary를 엄격하게 유지하면서도 사용자 정의 cleanup rule을 유연하게 확장할 수 있는 방식을 고민하고 있습니다."
-                    : "Currently, verified TOML signatures are distributed with the application. Moving forward, I am exploring ways to allow custom cleanup rules while strictly maintaining the core safety boundaries."}
+                    ? "현재는 macOS 환경과 내장 TOML 서명을 중심으로 동작합니다. 향후에는 Linux와 Windows 등 멀티 플랫폼으로 지원을 확장하고, safety boundary를 엄격하게 유지하면서 사용자 정의 cleanup rule을 유연하게 추가할 수 있도록 개선할 계획입니다."
+                    : "Currently focused on macOS with verified TOML signatures. Future roadmap includes expanding multi-platform support to Linux and Windows, while allowing customizable cleanup rules without compromising core safety boundaries."}
                 </p>
               </div>
             </div>
