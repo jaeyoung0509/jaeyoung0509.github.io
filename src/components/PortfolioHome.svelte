@@ -181,7 +181,7 @@
         expandCTA: "자세히 보기 ↓",
         collapseCTA: "닫기 ↑",
         confidentialityNote:
-          "*회사 내부 구현과 운영 정보를 보호하기 위해 architecture와 세부 수치는 추상화했습니다.",
+          "*회사 내부 구현과 운영 정보를 보호하기 위해 아키텍처와 세부 수치는 일부 추상화했습니다.",
       },
       oss: {
         title: "오픈소스",
@@ -440,8 +440,8 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "비동기 처리는 성능보다 실패 이후가 더 어려웠습니다"
-                    : "Async Pipelines: Failure Recovery Over Raw Performance"}
+                    ? "비동기 처리에서 신경 쓴 실패 상황"
+                    : "Failure Scenarios in Asynchronous Processing"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
@@ -459,8 +459,8 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "운영할 수 있어야 시스템이 완성된다고 배웠습니다"
-                    : "A System Is Only Complete When It Is Operable"}
+                    ? "장애 추적과 운영 자동화"
+                    : "Failure Tracing & Operations Automation"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"

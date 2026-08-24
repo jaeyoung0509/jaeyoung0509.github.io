@@ -8,13 +8,14 @@
 </script>
 
 <svelte:head>
-  <title>글 | {siteConfig.name}</title>
+  <title>Writing · Jaeyoung Lee</title>
   <meta
     name="description"
-    content="백엔드 시스템, 이벤트 기반 설계, 운영 가시성과 개발 생산성에 관한 글입니다."
+    content="백엔드 시스템, 비동기 워크플로, Go, Temporal, 개발자 도구를 직접 실험하며 기록합니다."
   />
   <link rel="canonical" href={`${siteConfig.url}/blog/`} />
 </svelte:head>
 
 <PageTitle />
 <PostSearch posts={data.posts} />
+
