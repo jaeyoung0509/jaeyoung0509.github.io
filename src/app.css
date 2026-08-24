@@ -1618,7 +1618,21 @@ summary {
   max-width: 68ch;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 28px;
+}
+
+.about-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-sub-heading {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 2px 0;
+  letter-spacing: -0.01em;
 }
 
 .about-lead-statement {
