@@ -132,8 +132,13 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(aboutHtml, /2022\.04 – 2025\.11/, "경력 기간이 올바르지 않습니다");
   assert.match(
     aboutHtml,
-    /어떻게 일하는가/,
+    /일할 때 집중하는 것/,
     "About Me 제목이 없습니다",
+  );
+  assert.match(
+    aboutHtml,
+    /문제를 풀 때는 혼자 빠르게 결론을 내리기보다/,
+    "About 페이지에 협업 및 맥락 정렬 설명이 없습니다",
   );
   assert.match(
     aboutHtml,

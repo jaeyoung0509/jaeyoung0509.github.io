@@ -1612,27 +1612,13 @@ summary {
   line-height: 1.6;
 }
 
-/* Approach Statement Layout */
+/* Focus / Approach Statement Layout */
 
 .about-statement-layout {
   max-width: 68ch;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-}
-
-.about-block {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.about-sub-heading {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--ink);
-  margin: 0 0 2px 0;
-  letter-spacing: -0.01em;
+  gap: 16px;
 }
 
 .about-lead-statement {
@@ -1640,7 +1626,7 @@ summary {
   font-weight: 600;
   color: var(--ink);
   line-height: 1.7;
-  margin: 0;
+  margin: 0 0 2px 0;
 }
 
 .about-sub-statement {
@@ -2046,6 +2032,10 @@ summary {
   color: var(--muted);
   line-height: 1.7;
   max-width: 700px;
+}
+
+.exp-summary-text + .exp-summary-text {
+  margin-top: 10px;
 }
 
 /* Contact Footer Box */

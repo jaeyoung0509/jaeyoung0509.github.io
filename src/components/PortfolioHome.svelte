@@ -84,15 +84,12 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
-        eyebrow: "Approach",
-        title: "How I Work",
+        eyebrow: "Focus",
+        title: "What I Focus On",
         p1: "In production, handling failure recovery rather than the happy path has consistently been the most critical problem.",
         p2: "Whether duplicate inbound payment events, long-running data extraction jobs, or repetitive manual migration steps, I trace actual implementations when documentation is ambiguous and turn recurring recovery procedures into code and tools.",
-        teamworkTitle: "Collaborating Across Teams",
-        teamworkP1:
-          "Rather than rushing to solo conclusions, I invest time upfront to define the problem together with PMs, operations, and fellow engineers. When domain terms or states are understood differently across roles, resolving that gap takes priority over writing code.",
-        teamworkP2:
-          "When technical opinions diverge, I map out the operational constraints and tradeoffs of each option first. Once the team aligns on a direction—even if different from my initial preference—I execute against that decision and iterate based on real operational feedback.",
+        p3: "When solving problems, I prefer aligning on context and constraints with PMs, operations, and fellow engineers over rushing to isolated conclusions. If domain terms or lifecycle states are interpreted differently across teams, even correct implementations lead to wrong outcomes—so standardizing shared language and operational boundaries comes first.",
+        p4: "When technical opinions diverge, I map out the operational constraints and tradeoffs of each option first. Once the team aligns on a direction—even if different from my initial preference—I execute against that decision and iterate based on real operational feedback.",
       },
       work: {
         title: "Selected Work",
@@ -174,15 +171,12 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
-        eyebrow: "작업 방식",
-        title: "어떻게 일하는가",
+        eyebrow: "지향점",
+        title: "일할 때 집중하는 것",
         p1: "정상 경로보다 실패 이후가 더 어려운 문제를 많이 다뤘습니다.",
         p2: "중복으로 들어오는 결제 이벤트, 오래 실행되는 데이터 수집 작업, 사람이 반복해서 확인하던 migration 작업 등이 그랬습니다. 문서만으로 동작이 명확하지 않으면 실제 구현까지 확인하고, 반복되는 해결 과정은 코드나 도구로 옮겨 왔습니다.",
-        teamworkTitle: "함께 일할 때",
-        teamworkP1:
-          "혼자 빠르게 결론을 내리는 것보다, 먼저 문제를 같이 정의하는 데 시간을 쓰는 편입니다. 특히 PM이나 운영 담당자와 개발자가 같은 용어를 다르게 이해하면 구현보다 그 차이를 먼저 맞추려고 합니다.",
-        teamworkP2:
-          "기술적인 의견이 다를 때는 각 선택지의 제약과 운영 비용을 먼저 정리합니다. 충분히 논의한 뒤 팀에서 방향을 정하면 제 의견과 다르더라도 그 결정을 기준으로 실행하고, 실제 운영 결과를 보면서 다시 개선합니다.",
+        p3: "문제를 풀 때는 혼자 빠르게 결론을 내리기보다 PM, 운영 담당자, 동료 개발자와 맥락을 먼저 맞추는 방식을 선호합니다. 같은 용어나 상태를 서로 다르게 이해하면 구현이 맞아도 결과가 틀어질 수 있기 때문에, 도메인 언어와 제약을 정리하는 데 시간을 충분히 씁니다.",
+        p4: "기술적인 의견이 다를 때는 각 선택지의 제약과 운영 비용을 먼저 정리합니다. 충분히 논의한 뒤 팀에서 방향을 정하면 제 의견과 다르더라도 그 결정을 기준으로 실행하고, 실제 운영 결과를 보면서 다시 개선해 나갑니다.",
       },
       work: {
         title: "주요 작업",
@@ -344,7 +338,7 @@
     </div>
   </section>
 
-  <!-- Approach Section -->
+  <!-- Focus / Approach Section -->
   <section class="portfolio-section section-approach" id="about">
     <div class="section-title-row">
       <span class="section-eyebrow">{c.about.eyebrow}</span>
@@ -352,16 +346,10 @@
     </div>
 
     <div class="about-statement-layout">
-      <div class="about-block">
-        <p class="about-lead-statement">{c.about.p1}</p>
-        <p class="about-sub-statement">{c.about.p2}</p>
-      </div>
-
-      <div class="about-block about-teamwork-block">
-        <h3 class="about-sub-heading">{c.about.teamworkTitle}</h3>
-        <p class="about-sub-statement">{c.about.teamworkP1}</p>
-        <p class="about-sub-statement">{c.about.teamworkP2}</p>
-      </div>
+      <p class="about-lead-statement">{c.about.p1}</p>
+      <p class="about-sub-statement">{c.about.p2}</p>
+      <p class="about-sub-statement">{c.about.p3}</p>
+      <p class="about-sub-statement">{c.about.p4}</p>
     </div>
   </section>
 
