@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { tick } from "svelte";
+  import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import {
     ArrowUpRight,
@@ -8,12 +8,14 @@
     MapPin,
     GitPullRequest,
     ChevronDown,
+    FileText,
     Check,
-    AlertCircle,
-    CheckCircle2,
   } from "lucide-svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
   import { siteConfig } from "$lib/site";
+  import type { PostMeta } from "$lib/posts";
+
+  let { posts = [] }: { posts?: PostMeta[] } = $props();
 
   let lang = $state<"en" | "ko">("ko");
   let expandedWork = $state<Record<string, boolean>>({
@@ -23,817 +25,283 @@
     zenith: false,
   });
 
+  function setLanguage(newLang: "en" | "ko") {
+    lang = newLang;
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("portfolio_lang", newLang);
+        const url = new URL(window.location.href);
+        url.searchParams.set("lang", newLang);
+        window.history.replaceState({}, "", url.toString());
+      } catch {
+        // Ignore localStorage/URL errors in restricted environments
+      }
+    }
+  }
+
   function disclosureDuration() {
     if (typeof window === "undefined") return 0;
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches
       ? 0
-      : 300;
+      : 250;
   }
 
-  async function toggleWork(slug: string) {
-    const isOpening = !expandedWork[slug];
-    expandedWork[slug] = isOpening;
-    await tick();
-
-    requestAnimationFrame(() => {
-      const targetId = isOpening
-        ? `work-details-${slug}`
-        : `work-item-${slug}`;
-      document.getElementById(targetId)?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    });
+  function toggleWork(slug: string) {
+    expandedWork[slug] = !expandedWork[slug];
   }
+
+  onMount(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramLang = urlParams.get("lang");
+      if (paramLang === "ko" || paramLang === "en") {
+        lang = paramLang;
+      } else {
+        const saved = localStorage.getItem("portfolio_lang");
+        if (saved === "ko" || saved === "en") {
+          lang = saved;
+        } else if (navigator.language && navigator.language.startsWith("ko")) {
+          lang = "ko";
+        }
+      }
+
+      // Check deep link hash
+      const hash = window.location.hash.replace(/^#/, "");
+      if (hash && hash in expandedWork) {
+        expandedWork[hash] = true;
+      }
+    }
+  });
 
   const content = $derived({
     en: {
+      meta: {
+        title: "Jaeyoung Lee — Backend Software Engineer",
+        description:
+          "Backend engineer with 3.5+ years building and operating payment, credit, contract, and settlement backends. Portfolio covering architecture tradeoffs, failure scenarios, and open source contributions.",
+      },
       hero: {
         role: "Software Engineer",
         location: "Seoul, South Korea",
         name: "Jaeyoung Lee",
-        headline: "I enjoy understanding how systems work,\nbuilding practical tools, and learning from open source.",
+        headline:
+          "I understand complex state and partial failures,\nturning them into operable systems.",
         subheadline:
-          "Backend engineer with 3.5+ years building payment, credit, contract, and settlement systems. I turn failure-prone workflows into reliable services and practical developer tools.",
-        ctaWork: "View Selected Work",
+          "Backend engineer with 3.5+ years building and operating payment, credit, contract, and settlement backends. Outside work, I build developer tools for repetitive operational friction and trace open-source implementations to their source.",
+        ctaWork: "Selected Work",
+        ctaResume: "Resume (PDF)",
         ctaContact: "Contact",
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
       },
       about: {
         title: "Turning manual and failure-prone workflows into reliable systems.",
-        p1: "The problems I keep returning to are practical ones: a payment retry that can duplicate a payout, a data-collection job that outlives its request, or a migration check people skip because it takes too long.",
-        p2: "I like tracing those failures through the implementation—not just the API surface—and turning the repeated fix into a tool or a clearer system boundary. That habit has led to developer tools like alembic-dump and Zenith, as well as upstream contributions to Temporal and Genkit.",
+        p1: "The problems I keep returning to are similar: payment retries that could duplicate a payout, data collection jobs that outlive an HTTP request, or migration checks skipped because they take too long—workflows where failure recovery is harder than the happy path.",
+        p2: "These issues are rarely solved by API specs alone. I trace where state actually persists through the implementation, and turn repeated fixes into clearer system boundaries or practical developer tools.",
       },
       work: {
-        title: "Selected work",
+        title: "Selected Engineering Work",
         subtitle:
           "Systems I built, the failure modes they had to handle, and what I would change now.",
-        expandCTA: "Details",
-        collapseCTA: "Close",
-        items: [
-          {
-            slug: "paymonths",
-            number: "01",
-            title: "PAYMONTHS",
-            subtitle: "Designing financial workflows from payments to settlement",
-            tagline:
-              "10+ event-driven serverless services supporting payment, contract, and settlement workflows.",
-            domain: "B2B FinTech · Event-Driven",
-            stack: [
-              "Python",
-              "AWS Lambda",
-              "EventBridge",
-              "SQS FIFO",
-              "DynamoDB",
-              "PostgreSQL",
-            ],
-            quickSummary: {
-              problem: "Handling partial failures across external payment/bank APIs",
-              solution: "SQS FIFO + Idempotency Keys + Transactional State Guards",
-              impact: "Safe retries without duplicate processing or inconsistent payout state",
-            },
-            context:
-              "PAYMONTHS is a B2B BNPL service that processes financial events from buyer checkout to seller settlement across multiple external partners.",
-            owned: [
-              "Built asynchronous processing pipelines across payments, digital contracts, and merchant settlements.",
-              "Implemented idempotency keys and retry mechanisms to handle intermittent third-party bank/PG failures.",
-              "Improved observability by introducing correlation_id-based structured logging to trace issues in distributed environments.",
-            ],
-            problem: {
-              headline:
-                "Financial workflows frequently face Partial Failures where one step succeeds but subsequent steps fail.",
-              subheadline: "How do you maintain reliable state across distributed external partners?",
-              details:
-                "If a payment charge succeeds but downstream digital contracting times out or settlement events drop, money is stranded in an indeterminate state requiring costly manual reconciliation.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "Synchronous API Chaining",
-                  desc: "Simple mental model, but downstream partner latency and timeouts cascade into checkout failures.",
-                },
-                {
-                  title: "Message-Driven Asynchronous Processing",
-                  desc: "Decouples service dependencies and allows safe retries without blocking client response paths.",
-                },
-              ],
-              choice:
-                "Decision: Applied SQS FIFO queues with per-order message grouping, backed by database-level idempotency keys and state transition guards inside transactional boundaries.",
-            },
-            architectureDiagram: `flowchart TD
-    Client[Client / PG Webhook] -->|1. Submit Payment| API[Payment API Lambda]
-    API -->|2. Persist PAID State| DB[(PostgreSQL)]
-    API -->|3. Emit Event| EB[AWS EventBridge]
-    
-    EB -->|Rule: Order Paid| Q1[SQS FIFO: Contract Queue]
-    EB -->|Rule: Order Paid| Q2[SQS FIFO: Settlement Queue]
-    
-    Q1 -->|Ordered by order_id| CWorker[Contract Service Lambda]
-    CWorker -->|E-Signature API| ExtContract[External Contract Gateway]
-    CWorker -->|Emit Contract Signed| EB
-    
-    Q2 -->|Ordered by order_id| SWorker[Settlement Service Lambda]
-    SWorker -->|Bank Transfer API| ExtBank[Bank VAN / Payment Gateway]
-    
-    Q1 -.->|Retries exhausted| DLQ1[Contract DLQ]
-    Q2 -.->|Retries exhausted| DLQ2[Settlement DLQ]`,
-            failureModes: [
-              {
-                q: "What if payment webhooks arrive multiple times due to network retries?",
-                a: "Every event carries a unique idempotency_key. The consumer validates unique constraints in a database transaction, safely ignoring duplicate deliveries without double-processing.",
-              },
-              {
-                q: "What if external banking or contract APIs experience intermittent outages?",
-                a: "The persisted payment state remains intact. Downstream tasks retry with exponential backoff in SQS and isolate to a DLQ if retries are exhausted.",
-              },
-            ],
-            results: [
-              "Operated reliably without payout discrepancies or duplicate settlement issues during production.",
-              "Structured correlation_id logging significantly reduced incident triage time across asynchronous queues.",
-              "Decoupled slow external partner API calls from user-facing checkout response paths.",
-            ],
-            learning:
-              "Queue ordering alone does not guarantee correctness. In distributed systems, at-least-once delivery is the baseline; integrity must be guarded at the database state transition boundary.",
-            differently:
-              "While microservices provided fast early domain boundaries, if designing this today, I would start with a modular monolith and evaluate service extraction much more deliberately as domain complexity matures.",
-          },
-          {
-            slug: "moonberg",
-            number: "02",
-            title: "MOONBERG",
-            subtitle: "Asynchronous architecture for long-running data collection",
-            tagline:
-              "Long-running Bloomberg data collection coordinated by a Go API and isolated Python workers.",
-            domain: "Financial Data · Async Architecture",
-            stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
-            quickSummary: {
-              problem: "Multi-minute Bloomberg collection jobs outlive HTTP requests",
-              solution: "Go API + PostgreSQL Queue (PGMQ) + Python Bloomberg Workers + Persistent Job State",
-              impact: "Durable job tracking outside the HTTP request lifecycle",
-            },
-            context:
-              "Moonberg is a financial workflow used by an accounting firm to collect, normalize, and structure Bloomberg data. A single collection job can take minutes, so it runs outside the HTTP request lifecycle.",
-            owned: [
-              "Designed asynchronous job dispatch between a Go API and isolated Python Bloomberg workers.",
-              "Implemented persistent job states (queued → dispatched → running → succeeded/failed) backed by PostgreSQL and PGMQ.",
-              "Kept collection results available after the original request ended so users could return to the persisted job state and results later.",
-            ],
-            problem: {
-              headline:
-                "Bloomberg data collection could take minutes and depended on isolated local workers.",
-              subheadline: "How do you keep long-running extraction out of the HTTP request lifecycle?",
-              details:
-                "The API needed to acknowledge work before collection finished, while PostgreSQL and PGMQ kept the job state and result connected across the worker boundary.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "Synchronous HTTP with Long Timeout",
-                  desc: "Simple, but gateway timeouts and network failures disconnect clients from in-flight work and make recovery difficult.",
-                },
-                {
-                  title: "Go API + PostgreSQL Queue + Python Bloomberg Workers",
-                  desc: "PGMQ retains queued work and persistent job state while Python workers handle long-running collection outside the API process.",
-                },
-              ],
-              choice:
-                "Decision: Go API + PostgreSQL Queue (PGMQ) + Python Bloomberg Workers + Persistent Job State.",
-            },
-            architectureDiagram: `flowchart TD
-    User[Client] -->|1. POST /jobs| GoAPI[Go API]
-    GoAPI -->|2. Create queued job| DB[(PostgreSQL + PGMQ)]
-    GoAPI -->|3. Return job ID| User
-    DB -->|4. Claim queued job| Worker[Python Bloomberg Worker]
-    Worker -->|5. Collect & normalize data| Bloomberg[Bloomberg Data Source]
-    Worker -->|6. Persist result and state| DB
-    User -.->|7. Read job state/result| GoAPI
-    GoAPI -->|8. Query persistent state| DB`,
-            failureModes: [
-              {
-                q: "What if the HTTP request ends before a collection job finishes?",
-                a: "The job remains in PostgreSQL and PGMQ with its current state. A later request can look up the job ID and read the persisted result instead of starting the collection again.",
-              },
-            ],
-            results: [
-              "Clients can reconnect and query persisted job state and results after the original request ends.",
-              "Resource-heavy collection stays isolated from the Go API process.",
-            ],
-            learning:
-              "Long-running tasks must treat worker crashes and client disconnections as normal baseline conditions, not rare edge cases.",
-            differently:
-              "I would evaluate a dedicated workflow engine if the lifecycle grows beyond the needs of a durable PostgreSQL queue and explicit job state.",
-          },
-          {
-            slug: "alembic_dump",
-            number: "03",
-            title: "ALEMBIC-DUMP",
-            subtitle: "Making database migration testing reproducible",
-            tagline:
-              "Python tooling for schema synchronization, database dump/load, and safe data masking.",
-            domain: "Developer Tooling · Open Source",
-            stack: ["Python", "PostgreSQL", "Alembic", "SSH", "Data Masking"],
-            quickSummary: {
-              problem: "Reproducing a migration-safe database state across environments",
-              solution: "Alembic sync + dump/load + masking + SSH tunneling",
-              impact: "Made migration and data-reproduction steps repeatable",
-            },
-            context:
-              "Migration verification required reproducing a representative database locally without exposing customer data. alembic-dump grew from that internal workflow into an open-source Python library for schema synchronization, dump/load, and data masking.",
-            owned: [
-              "Built and open-sourced alembic-dump as a Python library for repeatable database migration and data workflows.",
-              "Implemented Alembic revision alignment together with database dump and load operations.",
-              "Added chunked data masking and remote access through SSH tunneling, with support for secret backends such as AWS Secrets Manager and Vault.",
-            ],
-            problem: {
-              headline:
-                "Migration checks required a safe, repeatable database snapshot.",
-              subheadline: "How do you reproduce schema and data without copying sensitive records into local environments?",
-              details:
-                "Private network access, inconsistent dump steps, and unmasked data made local verification slow and risky.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "Static Wiki Checklist & Manual Procedures",
-                  desc: "Zero upfront code, but high friction and easily skipped when engineers are in a rush.",
-                },
-                {
-                  title: "Reusable Python Library",
-                  desc: "One library coordinating Alembic synchronization, dump/load, masking, and secure remote access.",
-                },
-              ],
-              choice:
-                "Decision: Build and open-source a Python library that combines Alembic synchronization, database dump/load, masking, and secure remote access into a repeatable workflow.",
-            },
-            architectureDiagram: `flowchart LR
-    Dev[Developer or CI] -->|Use library| Lib[alembic-dump Python library]
-    Secrets[AWS Secrets Manager / Vault] --> Lib
-    Lib -->|SSH tunnel| RemoteDB[(Remote PostgreSQL)]
-    RemoteDB -->|Dump / load| Lib
-    Lib -->|Chunked masking| SafeData[Sanitized data]
-    Lib -->|Alembic revision sync| LocalDB[(Local PostgreSQL)]
-    SafeData --> LocalDB`,
-            failureModes: [
-              {
-                q: "What if sensitive records enter a local dump?",
-                a: "Data is masked while it is being transferred and processed in chunks, so the local database can reproduce the shape of the source without carrying the original sensitive values.",
-              },
-            ],
-            results: [
-              "Reduced the internal migration pre-flight workflow from roughly 30 minutes to under 2 minutes.",
-              "Turned schema synchronization, database dump/load, and masking into reusable open-source building blocks.",
-            ],
-            learning:
-              "Developer tooling is an extension of system reliability. Automating repetitive operational workflows removes human error at the source.",
-            differently:
-              "Extend the library with a GitHub Actions integration that spins up ephemeral database containers on pull requests and reports migration diffs.",
-          },
-          {
-            slug: "zenith",
-            number: "04",
-            title: "ZENITH",
-            subtitle: "A lightweight macOS utility for developers",
-            tagline:
-              "Rust + Svelte desktop application focused on safely cleaning development environments.",
-            domain: "Developer Tooling · macOS",
-            stack: ["Rust", "Tauri", "Svelte", "macOS"],
-            quickSummary: {
-              problem: "Safely identifying reclaimable developer build caches without touching user data",
-              solution: "Rust scanning core + Tauri/Svelte desktop UI",
-              impact: "Fast workspace cleanup backed by preview-first safety checks and guarded deletion",
-            },
-            context:
-              "Developers accumulate gigabytes of hidden build artifacts (Cargo target/, node_modules, Docker unused caches) on macOS. The key engineering challenge is accurately identifying safe-to-delete artifacts while preventing any accidental data loss.",
-            owned: [
-              "Designed and developed the desktop app combining a Rust core with a modern Svelte UI via Tauri.",
-              "Moved scan execution to a background worker so large directory walks do not block the UI.",
-              "Designed preview-first safety checks and guarded deletion boundaries.",
-            ],
-            problem: {
-              headline:
-                "Development caches are deeply nested and dangerous to clean with naive recursive deletes.",
-              subheadline: "How do you scan and safely reclaim gigabytes of development artifacts?",
-              details:
-                "Build artifacts spread across arbitrary folders. A deletion tool must provide deterministic pattern recognition, explicit dry-run previews, and guarded deletion checks.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "Electron + Node.js Desktop App",
-                  desc: "Familiar ecosystem, but heavier memory consumption and a larger binary size.",
-                },
-                {
-                  title: "Tauri (Rust) + Svelte",
-                  desc: "Lower runtime overhead than an Electron-based architecture, fast native filesystem traversal in Rust, and a reactive lightweight UI.",
-                },
-              ],
-              choice:
-                "Decision: Combine a Rust scanning core with Tauri's lightweight IPC and Svelte's reactive frontend to build a local-first macOS developer utility.",
-            },
-            architectureDiagram: `flowchart LR
-    UI[Svelte 5 UI] -->|Tauri IPC invoke| Core[Rust Core Engine]
-    Core -->|spawn_blocking background worker| FS[macOS File System]
-    FS -->|Target / Cache Artifacts| Core
-    Core -->|Calculated Sizes & Safety Check| UI
-    UI -->|Confirm Clean| Core
-    Core -->|Guarded deletion| FS`,
-            failureModes: [
-              {
-                q: "What if scanning a massive directory locks up the UI thread?",
-                a: "Scanning runs outside the UI thread in a background worker, with progress streamed over Tauri IPC to keep the Svelte UI responsive.",
-              },
-              {
-                q: "What if a user accidentally includes source files in a cleanup run?",
-                a: "ZENITH matches registered artifact signatures and revalidates the target's filesystem identity immediately before deletion.",
-              },
-            ],
-            results: [
-              "Lightweight distribution bundle with a small idle footprint.",
-              "Fast scanning across deeply nested development directories without blocking the UI.",
-              "Preview-first checks and guarded deletion keep cleanup boundaries explicit.",
-            ],
-            learning:
-              "Developer tools must prioritize safety and predictability above all else—accidental data loss destroys user trust immediately.",
-            differently:
-              "Add a community plugin architecture to allow developers to define custom artifact cleaners via simple YAML or Lua manifests.",
-          },
-        ],
+        expandCTA: "Case study ↓",
+        collapseCTA: "Close ↑",
+        coreQuestionLabel: "Core Question",
       },
       oss: {
-        title: "Open source",
+        title: "Open Source",
         subtitle:
-          "Reading implementations, fixing rough edges, and contributing improvements upstream.",
-        contributionsTitle: "Open source work",
+          "Reading implementations, tracing failure boundaries, and contributing improvements upstream.",
         contributions: [
           {
             name: "Temporal Python SDK",
             subtitle: "OpenAI Agents Integration",
-            prTitle: "PR #1741 — Tool docs ↗",
-            prUrl: "https://github.com/temporalio/sdk-python/pull/1741",
-            desc: "While experimenting with Temporal's OpenAI Agents integration, I traced the SDK execution boundaries between Workflow-local and Activity-backed tools, contributing documentation clarifications upstream.",
+            linkText: "PR #1741 · Merged ↗",
+            linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
+            desc: "While exploring Temporal's OpenAI Agents integration, traced execution boundaries between Workflow-local deterministic tools and Activity-backed I/O tools, contributing documentation clarifications upstream.",
             status: "Merged",
             statusType: "merged",
           },
           {
-            name: "Genkit Go",
-            subtitle: "Ollama plugin · Docs and Ollama Cloud",
+            name: "Google Genkit",
+            subtitle: "Ollama Cloud Provider Plugin",
             links: [
               {
-                label: "Issue #3748 — Ollama docs ↗",
+                label: "Issue #3748 ↗",
                 href: "https://github.com/genkit-ai/genkit/issues/3748",
               },
               {
-                label: "PR #3813 — Ollama Cloud ↗",
+                label: "PR #3813 ↗",
                 href: "https://github.com/genkit-ai/genkit/pull/3813",
               },
             ],
-            desc: "Reported a broken Go Ollama documentation example caused by outdated DefineModel and ai.ModelInfo usage, then opened a compat_oai/ollamacloud plugin for Ollama Cloud's OpenAI-compatible API with model capability mapping, docs, and tests.",
-            status: "1 issue closed · 1 PR open",
-            statusType: "active",
-          },
-          {
-            name: "alembic-dump",
-            subtitle: "Database Migration & Data Tooling",
-            prTitle: "GitHub Repository ↗",
-            prUrl: "https://github.com/jaeyoung0509/alembic-dump",
-            desc: "Open-source Python library for Alembic synchronization, database dump/load, data masking, and SSH-based remote access.",
-            status: "Active · Published",
+            desc: "Reported broken Go Ollama documentation examples and authored the compat_oai/ollamacloud plugin for Ollama Cloud's OpenAI-compatible API with model capability mapping, documentation, and tests.",
+            status: "Active",
             statusType: "active",
           },
           {
             name: "AWS Chalice",
-            subtitle: "Lambda SnapStart · Framework Support Discussion",
-            prTitle: "Issue #2147 — SnapStart ↗",
-            prUrl: "https://github.com/aws/chalice/issues/2147",
-            desc: "Asked whether Chalice plans native AWS Lambda SnapStart support, since the deploy command and .chalice/config.json did not expose a configuration option.",
-            status: "Open · Issue",
+            subtitle: "Lambda SnapStart Framework Discussion",
+            linkText: "Issue #2147 ↗",
+            linkUrl: "https://github.com/aws/chalice/issues/2147",
+            desc: "Initiated framework discussion and configuration proposals for native AWS Lambda SnapStart support based on production deployment experience.",
+            status: "Open",
             statusType: "active",
           },
         ],
       },
+      writing: {
+        title: "Writing",
+        subtitle:
+          "Selected articles on distributed workflows, concurrency, and developer tooling.",
+      },
       experience: {
         title: "Experience",
-        items: [
-          {
-            company: "FinovusLab",
-            role: "Software Engineer",
-            period: "2022.04 – 2025.11",
-            summary:
-              "Built core payment, automated contract signing, credit evaluation, and merchant settlement backends for a B2B BNPL platform.",
-            highlights: [
-              "Built and operated 10+ event-driven serverless services across payment, credit, contract, and settlement workflows on AWS.",
-              "Designed idempotent processing and transactional state guards around retryable bank and payment-provider integrations.",
-              "Unified structured logging with correlation IDs, making cross-service incident tracing significantly faster.",
-              "Built the internal migration workflow that later evolved into alembic-dump, reducing staging verification from 30m to 2m.",
-            ],
-          },
-        ],
+        company: "FinovusLab",
+        role: "Software Engineer",
+        period: "2022.04 – 2025.11",
+        domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
+        summary:
+          "Built and operated core payment, contract signing, credit evaluation, and merchant settlement backends for a B2B BNPL platform. Designed asynchronous message pipelines, idempotency guards, and fault recovery mechanisms.",
+        resumeCTA: "View Full Resume (PDF) ↗",
+      },
+      contact: {
+        title: "Contact",
+        subtext: "Feel free to reach out via email or GitHub.",
       },
     },
     ko: {
+      meta: {
+        title: "이재영 · Backend Software Engineer",
+        description:
+          "결제, 신용평가, 전자계약, 정산 backend와 비동기 금융 workflow를 개발하고 운영해 온 소프트웨어 엔지니어 이재영의 포트폴리오.",
+      },
       hero: {
         role: "소프트웨어 엔지니어",
         location: "대한민국 서울",
-        name: "이재영 (Jaeyoung Lee)",
-        headline: "시스템의 동작 원리를 이해하고,\n실용적인 도구를 만드는 과정을 즐깁니다.",
+        name: "이재영",
+        headline: "복잡한 상태와 실패를 이해하고,\n운영 가능한 시스템으로 만듭니다.",
         subheadline:
-          "결제, 신용평가, 전자계약, 정산 등 핀테크 코어 시스템을 3.5년 이상 설계·운영해 왔습니다. 실패하기 쉬운 업무 흐름을 신뢰할 수 있는 서비스와 실용적인 개발자 도구로 바꾸는 일에 관심이 있습니다.",
-        ctaWork: "주요 엔지니어링 사례 보기",
+          "결제, 신용평가, 전자계약, 정산 backend를 3.5년 이상 개발하고 운영했습니다. 회사 밖에서는 반복되는 문제를 개발 도구로 만들고, 이해가 필요한 부분은 Open Source 구현까지 따라갑니다.",
+        ctaWork: "주요 작업 보기",
+        ctaResume: "이력서 (PDF)",
         ctaContact: "문의하기",
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
       },
-        about: {
-          title: "불안정하고 반복적인 문제를 신뢰할 수 있는 시스템과 도구로 바꿉니다.",
-          p1: "제가 반복해서 다루는 문제는 꽤 실무적입니다. 재시도로 정산이 중복될 수 있는 결제, 요청보다 오래 걸리는 데이터 수집, 번거로워서 건너뛰기 쉬운 마이그레이션 검증 같은 문제입니다.",
-          p2: "이런 실패를 API 표면에서 멈추지 않고 실제 구현까지 따라가 원인을 확인한 뒤, 반복되는 해결책을 도구나 명확한 시스템 경계로 바꾸는 편입니다. 그 습관은 alembic-dump와 Zenith 같은 개발자 도구, Temporal과 Genkit upstream 기여로 이어졌습니다.",
+      about: {
+        title: "문서에서 멈추지 않고 구현까지 따라갑니다.",
+        p1: "제가 자주 만난 문제는 비슷했습니다. 다시 들어온 결제 이벤트, HTTP 요청보다 오래 실행되는 데이터 수집, 사람이 반복해서 확인하던 migration 작업처럼 정상 경로보다 실패 이후가 더 어려운 문제들입니다.",
+        p2: "이런 문제는 API 사용법만으로 해결되지 않을 때가 많았습니다. 상태가 어디에 남는지 실제 구현까지 따라가 보고, 반복되는 해결 방식은 코드나 도구로 옮기는 편입니다.",
       },
-        work: {
-          title: "주요 작업",
-          subtitle:
-            "실제 운영과 제작 과정에서 만난 문제, 선택한 구조, 그리고 지금 다시 만든다면 바꿀 점을 정리했습니다.",
-        expandCTA: "자세히",
-        collapseCTA: "접기",
-        items: [
-          {
-            slug: "paymonths",
-            number: "01",
-            title: "PAYMONTHS",
-            subtitle: "결제부터 정산까지 이어지는 금융 워크플로 설계",
-            tagline:
-              "결제, 전자계약, 정산 워크플로를 지원하는 10개 이상의 이벤트 기반 서버리스 서비스",
-            domain: "B2B 핀테크 · 이벤트 기반",
-            stack: [
-              "Python",
-              "AWS Lambda",
-              "EventBridge",
-              "SQS FIFO",
-              "DynamoDB",
-              "PostgreSQL",
-            ],
-            quickSummary: {
-              problem: "외부 PG/은행 API 실패 및 부분 성공(Partial Failure) 처리",
-              solution: "SQS FIFO + DB 멱등성 키 + 트랜잭션 상태 전이 검증",
-              impact: "재시도 상황에서도 중복 처리와 일관성 없는 정산 상태 방지",
-            },
-            context:
-              "PAYMONTHS는 B2B BNPL 서비스로, 구매 기업의 결제부터 판매 기업의 정산까지 여러 금융 이벤트를 처리하는 플랫폼입니다.",
-            owned: [
-              "결제, 전자계약, 정산으로 이어지는 비동기 처리 흐름 개발",
-              "외부 PG 및 은행 API 실패 상황을 고려한 멱등성 처리 및 재시도 구조 구현",
-              "분산 환경에서 장애 원인 파악을 위한 correlation_id 기반 로깅 체계 개선",
-            ],
-            problem: {
-              headline:
-                "금융 거래에서는 일부 단계만 성공하는 Partial Failure 상황이 빈번하게 발생합니다.",
-              subheadline: "결제 성공 이후 계약이나 정산 과정에서 실패했을 때 상태를 어떻게 관리할 것인가?",
-              details:
-                "결제 승인 후 전자계약 발급이나 판매자 정산 이벤트가 유실되면 자금 흐름과 법적 효력이 어긋나며 수작업 대사 비용이 급증합니다.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "동기식 API 호출",
-                  desc: "구현은 단순하지만 외부 파트너사 장애가 전체 결제 흐름으로 전파됨",
-                },
-                {
-                  title: "메시지 기반 비동기 처리",
-                  desc: "서비스 간 결합도를 낮추고 안전한 재시도 및 지연 처리가 가능",
-                },
-              ],
-              choice:
-                "결정: 주문별 SQS FIFO 큐와 DB 트랜잭션 내 멱등성 키, 상태 전이 검증 구조를 결합하여 적용했습니다.",
-            },
-            architectureDiagram: `flowchart TD
-    Client[클라이언트 / 웹훅] -->|1. 결제 요청| API[Payment API Lambda]
-    API -->|2. 상태 저장 PAID| DB[(PostgreSQL)]
-    API -->|3. 결제 완료 이벤트| EB[AWS EventBridge]
-    
-    EB -->|규칙 라우팅| Q1[SQS FIFO: Contract Queue]
-    EB -->|규칙 라우팅| Q2[SQS FIFO: Settlement Queue]
-    
-    Q1 -->|주문순서 보장| CWorker[Contract Lambda]
-    CWorker -->|전자서명 API| ExtContract[외부 전자서명 서비스]
-    CWorker -->|계약완료 이벤트| EB
-    
-    Q2 -->|정산 대기열| SWorker[Settlement Lambda]
-    SWorker -->|정산 송금| ExtBank[은행 VAN / PG]
-    
-    Q1 -.->|재시도 소진| DLQ1[Contract DLQ]
-    Q2 -.->|재시도 소진| DLQ2[Settlement DLQ]`,
-            failureModes: [
-              {
-                q: "동일한 결제 완료 웹훅이나 이벤트가 네트워크 재시도로 중복 도착하면?",
-                a: "모든 이벤트는 고유한 idempotency_key를 가집니다. 컨슈머는 DB 트랜잭션 내에서 유니크 인덱스를 검사하여 이미 처리된 건이면 즉시 정상 반환하고 중복 처리를 건너뜁니다.",
-              },
-              {
-                q: "결제는 성공했으나 외부 전자계약 서비스나 은행 API가 일시 장애로 응답하지 않으면?",
-                a: "저장된 결제 상태는 그대로 유지됩니다. 하위 작업은 지수 백오프를 통해 SQS에서 재시도되며, 재시도가 소진되면 DLQ로 격리됩니다.",
-              },
-            ],
-            results: [
-              "운영 기간 동안 정산 누락 및 이중 지급 문제 없이 안정적으로 운영",
-              "주문별 correlation_id 구조화 로깅 체계로 비동기 큐 장애 추적 시간 단축",
-              "느린 외부 연동(전자서명 3~5초, 은행 응답)을 사용자 결제 API 응답 경로에서 분리하여 응답 속도 최적화",
-            ],
-            learning:
-              "큐의 순서 보장(FIFO)은 애플리케이션 수준의 멱등성을 대체할 수 없습니다. 분산 환경에서는 언제나 '적어도 한 번' 전달을 가정하고 데이터베이스 상태 전이 레벨에서 무결성을 방어해야 합니다.",
-            differently:
-              "당시에는 빠른 도메인 분리를 위해 MSA 구조를 선택했지만, 현재 다시 설계한다면 초기에는 모듈러 모놀리스로 시작하고 서비스 분리 시점을 더 신중하게 가져갈 것 같습니다.",
-          },
-          {
-            slug: "moonberg",
-            number: "02",
-            title: "MOONBERG",
-            subtitle: "장시간 실행되는 데이터 수집 작업 처리 구조",
-            tagline:
-              "Go API와 격리된 Python 워커가 조율하는 장시간 Bloomberg 데이터 수집",
-            domain: "금융 데이터 · 비동기 아키텍처",
-            stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
-            quickSummary: {
-              problem: "HTTP 요청보다 오래 걸리는 Bloomberg 데이터 수집 작업",
-              solution: "Go API + PostgreSQL Queue(PGMQ) + Python Bloomberg 워커 + 영속 작업 상태",
-              impact: "HTTP 요청 생명주기와 분리된 작업 추적",
-            },
-            context:
-              "Moonberg는 회계법인 업무에 사용되는 재무 데이터 워크플로로, Bloomberg 데이터를 수집하고 정규화합니다. 작업 하나가 수 분 걸릴 수 있어 HTTP 요청과 분리된 방식으로 실행됩니다.",
-            owned: [
-              "Go API와 격리된 Python Bloomberg 워커 사이의 비동기 작업 디스패치 구조 설계",
-              "PostgreSQL과 PGMQ를 기반으로 queued → dispatched → running → succeeded/failed 작업 상태를 영속화",
-              "원래 요청이 끝난 뒤에도 작업 결과를 저장해 나중에 조회하고 검토할 수 있도록 구성",
-            ],
-            problem: {
-              headline:
-                "Bloomberg 데이터 수집은 수 분이 걸릴 수 있고 격리된 로컬 워커에 의존합니다.",
-              subheadline: "장시간 수집 작업을 HTTP 요청 생명주기에서 어떻게 분리할 것인가?",
-              details:
-                "수집이 끝나기 전에 API가 요청을 먼저 응답해야 했고, 워커 경계를 넘은 뒤에도 PostgreSQL과 PGMQ가 작업 상태와 결과를 이어주어야 했습니다.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "동기식 HTTP 타임아웃 연장",
-                  desc: "구현은 단순하지만 게이트웨이 타임아웃 및 네트워크 순단 시 모든 작업 진행 내역이 유실됨",
-                },
-                {
-                  title: "Go API + PostgreSQL Queue + Python Bloomberg 워커",
-                  desc: "PGMQ가 대기 작업과 영속 상태를 보관하고, Python 워커가 API 프로세스와 분리된 장시간 수집을 수행",
-                },
-              ],
-              choice:
-                "결정: Go API + PostgreSQL Queue(PGMQ) + Python Bloomberg 워커 + 영속 작업 상태 구조를 채택했습니다.",
-            },
-            architectureDiagram: `flowchart TD
-    User[클라이언트] -->|1. 작업 요청| GoAPI[Go API]
-    GoAPI -->|2. queued 작업 생성| DB[(PostgreSQL + PGMQ)]
-    GoAPI -->|3. 작업 ID 반환| User
-    DB -->|4. 대기 작업 획득| Worker[Python Bloomberg 워커]
-    Worker -->|5. 데이터 수집 및 정규화| Bloomberg[Bloomberg 데이터 소스]
-    Worker -->|6. 결과 및 상태 저장| DB
-    User -.->|7. 작업 상태 및 결과 조회| GoAPI
-    GoAPI -->|8. 영속 상태 조회| DB`,
-            failureModes: [
-              {
-                q: "수집이 끝나기 전에 HTTP 요청이 종료되면?",
-                a: "작업은 현재 상태와 함께 PostgreSQL 및 PGMQ에 남습니다. 이후 작업 ID로 조회하면 수집을 다시 시작하지 않고 저장된 결과를 확인할 수 있습니다.",
-              },
-            ],
-            results: [
-              "게이트웨이 타임아웃 끊김을 제거하고 클라이언트 재접속 시에도 이전 작업 결과를 즉시 복구",
-              "동일 문서 중복 수집 요청을 캐싱 및 중복 제거하여 외부 시스템 부하 경감",
-            ],
-            learning:
-              "장기 실행 작업은 워커 크래시와 클라이언트 연결 끊김을 예외가 아닌 정상적인 기준 조건으로 다루어야 합니다.",
-            differently:
-              "작업 생명주기가 영속 PostgreSQL 큐와 명시적인 상태 관리 범위를 넘어선다면 전용 워크플로 엔진 도입을 검토했을 것입니다.",
-          },
-          {
-            slug: "alembic_dump",
-            number: "03",
-            title: "ALEMBIC-DUMP",
-            subtitle: "DB 마이그레이션 테스트를 재현 가능한 과정으로 만들기",
-            tagline:
-              "스키마 동기화, 데이터베이스 dump/load, 안전한 데이터 마스킹을 위한 Python 도구",
-            domain: "개발자 도구 · 오픈소스",
-            stack: ["Python", "PostgreSQL", "Alembic", "SSH", "Data Masking"],
-            quickSummary: {
-              problem: "환경마다 달라지는 마이그레이션용 데이터베이스 상태 재현",
-              solution: "Alembic 동기화 + dump/load + 마스킹 + SSH 터널링",
-              impact: "마이그레이션 및 데이터 재현 절차 표준화",
-            },
-            context:
-              "마이그레이션을 검증하려면 고객 데이터를 노출하지 않으면서 대표적인 데이터베이스 상태를 로컬에서 재현해야 했습니다. alembic-dump는 이 내부 업무에서 출발해 스키마 동기화, dump/load, 데이터 마스킹을 제공하는 오픈소스 Python 라이브러리로 확장되었습니다.",
-            owned: [
-              "반복 가능한 데이터베이스 마이그레이션 및 데이터 워크플로를 위한 Python 라이브러리 alembic-dump 개발 및 오픈소스 공개",
-              "Alembic 리비전 정렬과 데이터베이스 dump/load 작업 구현",
-              "AWS Secrets Manager와 Vault 같은 시크릿 백엔드 및 SSH 터널링, 청크 단위 데이터 마스킹 지원",
-            ],
-            problem: {
-              headline:
-                "마이그레이션 검증에는 안전하고 반복 가능한 데이터베이스 스냅샷이 필요했습니다.",
-              subheadline: "민감한 원본 데이터를 로컬로 복사하지 않고 스키마와 데이터를 어떻게 재현할 것인가?",
-              details:
-                "Private 네트워크 접근, 매번 달라지는 dump 절차, 마스킹되지 않은 데이터가 로컬 검증을 느리고 위험하게 만들었습니다.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "위키 문서 기반의 수동 체크리스트",
-                  desc: "초기 개발 비용은 없으나 작업 피로도로 인해 체크리스트를 생략하여 인적 실수 발생",
-                },
-                {
-                  title: "재사용 가능한 Python 라이브러리",
-                  desc: "Alembic 동기화, dump/load, 마스킹, 안전한 원격 접근을 하나의 라이브러리로 조율",
-                },
-              ],
-              choice:
-                "결정: Alembic 동기화, 데이터베이스 dump/load, 마스킹, 안전한 원격 접근을 반복 가능한 Python 라이브러리로 묶어 오픈소스로 공개했습니다.",
-            },
-            architectureDiagram: `flowchart LR
-    Dev[개발자 또는 CI] -->|라이브러리 사용| Lib[alembic-dump Python library]
-    Secrets[AWS Secrets Manager / Vault] --> Lib
-    Lib -->|SSH 터널| RemoteDB[(원격 PostgreSQL)]
-    RemoteDB -->|Dump / load| Lib
-    Lib -->|청크 단위 마스킹| SafeData[마스킹된 데이터]
-    Lib -->|Alembic 리비전 동기화| LocalDB[(로컬 PostgreSQL)]
-    SafeData --> LocalDB`,
-            failureModes: [
-              {
-                q: "민감한 원본 데이터가 로컬 dump에 들어가면?",
-                a: "데이터를 전송·처리하는 과정에서 청크 단위로 마스킹하여 로컬 데이터베이스에는 원본 값이 아닌 구조만 재현되도록 합니다.",
-              },
-            ],
-            results: [
-              "내부 마이그레이션 사전 검증 절차를 약 30분에서 2분 이내로 단축",
-              "스키마 동기화, 데이터베이스 dump/load, 마스킹을 재사용 가능한 오픈소스 구성요소로 정리",
-            ],
-            learning:
-              "개발자 도구는 시스템 신뢰성의 연장선입니다. 반복적인 운영 마찰을 자동화하면 인적 실수를 원천 차단할 수 있습니다.",
-            differently:
-              "라이브러리를 GitHub Actions와 연결해 PR 생성 시 임시 DB 컨테이너에서 마이그레이션 락 분석 결과를 자동 코멘트하도록 발전시킬 것입니다.",
-          },
-          {
-            slug: "zenith",
-            number: "04",
-            title: "ZENITH",
-            subtitle: "개발 환경의 대용량 캐시를 안전하게 탐색하고 정리하는 유틸리티",
-            tagline:
-              "Rust와 Tauri를 활용하여 개발 환경의 대용량 빌드 캐시를 빠르고 안전하게 정리",
-            domain: "개발자 도구 · macOS",
-            stack: ["Rust", "Tauri", "Svelte", "macOS"],
-            quickSummary: {
-              problem: "사용자 데이터 손실 없이 대용량 개발 빌드 캐시를 안전하게 식별 및 정리",
-              solution: "Rust scanning core + Tauri/Svelte 데스크톱 UI",
-              impact: "사전 검사와 삭제 대상 재검증을 바탕으로 한 빠른 로컬 개발 환경 정리",
-            },
-            context:
-              "개발을 진행하다 보면 수십 기가바이트의 target, node_modules, Docker 캐시가 시스템에 쌓입니다. 핵심 엔지니어링 과제는 소스코드 유실 없이 안전하게 삭제 가능한 대상을 정확히 식별하고 검증하는 것입니다.",
-            owned: [
-              "Rust 기반 고성능 파일 탐색 엔진과 Tauri + Svelte UI 구조 설계 및 개발",
-              "UI를 막지 않도록 백그라운드 워커에서 대용량 개발 캐시(target/, node_modules, Docker 등)를 탐색하는 워크플로 구현",
-              "사전 검사와 삭제 직전 대상 재검증을 중심으로 안전한 삭제 경계 설계",
-            ],
-            problem: {
-              headline:
-                "개발 환경 캐시는 깊고 방대하여 단순 삭제 명령 시 중요한 소스코드 유실 위험이 있습니다.",
-              subheadline: "수십 기가바이트의 개발 아티팩트를 어떻게 빠르고 안전하게 정리할 것인가?",
-              details:
-                "빌드 아티팩트는 디렉터리 곳곳에 흩어져 있습니다. 삭제 도구는 명확한 패턴 인식과 사전 드라이런, 삭제 직전 대상 재검증을 제공해야 합니다.",
-            },
-            decisions: {
-              considerations: [
-                {
-                  title: "Electron + Node.js 데스크톱 앱",
-                  desc: "빠른 UI 프로토타이핑이 가능하지만 높은 메모리 점유율과 큰 바이너리 용량",
-                },
-                {
-                  title: "Tauri (Rust) + Svelte",
-                  desc: "초경량 바이너리, Rust 네이티브 I/O 속도, 반응성 높은 Svelte UI",
-                },
-              ],
-              choice:
-                "결정: Rust scanning core와 Tauri 경량 IPC, Svelte 반응형 프론트엔드를 결합하여 오프라인 개발자 데스크톱 앱을 구축했습니다.",
-            },
-            architectureDiagram: `flowchart LR
-    UI[Svelte 5 UI] -->|Tauri IPC invoke| Core[Rust Core Engine]
-    Core -->|spawn_blocking 백그라운드 워커| FS[macOS 파일 시스템]
-    FS -->|빌드 아티팩트 목록| Core
-    Core -->|용량 계산 및 안전 검사| UI
-    UI -->|삭제 확인| Core
-    Core -->|삭제 대상 재검증| FS`,
-            failureModes: [
-              {
-                q: "수십만 개의 대규모 디렉터리를 스캔할 때 UI 렌더링이 멈추면?",
-                a: "스캔 작업은 UI 스레드 밖의 백그라운드 워커에서 수행하고, 진행률은 Tauri IPC로 전송해 Svelte UI의 반응성을 유지합니다.",
-              },
-              {
-                q: "사용자가 중요한 소스 코드를 실수로 삭제 대상에 포함하면?",
-                a: "ZENITH는 등록된 아티팩트 시그니처만 매칭하고 삭제 직전에 파일 시스템 대상을 다시 검증합니다.",
-              },
-            ],
-            results: [
-              "가벼운 배포 번들과 적은 유휴 리소스 사용",
-              "UI를 막지 않으면서 깊은 개발 디렉터리를 빠르게 탐색",
-              "사전 검사와 삭제 직전 대상 재검증으로 정리 범위를 통제",
-            ],
-            learning:
-              "개발자 도구는 무엇보다 안전성과 예측 가능성이 최우선이어야 합니다. 작은 데이터 유실도 사용자의 신뢰를 완전히 무너뜨립니다.",
-            differently:
-              "커뮤니티가 간단한 YAML이나 Lua 스크립트로 사용자 정의 아티팩트 클리너를 정의할 수 있는 플러그인 아키텍처를 추가할 것입니다.",
-          },
-        ],
+      work: {
+        title: "주요 작업",
+        subtitle:
+          "실제 운영과 제작 과정에서 만난 문제, 선택한 구조, 그리고 지금 다시 만든다면 바꿀 점을 정리했습니다.",
+        expandCTA: "Case study ↓",
+        collapseCTA: "닫기 ↑",
+        coreQuestionLabel: "핵심 질문",
       },
       oss: {
         title: "오픈소스",
         subtitle:
-          "구현을 따라가며 문제를 확인하고, 필요한 수정이나 도구를 upstream에 다시 기여합니다.",
-        contributionsTitle: "오픈소스 작업",
+          "구현을 따라가며 문제를 확인하고, upstream에 기여한 작업들입니다.",
         contributions: [
           {
             name: "Temporal Python SDK",
             subtitle: "OpenAI Agents SDK 통합",
-            prTitle: "PR #1741 — 실행 경계 문서 ↗",
-            prUrl: "https://github.com/temporalio/sdk-python/pull/1741",
-            desc: "Temporal과 OpenAI Agents 통합 시 Workflow(결정론적 로컬 도구)와 Activity(비결정론적 I/O 도구) 간의 실행 경계 모호성을 SDK 소스코드 분석을 통해 밝혀내고 공식 문서에 기여했습니다.",
+            linkText: "PR #1741 · Merged ↗",
+            linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
+            desc: "Temporal과 OpenAI Agents 통합 시 Workflow(결정론적 로컬 도구)와 Activity(비결정론적 I/O 도구) 간의 실행 경계 모호성을 SDK 소스코드 분석을 통해 밝혀내고 공식 문서 개선에 기여했습니다.",
             status: "Merged",
             statusType: "merged",
           },
           {
-            name: "Genkit Go",
-            subtitle: "Ollama 플러그인 · 문서 및 Ollama Cloud",
+            name: "Google Genkit",
+            subtitle: "Ollama Cloud Provider Plugin",
             links: [
               {
-                label: "Issue #3748 — Ollama 문서 ↗",
+                label: "Issue #3748 ↗",
                 href: "https://github.com/genkit-ai/genkit/issues/3748",
               },
               {
-                label: "PR #3813 — Ollama Cloud ↗",
+                label: "PR #3813 ↗",
                 href: "https://github.com/genkit-ai/genkit/pull/3813",
               },
             ],
-            desc: "오래된 DefineModel과 ai.ModelInfo 사용으로 컴파일되지 않던 Go Ollama 문서 예제를 제보하고, Ollama Cloud의 OpenAI 호환 API를 사용하는 compat_oai/ollamacloud 플러그인과 모델 기능 분류·문서·테스트를 추가했습니다.",
-            status: "이슈 1건 종료 · PR 1건 진행 중",
-            statusType: "active",
-          },
-          {
-            name: "alembic-dump",
-            subtitle: "데이터베이스 마이그레이션 및 데이터 도구",
-            prTitle: "GitHub 리포지토리 ↗",
-            prUrl: "https://github.com/jaeyoung0509/alembic-dump",
-            desc: "Alembic 동기화, 데이터베이스 dump/load, 데이터 마스킹, SSH 기반 원격 접근을 제공하는 오픈소스 Python 라이브러리입니다.",
-            status: "Active · PyPI / GitHub",
+            desc: "Go Ollama 문서 예제 버그(DefineModel/ai.ModelInfo)를 제보하고, Ollama Cloud의 OpenAI 호환 API를 연동하는 compat_oai/ollamacloud 플러그인과 모델 기능 매핑·문서·테스트를 구현했습니다.",
+            status: "Active",
             statusType: "active",
           },
           {
             name: "AWS Chalice",
-            subtitle: "Lambda SnapStart · 프레임워크 지원 논의",
-            prTitle: "Issue #2147 — SnapStart ↗",
-            prUrl: "https://github.com/aws/chalice/issues/2147",
-            desc: "Chalice의 deploy 명령과 .chalice/config.json에 설정 옵션이 없어 AWS Lambda SnapStart를 공식 지원할 계획이 있는지 문의했습니다.",
-            status: "Open · Issue",
+            subtitle: "Lambda SnapStart 프레임워크 지원 논의",
+            linkText: "Issue #2147 ↗",
+            linkUrl: "https://github.com/aws/chalice/issues/2147",
+            desc: "프로덕션 환경에서의 Lambda SnapStart 적용 경험을 바탕으로 프레임워크 차원의 SnapStart 배포 설정 지원 필요성을 논의하고 이슈를 제기했습니다.",
+            status: "Open",
             statusType: "active",
           },
         ],
       },
+      writing: {
+        title: "글",
+        subtitle:
+          "시스템 구조, 동시성, 도구 설계와 학습 과정을 기록한 대표 글입니다.",
+      },
       experience: {
         title: "경력",
-        items: [
-          {
-            company: "FinovusLab",
-            role: "소프트웨어 엔지니어",
-            period: "2022.04 – 2025.11",
-            summary:
-              "B2B BNPL 핀테크 플랫폼에서 결제, 전자계약 체결, 신용평가, 정산 코어 백엔드 시스템 개발 및 운영",
-            highlights: [
-              "AWS에서 결제, 신용평가, 전자계약, 정산 워크플로를 지원하는 10개 이상의 이벤트 기반 서버리스 서비스 개발 및 운영",
-              "재시도 가능한 외부 PG·은행 연동에 멱등성 처리와 트랜잭션 상태 전이 검증을 적용",
-              "주문별 correlation_id 구조화 로깅 체계 확립으로 분산 장애 추적 시간 단축",
-              "alembic-dump로 발전한 내부 마이그레이션 검증 워크플로를 구축해 스테이징 검증 시간을 30분에서 2분으로 단축",
-            ],
-          },
-        ],
+        company: "FinovusLab",
+        role: "소프트웨어 엔지니어 (Software Engineer)",
+        period: "2022.04 – 2025.11",
+        domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
+        summary:
+          "B2B BNPL 핀테크 플랫폼에서 결제, 전자계약 체결, 신용평가, 정산 코어 백엔드 시스템을 설계하고 운영했습니다. 분산 환경의 비동기 메시지 파이프라인과 멱등성 처리, 장애 복구 체계를 구축했습니다.",
+        resumeCTA: "전체 이력서 확인 (Resume PDF) ↗",
+      },
+      contact: {
+        title: "연락처",
+        subtext: "이메일이나 GitHub을 통해 언제든 연락하실 수 있습니다.",
       },
     },
   });
 
   const c = $derived(content[lang]);
+
+  // Curated writing fallback if posts aren't loaded
+  const fallbackWriting = [
+    {
+      title: "서버가 재시작돼도 업무는 계속됩니다: Temporal로 대출 신청 워크플로 만들기",
+      description:
+        "Stateless 구조에서 장기 업무의 상태가 왜 복잡해지는지, Temporal의 Durable Execution으로 대출 신청 워크플로를 구현하며 살펴봅니다.",
+      publishedAt: "2026-08-03",
+      slug: "temporal-loan-application-workflow",
+    },
+    {
+      title: "Temporal을 활용해 Durable AI Workflow 구현하기",
+      description:
+        "단일 프로세스의 Agent loop를 Temporal Workflow로 옮겨 이미 지불한 모델·도구 호출을 보존하는 방법과 아키텍처.",
+      publishedAt: "2026-08-05",
+      slug: "temporal-openai-agents-durable-workflow",
+    },
+    {
+      title: "Mutex는 왜 atomic보다 느릴까: Go로 직접 구현하며 체득한 Lock과 캐시 동기화 비용",
+      description:
+        "Jon Gjengset의 동시성 강연에서 다룬 캐시 라인, Cache Coherence, False Sharing을 Go 벤치마크 코드로 직접 구현하고 체득한 과정.",
+      publishedAt: "2026-08-16",
+      slug: "go-mutex-atomic-cache-coherence-benchmark",
+    },
+  ];
+
+  const writingItems = $derived(posts.length > 0 ? posts : fallbackWriting);
 </script>
 
 <svelte:head>
-  <title>{lang === "ko" ? "이재영 — 소프트웨어 엔지니어" : "Jaeyoung Lee — Software Engineer"}</title>
+  <title>{c.meta.title}</title>
+  <meta name="description" content={c.meta.description} />
+  <meta property="og:title" content={c.meta.title} />
+  <meta property="og:description" content={c.meta.description} />
   <meta
-    name="description"
-    content={lang === "ko"
-      ? "이재영 · 소프트웨어 엔지니어. 결제, 신용평가, 전자계약, 정산 등 핀테크 코어 시스템을 3.5년 이상 설계·운영해 왔습니다. 실패하기 쉬운 업무 흐름을 신뢰할 수 있는 서비스와 실용적인 개발자 도구로 바꿉니다."
-      : "Jaeyoung Lee · Software Engineer. I turn failure-prone workflows into reliable services and practical developer tools."}
+    property="og:image"
+    content={`${siteConfig.url}/images/editorial-backend-desk.jpg`}
   />
-  <meta property="og:title" content={lang === "ko" ? "이재영 — 소프트웨어 엔지니어" : "Jaeyoung Lee — Software Engineer"} />
-  <meta
-    property="og:description"
-    content={lang === "ko"
-      ? "결제, 신용평가, 전자계약, 정산 등 핀테크 코어 시스템을 3.5년 이상 설계·운영해 왔습니다. 실패하기 쉬운 업무 흐름을 신뢰할 수 있는 서비스와 실용적인 개발자 도구로 바꾸는 일에 관심이 있습니다."
-      : "Backend engineer with 3.5+ years building payment, credit, contract, and settlement systems. I turn failure-prone workflows into reliable services and practical developer tools."}
-  />
-  <meta property="og:image" content={`${siteConfig.url}/images/editorial-backend-desk.jpg`} />
 </svelte:head>
 
 <div class="portfolio-container">
@@ -853,7 +321,7 @@
           type="button"
           class="lang-btn"
           class:active={lang === "ko"}
-          onclick={() => (lang = "ko")}
+          onclick={() => setLanguage("ko")}
         >
           KO
         </button>
@@ -862,7 +330,7 @@
           type="button"
           class="lang-btn"
           class:active={lang === "en"}
-          onclick={() => (lang = "en")}
+          onclick={() => setLanguage("en")}
         >
           EN
         </button>
@@ -882,6 +350,14 @@
     <div class="hero-cta-row">
       <a href="#work" class="btn-hero-primary">
         {c.hero.ctaWork} <ArrowDown size={14} />
+      </a>
+      <a
+        href="/files/cv_jaeyoung_lee.pdf"
+        target="_blank"
+        rel="noreferrer"
+        class="btn-hero-secondary"
+      >
+        <FileText size={14} /> {c.hero.ctaResume} <ArrowUpRight size={13} />
       </a>
       <a
         href={siteConfig.author.github}
@@ -920,17 +396,15 @@
   <!-- Section Divider -->
   <hr class="section-rule" />
 
-  <!-- About Me Section -->
+  <!-- How I Work (About) Section -->
   <section class="portfolio-section" id="about">
     <div class="section-title-row">
       <h2 class="section-heading-large">{c.about.title}</h2>
     </div>
 
     <div class="about-split-layout">
-      <div class="about-prose-col">
-        <p class="about-lead-paragraph">{c.about.p1}</p>
-        <p class="about-body-paragraph">{c.about.p2}</p>
-      </div>
+      <p class="about-lead-paragraph">{c.about.p1}</p>
+      <p class="about-body-paragraph">{c.about.p2}</p>
     </div>
   </section>
 
@@ -945,164 +419,690 @@
     </div>
 
     <div class="work-showcase">
-      {#each c.work.items as item (item.slug)}
-        <article
-          id={`work-item-${item.slug}`}
-          class="work-item"
-          class:is-expanded={expandedWork[item.slug]}
-        >
-          <div class="work-num-col">
-            <span class="work-large-num">{item.number}</span>
+      <!-- 01. PAYMONTHS -->
+      <article
+        id="paymonths"
+        class="work-item"
+        class:is-expanded={expandedWork.paymonths}
+      >
+        <div class="work-num-col">
+          <span class="work-large-num">01</span>
+        </div>
+
+        <div class="work-main-col">
+          <div class="work-meta-top">
+            <span class="work-domain-badge">B2B FinTech · Event-Driven</span>
           </div>
 
-          <div class="work-main-col">
-            <div class="work-meta-top">
-              <span class="work-domain-badge">{item.domain}</span>
-            </div>
+          <h3 class="work-title">PAYMONTHS</h3>
+          <p class="work-premise">
+            {lang === "ko"
+              ? "결제부터 정산까지 이어지는 금융 workflow의 상태와 부분 실패(Partial Failure)를 다룬 backend system."
+              : "Backend system handling financial state and partial failure from payment to merchant settlement."}
+          </p>
 
-            <h3 class="work-title">{item.title}</h3>
-            <p class="work-subtitle">{item.subtitle}</p>
-            <p class="work-tagline">{item.tagline}</p>
-
-            <dl class="work-summary">
-              <div class="summary-row">
-                <dt>{lang === "ko" ? "문제" : "Problem"}</dt>
-                <dd>{item.quickSummary.problem}</dd>
-              </div>
-              <div class="summary-row">
-                <dt>{lang === "ko" ? "해결" : "Solution"}</dt>
-                <dd>{item.quickSummary.solution}</dd>
-              </div>
-              <div class="summary-row">
-                <dt>{lang === "ko" ? "결과" : "Result"}</dt>
-                <dd>{item.quickSummary.impact}</dd>
-              </div>
-            </dl>
-
-            <p class="work-stack-line" aria-label={lang === "ko" ? "기술 스택" : "Technology stack"}>
-              {#each item.stack as tech, idx (tech)}
-                <span>{tech}</span>{#if idx < item.stack.length - 1}<span aria-hidden="true"> / </span>{/if}
-              {/each}
-            </p>
-
-            <!-- Expandable Technical Case Study Detail -->
-            {#if expandedWork[item.slug]}
-              <div
-                id={`work-details-${item.slug}`}
-                class="work-deep-dive-panel"
-                transition:slide={{ duration: disclosureDuration() }}
-              >
-                <!-- Context & Focus -->
-                <div class="dd-section">
-                  <h4 class="dd-title">{lang === "ko" ? "01 / 배경 및 담당 역할" : "01 / Context & Focus"}</h4>
-                  <p class="dd-text">{item.context}</p>
-                  <ul class="dd-bullet-list">
-                    {#each item.owned as owned, idx (idx)}
-                      <li>
-                        <Check size={14} class="check-accent" />
-                        <span>{owned}</span>
-                      </li>
-                    {/each}
-                  </ul>
-                </div>
-
-                <!-- Problem -->
-                <div class="dd-section">
-                  <h4 class="dd-title">{lang === "ko" ? "02 / 직면했던 문제" : "02 / The Problem"}</h4>
-                  <div class="dd-problem-banner">
-                    <p class="dd-prob-lead">{item.problem.headline}</p>
-                    {#if item.problem.subheadline}
-                      <p class="dd-prob-punchline">{item.problem.subheadline}</p>
-                    {/if}
-                  </div>
-                  <p class="dd-text">{item.problem.details}</p>
-                </div>
-
-                <!-- Technical Decisions -->
-                <div class="dd-section">
-                  <h4 class="dd-title">{lang === "ko" ? "03 / 기술적 의사결정" : "03 / Technical Decisions"}</h4>
-                  <div class="dd-options-list">
-                    {#each item.decisions.considerations as consideration (consideration.title)}
-                      <div class="dd-option-card">
-                        <div class="dd-opt-name">{consideration.title}</div>
-                        <div class="dd-opt-desc">{consideration.desc}</div>
-                      </div>
-                    {/each}
-                  </div>
-                  <div class="dd-decision-banner">
-                    <CheckCircle2 size={15} />
-                    <span>{item.decisions.choice}</span>
-                  </div>
-                </div>
-
-                <!-- Architecture Diagram -->
-                {#if item.architectureDiagram}
-                  <div class="dd-section">
-                    <h4 class="dd-title">{lang === "ko" ? "04 / 아키텍처" : "04 / Architecture"}</h4>
-                    <figure class="mermaid-diagram" data-chart={item.architectureDiagram}>
-                      <div class="mermaid-loading">{lang === "ko" ? "다이어그램 로딩 중..." : "Rendering architecture diagram..."}</div>
-                    </figure>
-                  </div>
-                {/if}
-
-                <!-- Handling Failures -->
-                <div class="dd-section">
-                  <h4 class="dd-title">{lang === "ko" ? "05 / 실패 모드 대응" : "05 / Handling Failures"}</h4>
-                  <div class="dd-failure-list">
-                    {#each item.failureModes as fm (fm.q)}
-                      <div class="dd-failure-item">
-                        <div class="dd-fail-q">
-                          <AlertCircle size={15} />
-                          <strong>{fm.q}</strong>
-                        </div>
-                        <p class="dd-fail-a">{fm.a}</p>
-                      </div>
-                    {/each}
-                  </div>
-                </div>
-
-                <!-- Results & Retrospective -->
-                <div class="dd-section">
-                  <h4 class="dd-title">{lang === "ko" ? "06 / 성과 및 회고" : "06 / Results & Retrospective"}</h4>
-                  <ul class="dd-results-list">
-                    {#each item.results as res, idx (idx)}
-                      <li>
-                        <span class="res-check">✓</span>
-                        <span>{res}</span>
-                      </li>
-                    {/each}
-                  </ul>
-                  <div class="dd-learning-box">
-                    <p><strong>{lang === "ko" ? "핵심 배움:" : "Key Takeaway:"}</strong> {item.learning}</p>
-                    <p class="dd-differently"><strong>{lang === "ko" ? "회고 및 개선점:" : "Retrospective:"}</strong> {item.differently}</p>
-                  </div>
-                </div>
-              </div>
-            {/if}
+          <div class="work-core-question">
+            <strong>{c.work.coreQuestionLabel}:</strong>
+            <span>
+              {lang === "ko"
+                ? "외부 시스템 일부만 성공했을 때 내부 상태를 어떻게 안전하게 복구할 것인가?"
+                : "How do you recover internal state safely when external partners experience partial failures?"}
+            </span>
           </div>
 
-          <div class="work-action-col">
-            <button
-              type="button"
-              class="work-toggle-btn"
-              class:is-active={expandedWork[item.slug]}
-              onclick={() => toggleWork(item.slug)}
-              aria-expanded={expandedWork[item.slug]}
-              aria-controls={`work-details-${item.slug}`}
-              aria-label={expandedWork[item.slug] ? c.work.collapseCTA : c.work.expandCTA}
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Python</span> <span aria-hidden="true">/</span>
+            <span>AWS Lambda</span> <span aria-hidden="true">/</span>
+            <span>EventBridge</span> <span aria-hidden="true">/</span>
+            <span>SQS FIFO</span> <span aria-hidden="true">/</span>
+            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
+            <span>DynamoDB</span>
+          </p>
+
+          <!-- Expanded Editorial Case Study -->
+          {#if expandedWork.paymonths}
+            <div
+              id="work-details-paymonths"
+              class="work-deep-dive-panel"
+              transition:slide={{ duration: disclosureDuration() }}
             >
-              <span class="toggle-label">
-                {#if expandedWork[item.slug]}
-                  {c.work.collapseCTA}
-                {:else}
-                  {c.work.expandCTA}
-                {/if}
-              </span>
-              <ChevronDown size={13} class="toggle-icon" />
-            </button>
+              <!-- Context -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "배경: 금융 거래의 연결된 라이프사이클"
+                    : "Context: Connected Financial Workflows"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "PAYMONTHS는 B2B BNPL(선구매 후지불) 서비스로, 결제 승인 이후 신용평가, 전자계약 체결, 판매자 정산, 사후 운영 라이프사이클이 얽혀 있는 시스템이었습니다. 서비스가 성장함에 따라 상태 모델과 비즈니스 규칙이 복잡해졌고, 각 단계마다 외부 파트너사 연동 실패에 대한 안전한 복구 전략이 요구되었습니다."
+                    : "PAYMONTHS is a B2B BNPL platform coordinating checkout authorization, credit evaluation, digital contracting, merchant settlement, and post-transaction lifecycles. As transaction volume grew, failure handling across external partner APIs required strict state consistency."}
+                </p>
+              </div>
+
+              <!-- Domain Language (DDD) -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "같은 단어, 다른 의미 (Ubiquitous Language)"
+                    : "Same Words, Different Meanings (Ubiquitous Language)"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "기획, 운영, 백엔드 팀 간에 '결제 취소', '계약 철회', '정산 보류' 같은 표현이 각기 다른 시점과 법적/자금 이동 책임을 의미하여 상태 전이 규칙이 모호해지는 문제가 있었습니다. DDD의 Ubiquitous Language를 적용해 주요 도메인 상태와 전이 규칙을 일원화하고, 이를 데이터베이스 트랜잭션 경계와 상태 가드에 직접 반영했습니다."
+                    : "Terms like 'Payment Cancellation', 'Contract Revocation', and 'Payout Hold' carried subtly different timing and legal implications across Product, Operations, and Backend. By establishing a shared Ubiquitous Language, we standardized state transition rules and enforced them strictly inside database transaction boundaries."}
+                </p>
+              </div>
+
+              <!-- Sync vs Async Boundary -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "동기 처리 범위와 이벤트 분리"
+                    : "Synchronous Scope vs. Event-Driven Workflow"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "초기에는 하나의 API 요청에서 모든 후속 업무를 처리하는 동기 체이닝 방식이 단순해 보였습니다. 하지만 전자계약(3~5초), 은행 VAN사 정산 등은 외부 의존성이 있어 레이턴시가 길고 장애 특성이 달랐습니다. 따라서 '결제 응답에 즉시 필요한 최소 처리(PAID 상태 영속화)'와 '비동기로 지연 가능한 후속 업무(계약, 정산)'를 분리하고, EventBridge와 SQS FIFO 큐를 통한 이벤트 기반 워크플로를 적용했습니다."
+                    : "Initially, chaining every step synchronously inside one HTTP request seemed simple. However, downstream partner calls like digital contracting (3–5s latency) and bank payout VANs had high latency and intermittent outages that cascaded into checkout failures. We split the boundary: immediate payment auth and PAID state persistence remained synchronous, while downstream contracting and settlement were decoupled into an EventBridge and SQS FIFO workflow."}
+                </p>
+              </div>
+
+              <!-- Architecture Diagram -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko" ? "아키텍처 흐름" : "Architecture Workflow"}
+                </h4>
+                <figure
+                  class="mermaid-diagram"
+                  data-chart={`flowchart TD
+    Client[Client / PG Webhook] -->|1. Submit Payment| API[Payment API Lambda]
+    API -->|2. Persist PAID State| DB[(PostgreSQL)]
+    API -->|3. Emit Order Paid Event| EB[AWS EventBridge]
+    
+    EB -->|Rule: Contract Event| Q1[SQS FIFO: Contract Queue]
+    EB -->|Rule: Settlement Event| Q2[SQS FIFO: Settlement Queue]
+    
+    Q1 -->|Ordered by order_id| CWorker[Contract Service Lambda]
+    CWorker -->|E-Signature API| ExtContract[External Contract Gateway]
+    CWorker -->|Emit Contract Signed| EB
+    
+    Q2 -->|Ordered by order_id| SWorker[Settlement Service Lambda]
+    SWorker -->|Bank Transfer API| ExtBank[Bank VAN / Payment Gateway]
+    
+    Q1 -.->|Retries exhausted| DLQ1[Contract DLQ]
+    Q2 -.->|Retries exhausted| DLQ2[Settlement DLQ]`}
+                >
+                  <div class="mermaid-loading">
+                    {lang === "ko"
+                      ? "다이어그램 로딩 중..."
+                      : "Rendering architecture diagram..."}
+                  </div>
+                </figure>
+              </div>
+
+              <!-- Failure Scenarios -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "실제로 신경 쓴 실패 상황"
+                    : "Handling Failure Scenarios"}
+                </h4>
+                <div class="cs-failure-group">
+                  <div class="cs-failure-item">
+                    <p class="cs-fail-q">
+                      {lang === "ko"
+                        ? "같은 결제 이벤트가 네트워크 재시도로 중복 도착하면?"
+                        : "What if duplicate payment webhooks arrive due to network retries?"}
+                    </p>
+                    <p class="cs-fail-a">
+                      {lang === "ko"
+                        ? "SQS는 at-least-once 전달이 기본이므로 중복 도착 자체를 정상 조건으로 다루었습니다. 모든 이벤트에 idempotency_key를 부여하고, DB 트랜잭션 내 유니크 인덱스를 검증하여 이미 처리된 건은 추가 부작용 없이 즉시 성공 응답을 반환하도록 방어했습니다."
+                        : "SQS provides at-least-once delivery, so duplicate arrivals are treated as a standard baseline condition. Every event carries a unique idempotency_key validated against database unique constraints inside transaction boundaries to safely ignore duplicates without double processing."}
+                    </p>
+                  </div>
+                  <div class="cs-failure-item">
+                    <p class="cs-fail-q">
+                      {lang === "ko"
+                        ? "외부 API는 성공했는데 내부 저장이 실패하거나 파트너사가 일시 장애라면?"
+                        : "What if external partner APIs succeed but internal state persistence fails or encounters an outage?"}
+                    </p>
+                    <p class="cs-fail-a">
+                      {lang === "ko"
+                        ? "외부 상태와 내부 상태가 어긋나지 않도록 단계별 진행 상태를 독립적으로 기록합니다. 하위 작업은 SQS 지수 백오프로 재시도되며, 최대 재시도를 초과하면 DLQ로 격리하여 수작업 대사 비용을 최소화했습니다."
+                        : "To prevent state divergence between external partners and internal databases, each workflow step logs intermediate states. Downstream tasks retry with exponential backoff and isolate to a DLQ when retries are exhausted."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Retrospective -->
+              <div class="cs-retro-block">
+                <p>
+                  <strong>{lang === "ko" ? "지금 다시 만든다면:" : "Retrospective:"}</strong>
+                  {lang === "ko"
+                    ? "당시에는 도메인 분리를 빠르게 추진하기 위해 여러 서버리스 마이크로서비스로 구성했지만, 지금 다시 시작한다면 모듈러 모놀리스(Modular Monolith)로 시작해 실제 장애 및 스케일링 경계가 확인된 뒤 서비스 추출을 검토할 것입니다."
+                    : "While serverless microservices provided rapid early domain separation, if designing this today, I would start with a modular monolith and evaluate service extraction only after actual scaling and fault boundaries are clearly proven."}
+                </p>
+              </div>
+            </div>
+          {/if}
+        </div>
+
+        <div class="work-action-col">
+          <button
+            type="button"
+            class="work-toggle-btn"
+            class:is-active={expandedWork.paymonths}
+            onclick={() => toggleWork("paymonths")}
+            aria-expanded={expandedWork.paymonths}
+            aria-controls="work-details-paymonths"
+            aria-label={expandedWork.paymonths
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
+          >
+            <span class="toggle-label">
+              {expandedWork.paymonths ? c.work.collapseCTA : c.work.expandCTA}
+            </span>
+            <ChevronDown size={13} class="toggle-icon" />
+          </button>
+        </div>
+      </article>
+
+      <!-- 02. MOONBERG -->
+      <article
+        id="moonberg"
+        class="work-item"
+        class:is-expanded={expandedWork.moonberg}
+      >
+        <div class="work-num-col">
+          <span class="work-large-num">02</span>
+        </div>
+
+        <div class="work-main-col">
+          <div class="work-meta-top">
+            <span class="work-domain-badge">Financial Data · Async Architecture</span>
           </div>
-        </article>
-      {/each}
+
+          <h3 class="work-title">MOONBERG</h3>
+          <p class="work-premise">
+            {lang === "ko"
+              ? "Go API와 격리된 Python 워커가 조율하는 장시간 Bloomberg 데이터 수집 백엔드."
+              : "Long-running Bloomberg data collection coordinated by a Go API and isolated Python workers."}
+          </p>
+
+          <div class="work-core-question">
+            <strong>{c.work.coreQuestionLabel}:</strong>
+            <span>
+              {lang === "ko"
+                ? "HTTP 요청보다 오래 실행되는 수집 작업을 어떻게 모델링했는가?"
+                : "How do you model long-running data collection that outlives HTTP requests?"}
+            </span>
+          </div>
+
+          <div class="work-highlight-result">
+            <span class="result-bullet" aria-hidden="true">■</span>
+            <span>
+              {lang === "ko"
+                ? "수작업 정합성 확인 업무 ~60–80% 감소"
+                : "Reduced repetitive extraction & reconciliation by ~60–80%"}
+            </span>
+          </div>
+
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Go</span> <span aria-hidden="true">/</span>
+            <span>Python</span> <span aria-hidden="true">/</span>
+            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
+            <span>PGMQ</span> <span aria-hidden="true">/</span>
+            <span>Docker</span> <span aria-hidden="true">/</span>
+            <span>Vue</span>
+          </p>
+
+          <!-- Expanded Editorial Case Study -->
+          {#if expandedWork.moonberg}
+            <div
+              id="work-details-moonberg"
+              class="work-deep-dive-panel"
+              transition:slide={{ duration: disclosureDuration() }}
+            >
+              <!-- Context -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "배경: 요청 생명주기를 벗어난 데이터 수집"
+                    : "Context: Extractions Outliving Request Lifecycles"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "Moonberg는 회계법인에서 사용하는 재무 데이터 워크플로로, Bloomberg 데이터를 수집하고 정규화합니다. 단일 수집 작업이 수 분씩 걸릴 수 있어 HTTP 요청 생명주기 밖에서 실행되는 비동기 아키텍처가 필요했습니다."
+                    : "Moonberg is a financial data pipeline used by an accounting firm to extract, normalize, and structure Bloomberg market data. Because a single extraction job can take multiple minutes, it had to execute outside the HTTP request lifecycle."}
+                </p>
+              </div>
+
+              <!-- Go API & PGMQ -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "Go API와 PGMQ 기반의 작업 영속화"
+                    : "Go API & PGMQ Persistent Job State"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "Go API는 작업을 수신하자마자 즉시 작업 ID를 발급하고 응답합니다. 대기열 관리는 PostgreSQL 기반 큐인 PGMQ를 활용해 별도 큐 브로커 없이 단일 DB 내에서 작업 상태(queued → dispatched → running → succeeded/failed)를 영속화했습니다. 격리된 Python 워커가 작업을 가져가 무거운 수집을 처리하며, 수집 결과와 작업 상태를 분리 저장하여 클라이언트가 재접속해도 이전 결과를 즉시 조회할 수 있도록 설계했습니다."
+                    : "The Go API immediately acknowledges requests and issues a job ID. We used PGMQ (PostgreSQL-based queue) to persist queued work and lifecycle states (queued → dispatched → running → succeeded/failed) within PostgreSQL without introducing an external broker. Isolated Python workers claim jobs and execute heavy extractions. Results and job states remain persistent so clients can disconnect and retrieve results later."}
+                </p>
+              </div>
+
+              <!-- Architecture Diagram -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko" ? "아키텍처 흐름" : "Architecture Workflow"}
+                </h4>
+                <figure
+                  class="mermaid-diagram"
+                  data-chart={`flowchart TD
+    Client[Client] -->|1. POST /jobs| GoAPI[Go API]
+    GoAPI -->|2. Create queued job| DB[(PostgreSQL + PGMQ)]
+    GoAPI -->|3. Return Job ID| Client
+    DB -->|4. Claim queued job| Worker[Python Bloomberg Worker]
+    Worker -->|5. Collect & normalize data| Bloomberg[Bloomberg Data Source]
+    Worker -->|6. Persist result & state| DB
+    Client -.->|7. Poll job state & result| GoAPI
+    GoAPI -->|8. Query persistent state| DB`}
+                >
+                  <div class="mermaid-loading">
+                    {lang === "ko"
+                      ? "다이어그램 로딩 중..."
+                      : "Rendering architecture diagram..."}
+                  </div>
+                </figure>
+              </div>
+
+              <!-- Failure Scenarios -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "실패 상황 대응 및 운영 결과"
+                    : "Failure Resilience & Operational Impact"}
+                </h4>
+                <div class="cs-failure-group">
+                  <div class="cs-failure-item">
+                    <p class="cs-fail-q">
+                      {lang === "ko"
+                        ? "수집 도중 워커가 비정상 종료되거나 클라이언트 연결이 끊어지면?"
+                        : "What if workers crash mid-collection or clients disconnect?"}
+                    </p>
+                    <p class="cs-fail-a">
+                      {lang === "ko"
+                        ? "장기 실행 작업은 워커 크래시와 연결 끊김을 정상 조건으로 취급합니다. PGMQ의 가시성 타임아웃(Visibility Timeout)으로 중단된 작업을 감지하여 재시도하며, 동일한 문서/파라미터 수집 요청은 결과를 캐싱해 외부 데이터 소스 부하를 경감했습니다."
+                        : "Long-running pipelines treat worker crashes and disconnections as baseline conditions. PGMQ's visibility timeout automatically re-queues stalled tasks, while result caching prevents redundant extractions for identical parameter sets."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Retrospective -->
+              <div class="cs-retro-block">
+                <p>
+                  <strong>{lang === "ko" ? "지금 다시 만든다면:" : "Retrospective:"}</strong>
+                  {lang === "ko"
+                    ? "작업 수명주기와 단계별 보상(compensation) 로직이 단순 PostgreSQL 큐와 상태 테이블을 넘어선다면, Temporal 같은 전용 워크플로 엔진(Durable Execution)을 도입해 재시도와 오케스트레이션을 선언적으로 관리할 것입니다."
+                    : "If workflow lifecycles expand beyond a single durable PostgreSQL queue, I would evaluate a dedicated workflow engine like Temporal to manage step retries and compensations declaratively."}
+                </p>
+              </div>
+            </div>
+          {/if}
+        </div>
+
+        <div class="work-action-col">
+          <button
+            type="button"
+            class="work-toggle-btn"
+            class:is-active={expandedWork.moonberg}
+            onclick={() => toggleWork("moonberg")}
+            aria-expanded={expandedWork.moonberg}
+            aria-controls="work-details-moonberg"
+            aria-label={expandedWork.moonberg
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
+          >
+            <span class="toggle-label">
+              {expandedWork.moonberg ? c.work.collapseCTA : c.work.expandCTA}
+            </span>
+            <ChevronDown size={13} class="toggle-icon" />
+          </button>
+        </div>
+      </article>
+
+      <!-- 03. ALEMBIC-DUMP -->
+      <article
+        id="alembic-dump"
+        class="work-item"
+        class:is-expanded={expandedWork.alembic_dump}
+      >
+        <div class="work-num-col">
+          <span class="work-large-num">03</span>
+        </div>
+
+        <div class="work-main-col">
+          <div class="work-meta-top">
+            <span class="work-domain-badge">Developer Tooling · Open Source</span>
+          </div>
+
+          <h3 class="work-title">ALEMBIC-DUMP</h3>
+          <p class="work-premise">
+            {lang === "ko"
+              ? "스키마 동기화, 데이터베이스 dump/load, 안전한 데이터 마스킹을 위한 Python 도구."
+              : "Python tooling for schema synchronization, database dump/load, and safe data masking."}
+          </p>
+
+          <div class="work-core-question">
+            <strong>{c.work.coreQuestionLabel}:</strong>
+            <span>
+              {lang === "ko"
+                ? "왜 위키 문서가 아니라 재사용 가능한 CLI 도구를 만들었는가?"
+                : "Why build a reusable CLI tool instead of a static wiki checklist?"}
+            </span>
+          </div>
+
+          <div class="work-highlight-result">
+            <span class="result-bullet" aria-hidden="true">■</span>
+            <span>
+              {lang === "ko"
+                ? "마이그레이션 사전 검증 절차 ~30분 → 2분 이내 단축"
+                : "Migration pre-flight verification from ~30 min to under 2 min"}
+            </span>
+          </div>
+
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Python</span> <span aria-hidden="true">/</span>
+            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
+            <span>Alembic</span> <span aria-hidden="true">/</span>
+            <span>SSH Tunnel</span> <span aria-hidden="true">/</span>
+            <span>Data Masking</span> <span aria-hidden="true">/</span>
+            <span>AWS Secrets Manager</span>
+          </p>
+
+          <!-- Expanded Editorial Case Study -->
+          {#if expandedWork.alembic_dump}
+            <div
+              id="work-details-alembic-dump"
+              class="work-deep-dive-panel"
+              transition:slide={{ duration: disclosureDuration() }}
+            >
+              <!-- Context -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "배경: 반복 수작업을 도구로 전환한 이유"
+                    : "Context: Replacing Manual Checklists with Automation"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "신규 기능 배포 전 마이그레이션 안전성을 검증하려면 고객 민감 정보를 노출하지 않으면서도 실제와 동일한 데이터 형상을 로컬에서 재현해야 했습니다. 사내 위키에 정리된 수동 체크리스트와 dump 절차는 번거로워 엔지니어들이 건너뛰기 쉬웠고, 이 반복적인 운영 마찰을 자동화하기 위해 오픈소스 라이브러리로 제작했습니다."
+                    : "Verifying database migrations before deployment required reproducing representative schema and data shapes locally without exposing customer data. Static wiki checklists and manual dump steps caused high operational friction and were easily skipped under deadlines. alembic-dump turned this error-prone procedure into an automated, open-source Python library."}
+                </p>
+              </div>
+
+              <!-- CLI Workflow & Proof -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "단일 명령으로 실행되는 검증 파이프라인"
+                    : "Single-Command Pre-flight Workflow"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "Alembic 리비전 정렬, SSH 터널링을 통한 원격 접근, AWS Secrets Manager 시크릿 조회, 청크 단위 데이터 마스킹을 단일 CLI 명령으로 조율합니다."
+                    : "Coordinates Alembic revision alignment, SSH tunneling, AWS Secrets Manager retrieval, and chunked in-flight data masking into a reproducible CLI workflow."}
+                </p>
+                <div class="cs-code-box">
+                  <pre><code># {lang === "ko"
+  ? "원격 스테이징 DB 스키마/데이터를 로컬로 마스킹 덤프 & Alembic 동기화"
+  : "Masked staging DB dump & Alembic revision sync in one command"}
+alembic-dump sync \
+  --source-secret "arn:aws:secretsmanager:...:staging-db" \
+  --target "postgresql://localhost:5432/test_db" \
+  --mask-config ./masking.yaml \
+  --ssh-tunnel bastion.internal:22</code></pre>
+                </div>
+              </div>
+
+              <!-- Failure Scenarios -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "데이터 유출 방지 및 마스킹 검증"
+                    : "Masking Integrity & Sanitization"}
+                </h4>
+                <div class="cs-failure-group">
+                  <div class="cs-failure-item">
+                    <p class="cs-fail-q">
+                      {lang === "ko"
+                        ? "민감한 원본 데이터가 로컬 덤프 파일이나 디스크에 남지 않는가?"
+                        : "How do we prevent raw sensitive records from touching local disks?"}
+                    </p>
+                    <p class="cs-fail-a">
+                      {lang === "ko"
+                        ? "데이터를 전송받는 스트림 단계에서 청크 단위로 정규식 및 해시 마스킹을 적용합니다. 원본 민감 값은 로컬 디스크나 최종 DB에 도달하지 않으며, 오직 마스킹된 데이터만 로컬 PostgreSQL에 적재됩니다."
+                        : "Data is masked in chunked streaming pipelines before hitting local storage. Raw sensitive values never reach disk, ensuring local databases replicate schema topology with sanitized values."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Retrospective -->
+              <div class="cs-retro-block">
+                <p>
+                  <strong>{lang === "ko" ? "배운 점 및 발전 방향:" : "Takeaway & Next Steps:"}</strong>
+                  {lang === "ko"
+                    ? "개발자 도구는 시스템 신뢰성의 연장선이며, 반복적인 운영 마찰을 자동화하면 인적 실수를 원천 차단할 수 있습니다. 향후에는 GitHub Actions와 연동하여 PR 생성 시 임시 DB 컨테이너에서 마이그레이션 락(Lock) 분석 결과를 자동 리포팅하도록 발전시킬 계획입니다."
+                    : "Developer tooling is an extension of system reliability—automating operational friction eliminates human error at the root. Future plans include a GitHub Actions integration that spins up ephemeral database containers on PRs to analyze migration lock impacts automatically."}
+                </p>
+              </div>
+            </div>
+          {/if}
+        </div>
+
+        <div class="work-action-col">
+          <button
+            type="button"
+            class="work-toggle-btn"
+            class:is-active={expandedWork.alembic_dump}
+            onclick={() => toggleWork("alembic_dump")}
+            aria-expanded={expandedWork.alembic_dump}
+            aria-controls="work-details-alembic-dump"
+            aria-label={expandedWork.alembic_dump
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
+          >
+            <span class="toggle-label">
+              {expandedWork.alembic_dump
+                ? c.work.collapseCTA
+                : c.work.expandCTA}
+            </span>
+            <ChevronDown size={13} class="toggle-icon" />
+          </button>
+        </div>
+      </article>
+
+      <!-- 04. ZENITH -->
+      <article
+        id="zenith"
+        class="work-item"
+        class:is-expanded={expandedWork.zenith}
+      >
+        <div class="work-num-col">
+          <span class="work-large-num">04</span>
+        </div>
+
+        <div class="work-main-col">
+          <div class="work-meta-top">
+            <span class="work-domain-badge">Developer Tooling · macOS</span>
+          </div>
+
+          <h3 class="work-title">ZENITH</h3>
+          <p class="work-premise">
+            {lang === "ko"
+              ? "Rust와 Tauri를 활용하여 개발 환경의 대용량 빌드 캐시를 빠르고 안전하게 정리하는 데스크톱 유틸리티."
+              : "Rust + Tauri desktop application focused on safely scanning and cleaning development build caches on macOS."}
+          </p>
+
+          <div class="work-core-question">
+            <strong>{c.work.coreQuestionLabel}:</strong>
+            <span>
+              {lang === "ko"
+                ? "삭제 도구에서 성능보다 Safety(안전성)를 어떻게 우선했는가?"
+                : "How did we prioritize safety over raw performance in a disk cleanup tool?"}
+            </span>
+          </div>
+
+          <p class="work-stack-line" aria-label="Technology stack">
+            <span>Rust</span> <span aria-hidden="true">/</span>
+            <span>Tauri</span> <span aria-hidden="true">/</span>
+            <span>Svelte 5</span> <span aria-hidden="true">/</span>
+            <span>macOS</span>
+          </p>
+
+          <!-- Expanded Editorial Case Study -->
+          {#if expandedWork.zenith}
+            <div
+              id="work-details-zenith"
+              class="work-deep-dive-panel"
+              transition:slide={{ duration: disclosureDuration() }}
+            >
+              <!-- Context -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "배경: 안전한 삭제 경계 설계"
+                    : "Context: Designing Safety Boundaries"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "개발을 진행하다 보면 수십 기가바이트의 Cargo target/, node_modules, Docker 캐시가 시스템에 누적됩니다. 삭제 도구에서 가장 치명적인 실패는 사용자 소스 코드나 중요한 설정 파일의 오삭제이므로, 속도보다 '안전한 삭제 경계'를 최우선 원칙으로 설계했습니다."
+                    : "Developers accumulate tens of gigabytes of hidden build artifacts (Cargo target/, node_modules, Docker caches) on macOS. Because accidental data loss is catastrophic, ZENITH was designed around explicit safety boundaries rather than naive bulk deletion."}
+                </p>
+              </div>
+
+              <!-- Safety Model -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "3단계 안전 가드 모델 (3-Phase Safety Guard)"
+                    : "3-Phase Safety Guard Model"}
+                </h4>
+                <p class="cs-prose">
+                  {lang === "ko"
+                    ? "단순 재귀 삭제(rm -rf)의 위험을 차단하기 위해 3단계 안전 검증 모델을 적용했습니다:"
+                    : "To prevent accidental file loss, ZENITH implements a strict 3-phase safety pipeline:"}
+                </p>
+                <ul class="cs-bullet-list">
+                  <li>
+                    <Check size={14} class="check-accent" />
+                    <span>
+                      {lang === "ko"
+                        ? "1. 시그니처 매칭: 사전에 등록된 빌드 아티팩트 패턴(Cargo.lock이 인접한 target/ 등)만 정확히 식별"
+                        : "1. Signature Matching: Identifies only registered build artifact signatures (e.g. target/ adjacent to a valid Cargo.lock)"}
+                    </span>
+                  </li>
+                  <li>
+                    <Check size={14} class="check-accent" />
+                    <span>
+                      {lang === "ko"
+                        ? "2. 사전 검사 (Dry-Run Preview): 삭제 전 용량, 파일 목록, 보호 경로(Protected Paths) 검증 결과를 UI에 투명하게 표시"
+                        : "2. Dry-Run Preview: Displays calculated sizes, file trees, and protected path checks transparently before user confirmation"}
+                    </span>
+                  </li>
+                  <li>
+                    <Check size={14} class="check-accent" />
+                    <span>
+                      {lang === "ko"
+                        ? "3. 삭제 직전 재검증: 실제 삭제 명령 직전 파일 시스템 대상을 다시 검증하여 심볼릭 링크나 사용자 코드 유실 방지"
+                        : "3. Pre-Delete Validation: Re-verifies filesystem identity and inode paths immediately before execution to prevent symlink traversal or race conditions"}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Process Flow Diagram -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko" ? "스캔 및 삭제 프로세스" : "Scan & Safety Execution Flow"}
+                </h4>
+                <figure
+                  class="mermaid-diagram"
+                  data-chart={`flowchart LR
+    UI[Svelte 5 UI] -->|Tauri IPC invoke| Core[Rust Core Engine]
+    Core -->|spawn_blocking worker| FS[macOS File System]
+    FS -->|Build Artifact Signatures| Core
+    Core -->|Sizes & Safety Previews| UI
+    UI -->|Confirm Clean| Core
+    Core -->|Pre-delete Validation| FS`}
+                >
+                  <div class="mermaid-loading">
+                    {lang === "ko"
+                      ? "다이어그램 로딩 중..."
+                      : "Rendering architecture diagram..."}
+                  </div>
+                </figure>
+              </div>
+
+              <!-- Failure Scenarios -->
+              <div class="cs-block">
+                <h4 class="cs-heading">
+                  {lang === "ko"
+                    ? "대용량 탐색과 UI 반응성 유지"
+                    : "Deep File Walks & UI Responsiveness"}
+                </h4>
+                <div class="cs-failure-group">
+                  <div class="cs-failure-item">
+                    <p class="cs-fail-q">
+                      {lang === "ko"
+                        ? "수십만 개의 디렉터리를 스캔할 때 UI가 멈추거나 중요한 소스 코드가 포함되면?"
+                        : "What if deep scans lock up the UI or include active source repositories?"}
+                    </p>
+                    <p class="cs-fail-a">
+                      {lang === "ko"
+                        ? "스캔 작업은 UI 스레드 밖의 Rust 백그라운드 워커(spawn_blocking)에서 수행하고 진행률을 IPC로 스트리밍합니다. 또한 사용자 홈 디렉터리의 주요 프로젝트 루트는 보호 경로(Protected Paths) 규칙을 통해 임의 삭제를 차단합니다."
+                        : "Scanning runs in a background Rust worker with progress streamed over Tauri IPC to keep the Svelte UI responsive. Registered protected-path rules prevent unauthorized recursive directory operations."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Retrospective -->
+              <div class="cs-retro-block">
+                <p>
+                  <strong>{lang === "ko" ? "지금 다시 만든다면:" : "Retrospective:"}</strong>
+                  {lang === "ko"
+                    ? "개발자 도구는 안전성과 예측 가능성이 최우선이어야 하며, 작은 데이터 유실도 사용자의 신뢰를 완전히 무너뜨립니다. 향후에는 YAML/Lua 매니페스트를 통해 커뮤니티가 새로운 캐시 클리너 규칙을 안전하게 정의할 수 있는 플러그인 아키텍처를 도입할 예정입니다."
+                    : "Developer tools must prioritize safety above all else—accidental data loss destroys user trust immediately. Future development will introduce a sandboxed plugin architecture (YAML/Lua manifests) allowing developers to define custom artifact cleaners safely."}
+                </p>
+              </div>
+            </div>
+          {/if}
+        </div>
+
+        <div class="work-action-col">
+          <button
+            type="button"
+            class="work-toggle-btn"
+            class:is-active={expandedWork.zenith}
+            onclick={() => toggleWork("zenith")}
+            aria-expanded={expandedWork.zenith}
+            aria-controls="work-details-zenith"
+            aria-label={expandedWork.zenith
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
+          >
+            <span class="toggle-label">
+              {expandedWork.zenith ? c.work.collapseCTA : c.work.expandCTA}
+            </span>
+            <ChevronDown size={13} class="toggle-icon" />
+          </button>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -1110,88 +1110,112 @@
   <hr class="section-rule" />
 
   <!-- Open Source -->
-  <section class="portfolio-section">
+  <section class="portfolio-section" id="oss">
     <div class="section-title-row">
       <h2 class="section-heading-large">{c.oss.title}</h2>
       <p class="section-heading-sub">{c.oss.subtitle}</p>
     </div>
 
-    <!-- Core Contributions -->
-    <div class="oss-subgroup">
-      <h3 class="oss-group-heading">{c.oss.contributionsTitle}</h3>
-      <div class="oss-list">
-        {#each c.oss.contributions as item (item.name)}
-          <article class="oss-entry">
-            <div class="oss-card-top">
-              <div>
-                <h4 class="oss-card-name">{item.name}</h4>
-                <p class="oss-card-sub">{item.subtitle}</p>
-              </div>
-              <span class="oss-status">
-                {#if item.statusType === "merged"}<Check size={13} aria-hidden="true" />{/if}
-                {item.status}
-              </span>
+    <div class="oss-list">
+      {#each c.oss.contributions as item (item.name)}
+        <article class="oss-entry">
+          <div class="oss-card-top">
+            <div>
+              <h4 class="oss-card-name">{item.name}</h4>
+              <p class="oss-card-sub">{item.subtitle}</p>
             </div>
+            <span class="oss-status">
+              {#if item.statusType === "merged"}
+                <Check size={13} aria-hidden="true" />
+              {/if}
+              {item.status}
+            </span>
+          </div>
 
-            <p class="oss-card-desc">{item.desc}</p>
+          <p class="oss-card-desc">{item.desc}</p>
 
-            {#if item.links}
-              <div class="oss-pr-links">
-                {#each item.links as link (link.href)}
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    class="oss-pr-link"
-                  >
-                    <GitPullRequest size={14} /> {link.label}
-                  </a>
-                {/each}
-              </div>
-            {:else if item.prTitle && item.prUrl}
-              <a
-                href={item.prUrl}
-                target="_blank"
-                rel="noreferrer"
-                class="oss-pr-link"
-              >
-                <GitPullRequest size={14} /> {item.prTitle}
-              </a>
-            {/if}
-          </article>
-        {/each}
-      </div>
+          {#if item.links}
+            <div class="oss-pr-links">
+              {#each item.links as link (link.href)}
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="oss-pr-link"
+                >
+                  <GitPullRequest size={14} /> {link.label}
+                </a>
+              {/each}
+            </div>
+          {:else if item.linkText && item.linkUrl}
+            <a
+              href={item.linkUrl}
+              target="_blank"
+              rel="noreferrer"
+              class="oss-pr-link"
+            >
+              <GitPullRequest size={14} /> {item.linkText}
+            </a>
+          {/if}
+        </article>
+      {/each}
+    </div>
+  </section>
+
+  <!-- Section Divider -->
+  <hr class="section-rule" />
+
+  <!-- Writing Section -->
+  <section class="portfolio-section" id="writing">
+    <div class="section-title-row">
+      <h2 class="section-heading-large">{c.writing.title}</h2>
+      <p class="section-heading-sub">{c.writing.subtitle}</p>
     </div>
 
+    <div class="writing-list">
+      {#each writingItems as post (post.slug)}
+        <a href={`/blog/${post.slug}`} class="writing-entry">
+          <div class="writing-meta-row">
+            <span class="writing-date">{post.publishedAt.replace(/-/g, ".")}</span>
+          </div>
+          <h3 class="writing-title">
+            {post.title} <ArrowUpRight size={14} />
+          </h3>
+          <p class="writing-desc">{post.description}</p>
+        </a>
+      {/each}
+    </div>
   </section>
 
   <!-- Section Divider -->
   <hr class="section-rule" />
 
   <!-- Experience Summary -->
-  <section class="portfolio-section">
+  <section class="portfolio-section" id="experience">
     <div class="section-title-row">
       <h2 class="section-heading-large">{c.experience.title}</h2>
     </div>
 
-    <div class="experience-list">
-      {#each c.experience.items as exp (exp.company)}
-        <article class="exp-entry">
-          <div class="exp-header-row">
-            <div>
-              <h3 class="exp-company-name">{exp.company}</h3>
-              <p class="exp-role-title">{exp.role}</p>
-            </div>
-            <span class="exp-period-tag">{exp.period}</span>
+    <div class="exp-list">
+      <article class="exp-entry-compact">
+        <div class="exp-header-row">
+          <div>
+            <h3 class="exp-company-name">{c.experience.company}</h3>
+            <p class="exp-role-title">{c.experience.role}</p>
           </div>
-          <p class="exp-summary-text">{exp.summary}</p>
-          <ul class="exp-bullet-list">
-            {#each exp.highlights as item (item)}
-              <li>{item}</li>
-            {/each}
-          </ul>
-        </article>
-      {/each}
+          <span class="exp-period-tag">{c.experience.period}</span>
+        </div>
+        <span class="exp-domain-tag">{c.experience.domain}</span>
+        <p class="exp-summary-text">{c.experience.summary}</p>
+        <a
+          href="/files/cv_jaeyoung_lee.pdf"
+          target="_blank"
+          rel="noreferrer"
+          class="exp-resume-link"
+        >
+          <FileText size={14} /> {c.experience.resumeCTA}
+        </a>
+      </article>
     </div>
   </section>
 </div>
