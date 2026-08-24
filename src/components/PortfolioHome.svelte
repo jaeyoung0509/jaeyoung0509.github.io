@@ -792,8 +792,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 <p>
                   <strong>{lang === "ko" ? "다음 단계:" : "Next Steps:"}</strong>
                   {lang === "ko"
-                    ? "GitHub Actions 등 CI 파이프라인에서 마이그레이션 적용을 사전에 검증할 수 있도록 확장할 계획입니다."
-                    : "Planning to expand pre-flight schema verification directly into CI pipelines such as GitHub Actions."}
+                    ? "현재는 개발자가 로컬 환경에서 직접 실행해 검증하는 방식입니다. 향후에는 GitHub Actions 등 CI 파이프라인과 연동하여 PR 단계에서 마이그레이션 적용과 롤백을 자동으로 사전 검증하도록 확장할 계획입니다."
+                    : "Currently, verification runs locally via developer execution. The next step is integrating with CI pipelines like GitHub Actions to automatically validate migrations and rollbacks on pull requests."}
                 </p>
               </div>
             </div>
