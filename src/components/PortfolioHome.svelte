@@ -193,14 +193,14 @@
           {
             name: "Temporal Python SDK",
             meta: "OpenAI Agents integration · PR #1741 · Merged",
-            desc: "Temporal OpenAI Agents integration을 사용하면서 FunctionTool과 Activity 기반 tool의 실행 위치가 다르다는 점을 SDK 구현에서 확인했습니다. 문서와 diagram을 보완한 PR #1741이 merged되었습니다.",
+            desc: "Temporal OpenAI Agents integration을 사용하며 FunctionTool과 Activity 기반 Tool의 실행 위치가 다르다는 점을 SDK 소스 코드에서 확인했습니다. 동작 구조를 명확히 설명하는 다이어그램과 문서를 보완해 PR #1741(Merged)을 기여했습니다.",
             linkText: "PR #1741 ↗",
             linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
           },
           {
             name: "Google Genkit",
             meta: "Ollama Cloud Provider · PR #3813",
-            desc: "Go Ollama 문서 예제의 API 불일치를 Issue #3748로 제보했습니다. 이후 Ollama Cloud의 OpenAI 호환 API를 연결하는 provider를 구현하고, model capability mapping과 문서 및 테스트를 함께 추가했습니다.",
+            desc: "Go Ollama 공식 문서 예제의 API 불일치를 Issue #3748로 리포트했습니다. 이후 Ollama Cloud의 OpenAI 호환 Provider를 구현하고, model capability mapping과 문서 및 테스트를 함께 추가했습니다.",
             links: [
               {
                 label: "Issue #3748 ↗",
@@ -215,7 +215,7 @@
           {
             name: "AWS Chalice",
             meta: "Lambda versioning / alias · Issue #2147 · PR #2173 Review",
-            desc: "Chalice에서 Python Lambda SnapStart를 사용할 때 필요한 framework 지원 여부를 Issue #2147에서 논의했습니다. 이후 Lambda version과 alias 지원을 추가하는 PR #2173을 검토하면서 alias 값을 배포 전에 검증하는 방법을 제안했습니다.",
+            desc: "Chalice에서 Python Lambda SnapStart를 사용할 때 필요한 프레임워크 지원 여부를 Issue #2147에서 논의했습니다. 이후 Lambda version 및 alias 지원을 추가하는 PR #2173을 리뷰하며 alias 값을 배포 전에 사전 검증하는 방식을 제안했습니다.",
             links: [
               {
                 label: "Issue #2147 ↗",
@@ -236,7 +236,7 @@
         period: "2022.04 – 2025.11",
         domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
         summary:
-          "B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다. 결제 이후 비동기 처리, 외부 금융 서비스 연동, 중복 이벤트 처리와 장애 추적 등을 경험했습니다.",
+          "B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다. 결제 이후 이벤트 기반 비동기 워크플로, 외부 금융 서비스 연동, 중복 이벤트 처리 및 분산 환경의 장애 추적을 담당했습니다.",
       },
     },
   });
@@ -434,7 +434,7 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "AWS의 serverless 구성요소를 사용하면서도 결제와 계약 같은 핵심 업무 규칙이 Lambda나 특정 외부 서비스 구현에 직접 의존하지 않도록 도메인 로직과 외부 연동 영역의 경계를 나눴습니다. 이 경험을 통해 Hexagonal Architecture를 변경 이유가 다른 코드를 분리하기 위한 수단으로 이해하게 됐습니다."
+                    ? "AWS의 Serverless 서비스를 활용하면서도 결제와 계약 같은 핵심 비즈니스 로직이 Lambda나 특정 외부 SDK 구현에 직접 결합되지 않도록 Hexagonal Architecture 패턴을 적용해 도메인 로직과 외부 어댑터 영역을 명확히 분리했습니다."
                     : "While leveraging AWS serverless primitives, we ensured core financial domain logic did not couple directly to Lambda handlers or third-party SDKs. Structuring clear boundaries between domain rules and external adapters reinforced Hexagonal Architecture as a practical means to separate code with different reasons to change."}
                 </p>
               </div>
@@ -448,7 +448,7 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "결제 이후 업무 중 즉시 응답에 필요한 처리와 독립적으로 지연하거나 다시 실행할 수 있는 후속 업무를 구분했습니다. 중복 이벤트, 외부 서비스의 일시 장애, 일부 단계만 완료되는 경우와 재처리 지점을 주로 다뤘고, 이 과정에서 idempotency, ordering, retry, DLQ를 실제 운영 문제와 연결해 경험했습니다."
+                    ? "동기 응답이 필요한 결제 승인과 비동기로 처리 가능한 후속 작업을 명확히 분리했습니다. 중복 이벤트 유입, 외부 금융 서비스 일시 장애, 부분 실패 상황에 대응하며 Idempotency(멱등성) 보장, 이벤트 순서(Ordering), 재시도(Retry) 및 DLQ 기반의 복구 흐름을 구축했습니다."
                     : "We distinguished immediate client-facing authorizations from deferred or retryable background operations. Managing duplicate events, temporary partner outages, partial workflow completion, and recovery resume points provided practical experience with idempotency, ordering, retry strategies, and DLQ handling."}
                 </p>
                 <p class="cs-abstract-note">
@@ -467,7 +467,7 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "비동기 업무가 늘면서 하나의 흐름을 여러 실행 단위에 걸쳐 추적해야 했습니다. 업무 단위 식별자를 로그와 이벤트에 함께 남기고 structured logging, metrics, tracing을 적용했습니다. 운영팀과 반복적으로 확인하던 알림과 상태 확인 업무도 일부 자동화했습니다."
+                    ? "비동기 워크플로가 확장됨에 따라 분산 환경에서의 추적성을 확보하기 위해 Correlation ID를 로그와 이벤트에 전파하고 Structured Logging, Metrics, Tracing을 적용했습니다. 운영팀과 반복 확인하던 알림과 상태 확인 절차도 자동화했습니다."
                     : "As asynchronous workflows spanned multiple execution contexts, correlation IDs were embedded across logs and events to enable end-to-end tracing. Routine operational verification and notifications were also automated in collaboration with operations teams."}
                 </p>
               </div>
@@ -477,7 +477,7 @@
                 <p>
                   <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
-                    ? "처음에는 서비스를 기능 단위로 빠르게 분리하는 것이 중요하다고 생각했습니다. 하지만 여러 serverless 구성요소와 분산 서비스를 운영하면서 분산 자체가 비용이라는 것도 경험했습니다. 지금 같은 시스템을 처음부터 설계한다면 우선 하나의 배포 단위 안에서 도메인 경계를 명확하게 나누고, 장애 격리나 독립적인 확장이 실제로 필요한 지점이 확인됐을 때 서비스 분리를 검토할 것 같습니다."
+                    ? "처음에는 서비스를 기능 단위로 분리하는 데 집중했으나, Serverless와 분산 시스템을 운영하며 분산 구조 자체가 가져오는 복잡도와 운영 비용을 체감했습니다. 현재는 모듈형 모놀리스 구조로 도메인 경계를 먼저 명확히 정의하고, 장애 격리나 독립적인 확장이 실질적으로 필요한 시점에 점진적으로 분리하는 방식을 선호합니다."
                     : "Initially, decomposing into microservices seemed paramount. However, operating multiple serverless and distributed services demonstrated that distribution itself incurs high operational cost. Today, I would structure a single deployable unit with clean domain boundaries, evaluating service extraction only when fault isolation or independent scaling boundaries are proven."}
                 </p>
               </div>
@@ -534,17 +534,17 @@
           <h3 class="work-title">MOONBERG</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "회계법인의 Bloomberg 데이터 수집과 reconciliation 업무를 자동화하기 위해 만든 비동기 작업 시스템입니다."
+              ? "회계법인의 Bloomberg 데이터 수집 및 Reconciliation(대사) 업무를 자동화하기 위해 구축한 비동기 작업 파이프라인입니다."
               : "Asynchronous pipeline built to automate Bloomberg market data extraction and reconciliation for an accounting firm."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "HTTP 요청과 작업 수명을 분리하고, Go API와 PostgreSQL에 작업 상태를 남긴 뒤 Python worker가 장시간 수집을 처리하도록 구성했습니다."
+              ? "HTTP 요청 라이프사이클과 작업 실행을 분리하고, Go API와 PostgreSQL(PGMQ)로 작업 상태를 영속화한 뒤 Python 워커가 장시간 수집을 처리하도록 구성했습니다."
               : "Decoupled HTTP request lifecycles from extraction workloads, persisting job state in Go API and PostgreSQL while a Python worker executes long-running data collection."}
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
-              ? "반복적인 데이터 수집과 reconciliation 수작업을 약 60~80% 줄였습니다."
+              ? "반복적인 데이터 수집 및 대사 수작업을 약 60~80% 절감했습니다."
               : "Reduced repetitive data collection and reconciliation tasks by ~60–80%."}
           </p>
 
@@ -573,7 +573,7 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "Moonberg는 회계법인에서 사용하는 재무 데이터 워크플로로, Bloomberg 데이터를 수집하고 정규화합니다. 단일 수집 작업이 수 분씩 걸릴 수 있어 HTTP 요청 생명주기 밖에서 실행되는 비동기 아키텍처가 필요했습니다."
+                    ? "Moonberg는 회계법인에서 사용하는 금융 데이터 파이프라인으로, Bloomberg 데이터를 수집하고 정규화합니다. 단일 수집 작업에 수 분 이상 소요될 수 있어 HTTP 요청 라이프사이클 밖에서 실행되는 비동기 아키텍처가 필요했습니다."
                     : "Moonberg is a financial data pipeline used by an accounting firm to extract, normalize, and structure Bloomberg market data. Because a single extraction job can take multiple minutes, it had to execute outside the HTTP request lifecycle."}
                 </p>
               </div>
@@ -587,7 +587,7 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "Go API는 작업을 수신하자마자 즉시 작업 ID를 발급하고 응답합니다. 대기열 관리는 PostgreSQL 기반 큐인 PGMQ를 활용해 별도 큐 브로커 없이 단일 DB 내에서 작업 상태(queued → dispatched → running → succeeded/failed)를 영속화했습니다. 별도 Python worker가 작업을 가져가 무거운 수집을 처리하며, 수집 결과와 작업 상태를 분리 저장하여 클라이언트가 재접속해도 이전 결과를 즉시 조회할 수 있도록 설계했습니다."
+                    ? "Go API는 요청을 수신하는 즉시 Job ID를 발급하고 비동기로 응답합니다. 대기열 관리는 별도의 메시지 브로커 대신 PostgreSQL 기반 큐인 PGMQ를 활용해 단일 DB 내에서 작업 상태(queued → dispatched → running → succeeded/failed)를 안정적으로 영속화했습니다. 별도 Python 워커가 작업을 가져가 대용량 수집을 처리하며, 수집 결과와 작업 상태를 분리 저장하여 클라이언트가 재접속하더라도 이전 결과를 즉시 조회할 수 있도록 설계했습니다."
                     : "The Go API immediately acknowledges requests and issues a job ID. We used PGMQ to persist queued work and lifecycle states (queued → dispatched → running → succeeded/failed) within PostgreSQL without introducing an external broker. A separate Python worker claims jobs and executes heavy extractions, persisting results and job states separately so clients can retrieve previous outcomes on reconnect."}
                 </p>
               </div>
@@ -697,18 +697,18 @@
           <h3 class="work-title">ALEMBIC DUMP</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "여러 개발 브랜치에서 반복되던 PostgreSQL schema 및 migration 검증 과정을 자동화하기 위해 만든 Python 도구입니다."
+              ? "여러 개발 브랜치에서 반복되던 PostgreSQL 스키마 및 Alembic 마이그레이션 사전 검증 과정을 자동화하기 위해 만든 오픈소스 Python 라이브러리입니다."
               : "Python developer tool built to automate repetitive PostgreSQL schema and migration verification workflows across branches."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "SSH tunnel, AWS Secrets Manager, PostgreSQL 연결과 데이터 masking을 하나의 작업 흐름으로 묶었습니다."
+              ? "SSH 터널링, AWS Secrets Manager 시크릿 조회, PostgreSQL 연결 및 데이터 마스킹을 단일 워크플로로 통합했습니다."
               : "Bundled SSH tunneling, AWS Secrets Manager access, PostgreSQL connections, and column-level masking into a single workflow."}
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
-              ? "마이그레이션 사전 검증에 걸리던 시간을 약 10분에서 2분 내외로 줄였습니다."
-              : "Reduced migration pre-flight verification time from ~10 minutes to under 2 minutes."}
+              ? "마이그레이션 사전 검증에 걸리던 시간을 약 10분에서 1분 내외로 줄였습니다."
+              : "Reduced migration pre-flight verification time from ~10 minutes to under 1 minute."}
           </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
@@ -736,7 +736,7 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "신규 기능 배포 전 마이그레이션 안전성을 검증하려면 고객 민감 정보를 노출하지 않으면서도 실제와 동일한 데이터 형상을 로컬에서 재현해야 했습니다. 사내 위키에 정리된 수동 체크리스트와 dump 절차는 번거로워 엔지니어들이 건너뛰기 쉬웠고, 이 반복적인 운영 마찰을 자동화하기 위해 오픈소스 라이브러리로 제작했습니다."
+                    ? "신규 기능 배포 전 마이그레이션 안전성을 검증하려면 고객 민감 정보를 노출하지 않으면서도 실제 프로덕션과 유사한 데이터 형상을 로컬에서 재현해야 했습니다. 수동 체크리스트와 dump 절차에서 발생하던 운영 마찰과 휴먼 에러를 방지하기 위해 이 과정을 단일 명령으로 자동화한 오픈소스 라이브러리로 제작했습니다."
                     : "Verifying database migrations before deployment required reproducing representative schema and data shapes locally without exposing customer data. Static wiki checklists and manual dump steps caused high operational friction and were easily skipped under deadlines. alembic-dump turned this error-prone procedure into an automated, open-source Python library."}
                 </p>
               </div>
@@ -750,7 +750,7 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "Alembic 리비전 정렬, SSH 터널링을 통한 원격 접근, AWS Secrets Manager 시크릿 조회, 컬럼별 마스킹 처리를 단일 파이썬 함수 호출로 연결했습니다."
+                    ? "Alembic 리비전 정렬, SSH 터널링을 통한 원격 접근, AWS Secrets Manager 인증 정보 조회, 컬럼별 마스킹 처리를 단일 파이썬 함수 호출로 연결했습니다."
                     : "Coordinates Alembic revision alignment, SSH tunneling, AWS Secrets Manager retrieval, and column-level masking inside a single Python function call."}
                 </p>
                 <div class="cs-code-box">
@@ -778,12 +778,12 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                   <div class="cs-failure-item">
                     <p class="cs-fail-q">
                       {lang === "ko"
-                        ? "로컬 개발 환경에 민감한 실제 데이터가 그대로 적재되지 않는가?"
+                        ? "로컬 개발 환경에 실제 민감 데이터가 그대로 적재되는 문제를 어떻게 방지하는가?"
                         : "How do we prevent raw sensitive records from loading into local databases?"}
                     </p>
                     <p class="cs-fail-a">
                       {lang === "ko"
-                        ? "Source DB에서 읽은 데이터에 설정된 masking rule을 적용한 뒤 target DB에 적재합니다. 이메일, 전화번호, 해시 등 컬럼별 마스킹 규칙을 적용한 데이터만 로컬 PostgreSQL에 반영되도록 구성했습니다."
+                        ? "Source DB에서 읽은 데이터에 사전 정의된 마스킹 규칙(이메일, 전화번호, 해시 등)을 적용한 뒤 Target DB에 적재합니다. 민감 정보 노출 없이 실제 데이터 분포와 카디널리티를 유지한 채 검증을 수행할 수 있도록 구성했습니다."
                         : "Applies configured column-level masking rules (emails, phone numbers, hashes) to rows read from the source DB before writing them to the target DB."}
                     </p>
                   </div>
@@ -795,7 +795,7 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 <p>
                   <strong>{lang === "ko" ? "다음 단계:" : "Next Steps:"}</strong>
                   {lang === "ko"
-                    ? "현재는 PostgreSQL과 Alembic 중심 구조입니다. 향후에는 MySQL, SQLite, DuckDB, Oracle 등 다양한 데이터베이스 간 마스킹 및 데이터 이관을 지원하고, CI 파이프라인과도 연동하여 마이그레이션 사전 검증을 자동화할 계획입니다."
+                    ? "현재는 PostgreSQL과 Alembic 중심 구조입니다. 향후에는 MySQL, SQLite, DuckDB, Oracle 등 다양한 이기종 데이터베이스 간 데이터 이관 및 마스킹을 지원하고, CI 파이프라인과도 연동하여 마이그레이션 사전 검증을 자동화할 계획입니다."
                     : "Currently tailored for PostgreSQL and Alembic. Future plans include supporting data migration and masking across heterogeneous databases (MySQL, SQLite, DuckDB, Oracle, etc.), as well as automated CI pre-flight verification."}
                 </p>
               </div>
@@ -847,12 +847,12 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
           <h3 class="work-title">ZENITH</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "개발 도구가 남기는 캐시와 로컬 프로세스를 관리하기 위해 Rust와 Tauri로 만들고 있는 macOS 앱입니다."
+              ? "개발 도구가 남기는 빌드 캐시와 로컬 프로세스를 안전하게 관리하기 위해 Rust와 Tauri로 개발 중인 macOS 데스크톱 앱입니다."
               : "macOS application built with Rust and Tauri to manage development build caches and local processes safely."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "삭제 경로를 frontend에서 직접 결정하지 않고 Rust backend에서 검증하며, 삭제 전 preview와 보호 경로 검사를 거치도록 만들었습니다."
+              ? "삭제 권한을 프론트엔드에 두지 않고 Rust 백엔드에서 검증하며, 삭제 전 Preview와 보호 경로 필터링을 거치도록 설계했습니다."
               : "Keeps deletion decisions strictly within the Rust backend rather than the frontend, enforcing pre-delete previews and protected path guards."}
           </p>
 
@@ -879,7 +879,7 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "개발을 진행하다 보면 수십 기가바이트의 Cargo target/, node_modules, Docker 캐시가 시스템에 누적됩니다. 삭제 도구에서 가장 치명적인 실패는 사용자 소스 코드나 중요한 설정 파일의 오삭제이므로, 속도보다 '안전한 삭제 경계'를 최우선 원칙으로 설계했습니다."
+                    ? "빌드 과정에서 수십 기가바이트의 Cargo target/, node_modules, Docker 캐시가 시스템에 누적됩니다. 삭제 도구에서 가장 치명적인 문제는 사용자 소스 코드나 중요 설정 파일의 오삭제이므로, 속도보다 엄격한 '안전 삭제 경계(Safety Boundary)'를 최우선 원칙으로 설계했습니다."
                     : "Developers accumulate tens of gigabytes of hidden build artifacts (Cargo target/, node_modules, Docker caches) on macOS. Because accidental data loss is catastrophic, ZENITH was designed around explicit safety boundaries rather than naive bulk deletion."}
                 </p>
               </div>
@@ -893,7 +893,7 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "Svelte UI는 삭제 경로나 cleanup 로직을 직접 다루지 않고, 현재 scan 결과에서 받은 item ID만 Rust 백엔드로 전달합니다. Rust의 SafetyPlanner가 signature scope와 risk tier(Safe / Rebuild / Manual)를 다시 검증한 뒤 one-shot delete plan을 생성합니다."
+                    ? "Svelte UI는 삭제 경로나 정리 로직을 직접 다루지 않고, 스캔 결과의 Opaque Item ID만 Rust 백엔드로 전달합니다. Rust의 SafetyPlanner가 Signature Scope와 Risk Tier(Safe / Rebuild / Manual)를 재검증한 뒤 안전한 원샷 삭제 계획(One-shot Delete Plan)을 생성합니다."
                     : "The Svelte UI never specifies deletion paths or strategies directly; it only sends opaque item IDs from the current scan back to Rust. Rust's SafetyPlanner re-validates signature scopes and risk tiers (Safe / Rebuild / Manual) to generate a one-shot delete plan."}
                 </p>
                 <ul class="cs-bullet-list">
@@ -901,7 +901,7 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                     <Check size={14} class="check-accent" />
                     <span>
                       {lang === "ko"
-                        ? "사전에 등록된 빌드 아티팩트 signature scope 안에서만 cleanup candidate를 생성합니다."
+                        ? "사전에 정의된 빌드 아티팩트 Signature Scope 내에서만 Cleanup Candidate를 생성합니다."
                         : "Generates cleanup candidates strictly within registered build artifact signature scopes."}
                     </span>
                   </li>
@@ -909,7 +909,7 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                     <Check size={14} class="check-accent" />
                     <span>
                       {lang === "ko"
-                        ? "삭제 직전 파일 시스템의 identity를 다시 확인하고, symlink와 중요 설정/소스코드가 포함된 protected path를 차단해 scan 이후 대상이 바뀐 경우 삭제를 중단합니다."
+                        ? "삭제 직전 파일 시스템 Identity를 재검증하고, 심볼릭 링크(Symlink)와 소스 코드·키체인 등 Protected Path를 차단하여 스캔 이후 대상이 변경되었을 경우 즉시 삭제를 중단합니다."
                         : "Re-verifies filesystem identity right before execution, blocking symlinks and protected paths to abort if targets changed after scanning."}
                     </span>
                   </li>
@@ -950,12 +950,12 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                   <div class="cs-failure-item">
                     <p class="cs-fail-q">
                       {lang === "ko"
-                        ? "수십만 개의 디렉터리를 스캔할 때 UI가 멈추거나 중요한 소스 코드가 포함되면?"
+                        ? "수십만 개의 디렉터리를 딥스캔할 때 UI 멈춤이나 소스 코드 오삭제를 어떻게 방지하는가?"
                         : "What if deep scans lock up the UI or include active source repositories?"}
                     </p>
                     <p class="cs-fail-a">
                       {lang === "ko"
-                        ? "스캔 작업은 UI 스레드 밖의 Rust 백그라운드 워커(spawn_blocking)에서 수행하고 진행률을 IPC로 스트리밍합니다. 또한 사용자 홈 디렉터리의 주요 프로젝트 루트는 protected path 규칙을 통해 임의 삭제를 차단합니다."
+                        ? "스캔 작업은 UI 스레드와 분리된 Rust 백그라운드 워커(spawn_blocking)에서 수행하며 진행률을 Tauri IPC로 스트리밍합니다. 또한 사용자 홈 디렉터리의 주요 프로젝트 루트는 Protected Path 보호 규칙을 통해 임의 삭제를 원천 차단합니다."
                         : "Scanning runs in a background Rust worker with progress streamed over Tauri IPC. Protected path rules prevent accidental deletion within active project roots."}
                     </p>
                   </div>
@@ -967,7 +967,7 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 <p>
                   <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
-                    ? "현재는 macOS 환경과 내장 TOML 서명을 중심으로 동작합니다. 향후에는 Linux와 Windows 등 멀티 플랫폼으로 지원을 확장하고, safety boundary를 엄격하게 유지하면서 사용자 정의 cleanup rule을 유연하게 추가할 수 있도록 개선할 계획입니다."
+                    ? "현재는 macOS 환경과 검증된 TOML 서명을 중심으로 동작합니다. 향후에는 Linux와 Windows 등 멀티 플랫폼으로 지원을 확장하고, Core Safety Boundary를 엄격히 유지하면서 사용자 정의 Cleanup Rule을 유연하게 추가할 수 있도록 개선할 계획입니다."
                     : "Currently focused on macOS with verified TOML signatures. Future roadmap includes expanding multi-platform support to Linux and Windows, while allowing customizable cleanup rules without compromising core safety boundaries."}
                 </p>
               </div>

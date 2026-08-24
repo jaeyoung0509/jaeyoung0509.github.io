@@ -452,7 +452,7 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
     results: [
-      "Reduced the internal migration pre-flight workflow from roughly 30 minutes to under 2 minutes.",
+      "Reduced the internal migration pre-flight workflow from roughly 10 minutes to under 1 minute.",
       "Turned schema synchronization, database dump/load, and masking into reusable open-source building blocks.",
       "Made it easier to reproduce migration-related database states without carrying original sensitive values.",
     ],
