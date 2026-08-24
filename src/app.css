@@ -1906,55 +1906,6 @@ summary {
   margin: 0;
 }
 
-/* Writing List */
-
-.writing-list {
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-}
-
-.writing-entry {
-  padding: 24px 0;
-  border-top: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  text-decoration: none;
-  color: inherit;
-}
-
-.writing-entry:hover .writing-title {
-  color: var(--accent-strong);
-}
-
-.writing-date {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--faint);
-}
-
-.writing-title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 750;
-  color: var(--ink);
-  line-height: 1.35;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 0.15s ease;
-}
-
-.writing-desc {
-  margin: 0;
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.65;
-  max-width: 720px;
-}
-
 /* Compact Experience */
 
 .exp-list {
@@ -2007,28 +1958,11 @@ summary {
 }
 
 .exp-summary-text {
-  margin: 0 0 12px;
+  margin: 0;
   font-size: 14.5px;
   color: var(--muted);
   line-height: 1.7;
   max-width: 720px;
-}
-
-.exp-resume-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--accent);
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.exp-resume-link:hover {
-  color: var(--accent-strong);
-  text-decoration: underline;
 }
 
 /* Open Source Records */

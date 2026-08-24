@@ -13,9 +13,6 @@
   } from "lucide-svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
   import { siteConfig } from "$lib/site";
-  import type { PostMeta } from "$lib/posts";
-
-  let { posts = [] }: { posts?: PostMeta[] } = $props();
 
   let lang = $state<"en" | "ko">("ko");
   let expandedWork = $state<Record<string, boolean>>({
@@ -146,11 +143,6 @@
           },
         ],
       },
-      writing: {
-        title: "Writing",
-        subtitle:
-          "Selected articles on distributed workflows, concurrency, and developer tooling.",
-      },
       experience: {
         title: "Experience",
         company: "FinovusLab",
@@ -159,7 +151,6 @@
         domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
         summary:
           "Built and operated core payment, contract signing, credit evaluation, and merchant settlement backends for a B2B BNPL platform. Designed asynchronous message pipelines, idempotency guards, and fault recovery mechanisms.",
-        resumeCTA: "View Full Resume (PDF) ↗",
       },
       contact: {
         title: "Contact",
@@ -239,11 +230,6 @@
           },
         ],
       },
-      writing: {
-        title: "글",
-        subtitle:
-          "시스템 구조, 동시성, 도구 설계와 학습 과정을 기록한 대표 글입니다.",
-      },
       experience: {
         title: "경력",
         company: "FinovusLab",
@@ -252,7 +238,6 @@
         domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
         summary:
           "B2B BNPL 핀테크 플랫폼에서 결제, 전자계약 체결, 신용평가, 정산 코어 백엔드 시스템을 설계하고 운영했습니다. 분산 환경의 비동기 메시지 파이프라인과 멱등성 처리, 장애 복구 체계를 구축했습니다.",
-        resumeCTA: "전체 이력서 확인 (Resume PDF) ↗",
       },
       contact: {
         title: "연락처",
@@ -262,33 +247,6 @@
   });
 
   const c = $derived(content[lang]);
-
-  // Curated writing fallback if posts aren't loaded
-  const fallbackWriting = [
-    {
-      title: "서버가 재시작돼도 업무는 계속됩니다: Temporal로 대출 신청 워크플로 만들기",
-      description:
-        "Stateless 구조에서 장기 업무의 상태가 왜 복잡해지는지, Temporal의 Durable Execution으로 대출 신청 워크플로를 구현하며 살펴봅니다.",
-      publishedAt: "2026-08-03",
-      slug: "temporal-loan-application-workflow",
-    },
-    {
-      title: "Temporal을 활용해 Durable AI Workflow 구현하기",
-      description:
-        "단일 프로세스의 Agent loop를 Temporal Workflow로 옮겨 이미 지불한 모델·도구 호출을 보존하는 방법과 아키텍처.",
-      publishedAt: "2026-08-05",
-      slug: "temporal-openai-agents-durable-workflow",
-    },
-    {
-      title: "Mutex는 왜 atomic보다 느릴까: Go로 직접 구현하며 체득한 Lock과 캐시 동기화 비용",
-      description:
-        "Jon Gjengset의 동시성 강연에서 다룬 캐시 라인, Cache Coherence, False Sharing을 Go 벤치마크 코드로 직접 구현하고 체득한 과정.",
-      publishedAt: "2026-08-16",
-      slug: "go-mutex-atomic-cache-coherence-benchmark",
-    },
-  ];
-
-  const writingItems = $derived(posts.length > 0 ? posts : fallbackWriting);
 </script>
 
 <svelte:head>
@@ -1163,31 +1121,6 @@ alembic-dump sync \
   <!-- Section Divider -->
   <hr class="section-rule" />
 
-  <!-- Writing Section -->
-  <section class="portfolio-section" id="writing">
-    <div class="section-title-row">
-      <h2 class="section-heading-large">{c.writing.title}</h2>
-      <p class="section-heading-sub">{c.writing.subtitle}</p>
-    </div>
-
-    <div class="writing-list">
-      {#each writingItems as post (post.slug)}
-        <a href={`/blog/${post.slug}`} class="writing-entry">
-          <div class="writing-meta-row">
-            <span class="writing-date">{post.publishedAt.replace(/-/g, ".")}</span>
-          </div>
-          <h3 class="writing-title">
-            {post.title} <ArrowUpRight size={14} />
-          </h3>
-          <p class="writing-desc">{post.description}</p>
-        </a>
-      {/each}
-    </div>
-  </section>
-
-  <!-- Section Divider -->
-  <hr class="section-rule" />
-
   <!-- Experience Summary -->
   <section class="portfolio-section" id="experience">
     <div class="section-title-row">
@@ -1205,14 +1138,6 @@ alembic-dump sync \
         </div>
         <span class="exp-domain-tag">{c.experience.domain}</span>
         <p class="exp-summary-text">{c.experience.summary}</p>
-        <a
-          href="/files/cv_jaeyoung_lee.pdf"
-          target="_blank"
-          rel="noreferrer"
-          class="exp-resume-link"
-        >
-          <FileText size={14} /> {c.experience.resumeCTA}
-        </a>
       </article>
     </div>
   </section>
