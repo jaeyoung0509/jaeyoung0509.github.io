@@ -4,11 +4,9 @@
   import {
     ArrowUpRight,
     ArrowDown,
-    Mail,
     MapPin,
     GitPullRequest,
     ChevronDown,
-    FileText,
     Check,
   } from "lucide-svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
@@ -84,8 +82,6 @@
         subheadline:
           "Backend engineer with 3.5+ years building and operating payment, credit, contract, and settlement backends. Outside work, I build developer tools for repetitive operational friction and trace open-source implementations to their source.",
         ctaWork: "Selected Work",
-        ctaResume: "Resume (PDF)",
-        ctaContact: "Contact",
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
       },
       about: {
@@ -152,10 +148,6 @@
         summary:
           "Built and operated core payment, contract signing, credit evaluation, and merchant settlement backends for a B2B BNPL platform. Designed asynchronous message pipelines, idempotency guards, and fault recovery mechanisms.",
       },
-      contact: {
-        title: "Contact",
-        subtext: "Feel free to reach out via email or GitHub.",
-      },
     },
     ko: {
       meta: {
@@ -171,8 +163,6 @@
         subheadline:
           "결제, 신용평가, 전자계약, 정산 backend를 3.5년 이상 개발하고 운영했습니다. 회사 밖에서는 반복되는 문제를 개발 도구로 만들고, 이해가 필요한 부분은 Open Source 구현까지 따라갑니다.",
         ctaWork: "주요 작업 보기",
-        ctaResume: "이력서 (PDF)",
-        ctaContact: "문의하기",
         techStack: ["Python", "Go", "PostgreSQL", "AWS", "Rust"],
       },
       about: {
@@ -239,10 +229,6 @@
         summary:
           "B2B BNPL 핀테크 플랫폼에서 결제, 전자계약 체결, 신용평가, 정산 코어 백엔드 시스템을 설계하고 운영했습니다. 분산 환경의 비동기 메시지 파이프라인과 멱등성 처리, 장애 복구 체계를 구축했습니다.",
       },
-      contact: {
-        title: "연락처",
-        subtext: "이메일이나 GitHub을 통해 언제든 연락하실 수 있습니다.",
-      },
     },
   });
 
@@ -308,14 +294,6 @@
         {c.hero.ctaWork} <ArrowDown size={14} />
       </a>
       <a
-        href="/files/cv_jaeyoung_lee.pdf"
-        target="_blank"
-        rel="noreferrer"
-        class="btn-hero-secondary"
-      >
-        <FileText size={14} /> {c.hero.ctaResume} <ArrowUpRight size={13} />
-      </a>
-      <a
         href={siteConfig.author.github}
         target="_blank"
         rel="noreferrer"
@@ -334,8 +312,24 @@
         </svg>
         GitHub <ArrowUpRight size={13} />
       </a>
-      <a href="mailto:ejaebbang@gmail.com" class="btn-hero-secondary">
-        <Mail size={14} /> {c.hero.ctaContact}
+      <a
+        href={siteConfig.author.linkedin}
+        target="_blank"
+        rel="noreferrer"
+        class="btn-hero-secondary"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="15"
+          height="15"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+          />
+        </svg>
+        LinkedIn <ArrowUpRight size={13} />
       </a>
     </div>
 

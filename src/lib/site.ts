@@ -10,7 +10,7 @@ export const siteConfig = {
     tagline: "I build reliable systems for workflows that don't always go as planned.",
     email: "ejaebbang@gmail.com",
     github: "https://github.com/jaeyoung0509",
-    linkedin: "https://www.linkedin.com/in/jaeyoung0509",
+    linkedin: "https://www.linkedin.com/in/jaeyoung-lee-72908227a/",
     location: "Seoul, South Korea",
   },
 } as const;

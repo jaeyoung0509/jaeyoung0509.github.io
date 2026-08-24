@@ -180,10 +180,20 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     ["Temporal Python SDK", "Google Genkit", "AWS Chalice"],
     "Open Source 항목 순서가 contribution 무게에 맞지 않습니다",
   );
+  assert.match(
+    aboutHtml,
+    /https:\/\/www\.linkedin\.com\/in\/jaeyoung-lee-72908227a\//,
+    "LinkedIn 링크가 없습니다",
+  );
   assert.doesNotMatch(
     aboutHtml,
     /id="writing"/,
     "About 페이지에 Writing 섹션이 없어야 합니다",
+  );
+  assert.doesNotMatch(
+    aboutHtml,
+    /cv_jaeyoung_lee\.pdf|mailto:ejaebbang@gmail\.com/,
+    "이력서 PDF 및 이메일 문의 버튼이 제거되어야 합니다",
   );
 });
 
