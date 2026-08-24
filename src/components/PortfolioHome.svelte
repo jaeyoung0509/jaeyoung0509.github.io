@@ -15,7 +15,7 @@
   import MermaidHandler from "$components/MermaidHandler.svelte";
   import { siteConfig } from "$lib/site";
 
-  let lang = $state<"en" | "ko">("en");
+  let lang = $state<"en" | "ko">("ko");
   let expandedWork = $state<Record<string, boolean>>({
     paymonths: false,
     moonberg: false,
@@ -819,15 +819,19 @@
 </script>
 
 <svelte:head>
-  <title>Jaeyoung Lee — Software Engineer</title>
+  <title>{lang === "ko" ? "이재영 — 소프트웨어 엔지니어" : "Jaeyoung Lee — Software Engineer"}</title>
   <meta
     name="description"
-    content="Jaeyoung Lee · Software Engineer. I turn failure-prone workflows into reliable services and practical developer tools."
+    content={lang === "ko"
+      ? "이재영 · 소프트웨어 엔지니어. 결제, 신용평가, 전자계약, 정산 등 핀테크 코어 시스템을 3.5년 이상 설계·운영해 왔습니다. 실패하기 쉬운 업무 흐름을 신뢰할 수 있는 서비스와 실용적인 개발자 도구로 바꿉니다."
+      : "Jaeyoung Lee · Software Engineer. I turn failure-prone workflows into reliable services and practical developer tools."}
   />
-  <meta property="og:title" content="Jaeyoung Lee — Software Engineer" />
+  <meta property="og:title" content={lang === "ko" ? "이재영 — 소프트웨어 엔지니어" : "Jaeyoung Lee — Software Engineer"} />
   <meta
     property="og:description"
-    content="Backend engineer with 3.5+ years building payment, credit, contract, and settlement systems. I turn failure-prone workflows into reliable services and practical developer tools."
+    content={lang === "ko"
+      ? "결제, 신용평가, 전자계약, 정산 등 핀테크 코어 시스템을 3.5년 이상 설계·운영해 왔습니다. 실패하기 쉬운 업무 흐름을 신뢰할 수 있는 서비스와 실용적인 개발자 도구로 바꾸는 일에 관심이 있습니다."
+      : "Backend engineer with 3.5+ years building payment, credit, contract, and settlement systems. I turn failure-prone workflows into reliable services and practical developer tools."}
   />
   <meta property="og:image" content={`${siteConfig.url}/images/editorial-backend-desk.jpg`} />
 </svelte:head>
@@ -848,19 +852,19 @@
         <button
           type="button"
           class="lang-btn"
-          class:active={lang === "en"}
-          onclick={() => (lang = "en")}
+          class:active={lang === "ko"}
+          onclick={() => (lang = "ko")}
         >
-          EN
+          KO
         </button>
         <span class="lang-divider">/</span>
         <button
           type="button"
           class="lang-btn"
-          class:active={lang === "ko"}
-          onclick={() => (lang = "ko")}
+          class:active={lang === "en"}
+          onclick={() => (lang = "en")}
         >
-          KO
+          EN
         </button>
       </div>
     </div>
@@ -990,7 +994,7 @@
               >
                 <!-- Context & Focus -->
                 <div class="dd-section">
-                  <h4 class="dd-title">01 / Context & Focus</h4>
+                  <h4 class="dd-title">{lang === "ko" ? "01 / 배경 및 담당 역할" : "01 / Context & Focus"}</h4>
                   <p class="dd-text">{item.context}</p>
                   <ul class="dd-bullet-list">
                     {#each item.owned as owned, idx (idx)}
@@ -1004,7 +1008,7 @@
 
                 <!-- Problem -->
                 <div class="dd-section">
-                  <h4 class="dd-title">02 / The Problem</h4>
+                  <h4 class="dd-title">{lang === "ko" ? "02 / 직면했던 문제" : "02 / The Problem"}</h4>
                   <div class="dd-problem-banner">
                     <p class="dd-prob-lead">{item.problem.headline}</p>
                     {#if item.problem.subheadline}
@@ -1016,7 +1020,7 @@
 
                 <!-- Technical Decisions -->
                 <div class="dd-section">
-                  <h4 class="dd-title">03 / Technical Decisions</h4>
+                  <h4 class="dd-title">{lang === "ko" ? "03 / 기술적 의사결정" : "03 / Technical Decisions"}</h4>
                   <div class="dd-options-list">
                     {#each item.decisions.considerations as consideration (consideration.title)}
                       <div class="dd-option-card">
@@ -1034,16 +1038,16 @@
                 <!-- Architecture Diagram -->
                 {#if item.architectureDiagram}
                   <div class="dd-section">
-                    <h4 class="dd-title">04 / Architecture</h4>
+                    <h4 class="dd-title">{lang === "ko" ? "04 / 아키텍처" : "04 / Architecture"}</h4>
                     <figure class="mermaid-diagram" data-chart={item.architectureDiagram}>
-                      <div class="mermaid-loading">Rendering architecture diagram...</div>
+                      <div class="mermaid-loading">{lang === "ko" ? "다이어그램 로딩 중..." : "Rendering architecture diagram..."}</div>
                     </figure>
                   </div>
                 {/if}
 
                 <!-- Handling Failures -->
                 <div class="dd-section">
-                  <h4 class="dd-title">05 / Handling Failures</h4>
+                  <h4 class="dd-title">{lang === "ko" ? "05 / 실패 모드 대응" : "05 / Handling Failures"}</h4>
                   <div class="dd-failure-list">
                     {#each item.failureModes as fm (fm.q)}
                       <div class="dd-failure-item">
@@ -1059,7 +1063,7 @@
 
                 <!-- Results & Retrospective -->
                 <div class="dd-section">
-                  <h4 class="dd-title">06 / Results & Retrospective</h4>
+                  <h4 class="dd-title">{lang === "ko" ? "06 / 성과 및 회고" : "06 / Results & Retrospective"}</h4>
                   <ul class="dd-results-list">
                     {#each item.results as res, idx (idx)}
                       <li>
@@ -1069,8 +1073,8 @@
                     {/each}
                   </ul>
                   <div class="dd-learning-box">
-                    <p><strong>Key Takeaway:</strong> {item.learning}</p>
-                    <p class="dd-differently"><strong>Retrospective:</strong> {item.differently}</p>
+                    <p><strong>{lang === "ko" ? "핵심 배움:" : "Key Takeaway:"}</strong> {item.learning}</p>
+                    <p class="dd-differently"><strong>{lang === "ko" ? "회고 및 개선점:" : "Retrospective:"}</strong> {item.differently}</p>
                   </div>
                 </div>
               </div>
