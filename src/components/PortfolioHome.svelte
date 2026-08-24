@@ -71,54 +71,49 @@
       meta: {
         title: "Jaeyoung Lee — Backend Software Engineer",
         description:
-          "Backend engineer with 3.5+ years building and operating payment, credit, contract, and settlement backends. Portfolio covering engineering judgment, systems architecture, developer tooling, and open source contributions.",
+          "Portfolio of Jaeyoung Lee, a backend software engineer with 3.5+ years building and operating payment, credit, contract, and settlement systems.",
       },
       hero: {
         role: "Software Engineer",
         location: "Seoul, South Korea",
         name: "Jaeyoung Lee",
-        headline:
-          "I understand complex state and partial failures,\nturning them into operable systems.",
+        headline: "I focus on backend systems with\ncomplex state and failure recovery.",
         subheadline:
-          "Backend engineer with 3.5+ years building and operating payment, credit, contract, and settlement backends. Outside work, I build developer tools for repetitive operational friction and trace open-source implementations to their source.",
+          "Built and operated payment, credit evaluation, digital contracting, and merchant settlement backends for over 3.5 years. Outside work, I build small developer tools for repetitive friction and trace libraries and open source code to their implementation.",
         ctaWork: "Selected Work",
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
         eyebrow: "Approach",
-        title: "Turning manual and failure-prone workflows into reliable systems.",
-        p1: "I focus on systems where failure recovery is harder than the happy path—long-running workflows, async pipelines, and operational edge cases.",
-        p2: "Rather than stopping at API specs, I trace where state actually persists and how systems behave under real failure conditions.",
+        title: "How I Work",
+        p1: "In production, handling failures after the happy path has consistently been the most challenging and critical problem.",
+        p2: "Whether duplicate inbound payment events, long-running data extraction jobs, or repetitive manual migration steps, I trace actual implementations when documentation is ambiguous and turn recurring recovery procedures into code and tools.",
       },
       work: {
-        title: "Selected Engineering Work",
+        title: "Selected Work",
         subtitle:
-          "Core problems I worked on, design judgment from production systems, and tools built to automate friction.",
-        experienceExpandCTA: "View experience ↓",
-        experienceCollapseCTA: "Close ↑",
-        projectExpandCTA: "View implementation ↓",
-        projectCollapseCTA: "Close ↑",
-        coreQuestionLabel: "Core Problem",
+          "Production systems I operated and developer tools I built.",
+        expandCTA: "View details ↓",
+        collapseCTA: "Close ↑",
         confidentialityNote:
           "*Implementation details and architecture topology are intentionally abstracted to protect proprietary company information.",
       },
       oss: {
         title: "Open Source",
         subtitle:
-          "Reading implementations, tracing failure boundaries, and contributing improvements upstream.",
+          "Issues identified through hands-on usage and upstream contributions.",
         contributions: [
           {
             name: "Temporal Python SDK",
-            subtitle: "OpenAI Agents SDK Integration & Tool Boundaries Documentation",
-            linkText: "PR #1741 · Merged ↗",
+            meta: "OpenAI Agents integration · PR #1741 · Merged",
+            desc: "While exploring the Temporal OpenAI Agents integration, traced execution differences between FunctionTools and Activity-backed tools in SDK source, contributing clearer documentation and diagram explanations upstream (PR #1741, merged).",
+            linkText: "PR #1741 ↗",
             linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
-            desc: "While exploring the Temporal OpenAI Agents integration, traced execution differences between user-defined FunctionTools and Activity-backed tools in the SDK source, contributing documentation and diagram clarifications upstream (PR #1741, merged).",
-            status: "Merged",
-            statusType: "merged",
           },
           {
             name: "Google Genkit",
-            subtitle: "Ollama Cloud Provider Plugin",
+            meta: "Ollama Cloud Provider · PR #3813",
+            desc: "Reported Go Ollama documentation API mismatches in Issue #3748. Implemented the Ollama Cloud OpenAI-compatible provider with model capability mappings, documentation, and tests (PR #3813).",
             links: [
               {
                 label: "Issue #3748 ↗",
@@ -129,13 +124,11 @@
                 href: "https://github.com/genkit-ai/genkit/pull/3813",
               },
             ],
-            desc: "Reported broken Go Ollama documentation examples and authored the compat_oai/ollamacloud plugin for Ollama Cloud's OpenAI-compatible API with model capability mapping, documentation, and tests.",
-            status: "Active",
-            statusType: "active",
           },
           {
             name: "AWS Chalice",
-            subtitle: "Lambda versioning / alias support & SnapStart discussions",
+            meta: "Lambda versioning / alias · Issue #2147 · PR #2173 Review",
+            desc: "Discussed framework support for Python Lambda SnapStart in Issue #2147. Later reviewed PR #2173 (Lambda version/alias support), proposing pre-flight validation UX for alias constraints.",
             links: [
               {
                 label: "Issue #2147 ↗",
@@ -146,9 +139,6 @@
                 href: "https://github.com/aws/chalice/pull/2173",
               },
             ],
-            desc: "Explored Python Lambda SnapStart deployment paths in Chalice, raising Issue #2147 to discuss native support. Later reviewed PR #2173 (Lambda version/alias support), proposing pre-flight validation UX for alias naming constraints.",
-            status: "Open",
-            statusType: "active",
           },
         ],
       },
@@ -159,7 +149,7 @@
         period: "2022.04 – 2025.11",
         domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
         summary:
-          "Built and operated core payment, contract signing, credit evaluation, and merchant settlement backends for a B2B BNPL platform. Focused on post-payment asynchronous pipelines, financial partner integrations, idempotency guards, and fault recovery.",
+          "Built and operated core payment, credit evaluation, digital contracting, and merchant settlement backends for a B2B BNPL platform. Handled post-payment async workflows, external partner integrations, duplicate event deduplication, and failure tracing.",
       },
     },
     ko: {
@@ -172,47 +162,43 @@
         role: "소프트웨어 엔지니어",
         location: "대한민국 서울",
         name: "이재영",
-        headline: "복잡한 상태와 실패를 이해하고,\n운영 가능한 시스템으로 만듭니다.",
+        headline: "상태가 복잡하고 실패할 수 있는\n백엔드 시스템을 주로 다뤄왔습니다.",
         subheadline:
-          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 회사 밖에서는 반복되는 문제를 개발 도구로 만들고, 이해가 필요한 부분은 오픈소스 구현까지 따라갑니다.",
+          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 업무에서 반복되는 문제는 작은 도구로 만들어보고, 동작이 궁금한 부분은 라이브러리와 오픈소스 구현까지 확인하는 편입니다.",
         ctaWork: "주요 작업 보기",
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
         eyebrow: "작업 방식",
-        title: "문서에서 멈추지 않고 구현까지 따라갑니다.",
-        p1: "반복되는 운영 문제와 긴 수명주기 작업, 실패 이후가 더 어려운 비동기 시스템을 주로 다뤘습니다.",
-        p2: "API 사용법에 머무르지 않고 상태가 실제로 어디에 남는지, 구현 수준에서 어떻게 동작하는지 끝까지 확인하는 편입니다.",
+        title: "어떻게 일하는가",
+        p1: "업무에서는 정상적으로 동작하는 경우보다 실패한 뒤의 처리가 더 어려운 문제를 자주 만났습니다.",
+        p2: "중복으로 들어오는 결제 이벤트, 오래 실행되는 데이터 수집 작업, 사람이 반복해서 확인하던 migration 작업 등이 그랬습니다. 문서만으로 동작이 명확하지 않을 때는 실제 구현을 확인하고, 반복되는 해결 과정은 코드나 도구로 옮겨 왔습니다.",
       },
       work: {
         title: "주요 작업",
         subtitle:
-          "실무에서 맞닥뜨린 복잡한 도메인과 운영 경험, 그리고 직접 구현한 시스템과 개발 도구들을 정리했습니다.",
-        experienceExpandCTA: "경험 자세히 보기 ↓",
-        experienceCollapseCTA: "닫기 ↑",
-        projectExpandCTA: "구현 자세히 보기 ↓",
-        projectCollapseCTA: "닫기 ↑",
-        coreQuestionLabel: "제가 주로 다룬 문제",
+          "실무에서 경험한 시스템과 직접 만든 프로젝트를 정리했습니다.",
+        expandCTA: "자세히 보기 ↓",
+        collapseCTA: "닫기 ↑",
         confidentialityNote:
           "*회사 내부 구현과 운영 정보를 보호하기 위해 architecture와 세부 수치는 추상화했습니다.",
       },
       oss: {
         title: "오픈소스",
         subtitle:
-          "구현을 따라가며 문제를 확인하고, upstream에 기여한 작업들입니다.",
+          "사용하면서 발견한 문제를 정리하거나 직접 구현한 작업들입니다.",
         contributions: [
           {
             name: "Temporal Python SDK",
-            subtitle: "OpenAI Agents SDK 통합 문서 및 실행 경계 정리",
-            linkText: "PR #1741 · Merged ↗",
+            meta: "OpenAI Agents integration · PR #1741 · Merged",
+            desc: "Temporal OpenAI Agents integration을 사용하면서 FunctionTool과 Activity 기반 tool의 실행 위치가 다르다는 점을 SDK 구현에서 확인했습니다. 외부 I/O가 필요한 tool을 Activity로 분리하는 기준을 문서와 diagram에서 더 명확하게 설명하는 PR을 기여했습니다.",
+            linkText: "PR #1741 ↗",
             linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
-            desc: "Temporal OpenAI Agents integration을 사용하면서 user-defined FunctionTool과 Activity backed tool의 실행 위치가 다르다는 점을 SDK 구현에서 확인했습니다. 외부 I/O가 필요한 tool을 Activity로 분리해야 하는 기준을 문서와 diagram에 명확히 하는 PR(#1741)을 기여해 merged되었습니다.",
-            status: "Merged",
-            statusType: "merged",
           },
           {
             name: "Google Genkit",
-            subtitle: "Ollama Cloud Provider Plugin",
+            meta: "Ollama Cloud Provider · PR #3813",
+            desc: "Go Ollama 문서 예제의 API 불일치를 Issue #3748로 제보했습니다. 이후 Ollama Cloud의 OpenAI 호환 API를 연결하는 provider를 구현하고, model capability mapping과 문서 및 테스트를 함께 추가했습니다.",
             links: [
               {
                 label: "Issue #3748 ↗",
@@ -223,13 +209,11 @@
                 href: "https://github.com/genkit-ai/genkit/pull/3813",
               },
             ],
-            desc: "Go Ollama 문서 예제 버그(DefineModel/ai.ModelInfo)를 제보하고, Ollama Cloud의 OpenAI 호환 API를 연동하는 compat_oai/ollamacloud 플러그인과 모델 기능 매핑·문서·테스트를 구현했습니다.",
-            status: "Active",
-            statusType: "active",
           },
           {
             name: "AWS Chalice",
-            subtitle: "Lambda versioning / alias support · SnapStart 관련 논의",
+            meta: "Lambda versioning / alias · Issue #2147 · PR #2173 Review",
+            desc: "Chalice에서 Python Lambda SnapStart를 사용할 때 필요한 framework 지원 여부를 Issue #2147에서 논의했습니다. 이후 Lambda version과 alias 지원을 추가하는 PR #2173을 검토하면서 alias 값을 배포 전에 검증하는 방법을 제안했습니다.",
             links: [
               {
                 label: "Issue #2147 ↗",
@@ -240,20 +224,17 @@
                 href: "https://github.com/aws/chalice/pull/2173",
               },
             ],
-            desc: "Chalice에서 Python Lambda SnapStart를 적용할 수 있는 배포 경로를 검토하며 native 지원 여부를 Issue #2147로 문의했습니다. 이후 Lambda version/alias 지원을 추가하는 PR #2173을 검토하며 alias 값의 사전 validation UX를 제안했습니다.",
-            status: "Open",
-            statusType: "active",
           },
         ],
       },
       experience: {
         title: "경력",
         company: "FinovusLab",
-        role: "소프트웨어 엔지니어 (Software Engineer)",
+        role: "Software Engineer",
         period: "2022.04 – 2025.11",
         domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
         summary:
-          "B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다. 결제 이후 비동기 처리와 외부 금융 서비스 연동, 중복 이벤트 처리와 장애 추적을 주로 다뤘습니다.",
+          "B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다. 결제 이후 비동기 처리, 외부 금융 서비스 연동, 중복 이벤트 처리와 장애 추적 등을 경험했습니다.",
       },
     },
   });
@@ -374,10 +355,10 @@
     </div>
 
     <div class="work-showcase">
-      <!-- 01. PAYMONTHS (Professional Experience) -->
+      <!-- 01. PAYMONTHS -->
       <article
         id="paymonths"
-        class="work-item work-experience-item"
+        class="work-item"
         class:is-expanded={expandedWork.paymonths}
       >
         <div class="work-num-col">
@@ -386,28 +367,29 @@
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge badge-experience">
+            <span class="work-domain-label">
               {lang === "ko"
-                ? "실무 경험 · B2B FinTech"
-                : "Professional Experience · B2B FinTech"}
+                ? "B2B FinTech"
+                : "B2B FinTech"}
             </span>
           </div>
 
           <h3 class="work-title">PAYMONTHS</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "결제 승인부터 신용평가, 전자계약, 정산까지 이어지는 B2B BNPL 서비스의 백엔드를 개발하고 운영했습니다. Python과 AWS 기반의 이벤트 중심 시스템에서 결제 이후의 업무 흐름, 외부 금융 서비스 연동, 상태 관리와 장애 대응을 주로 다뤘습니다."
-              : "Built and operated core backends for a B2B BNPL platform spanning authorization, credit evaluation, digital contracting, and merchant settlement. Handled post-payment event-driven workflows, financial partner integrations, state management, and operational failure resilience."}
+              ? "B2B BNPL 서비스에서 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다."
+              : "Built and operated payment, credit evaluation, digital contracting, and merchant settlement backends for a B2B BNPL service."}
           </p>
-
-          <div class="work-focus-pill">
-            <span class="focus-label">{c.work.coreQuestionLabel}</span>
-            <span class="focus-text">
-              {lang === "ko"
-                ? "여러 단계와 외부 시스템이 연결된 금융 업무를 어떻게 이해하기 쉽고 운영 가능한 구조로 만들 것인가?"
-                : "How do you turn multi-stage financial workflows connected to external partners into understandable, operable systems?"}
-            </span>
-          </div>
+          <p class="work-premise-sub">
+            {lang === "ko"
+              ? "Python과 AWS 기반 환경에서 결제 이후 업무 흐름, 외부 금융 서비스 연동, 상태 관리와 장애 대응을 주로 다뤘습니다."
+              : "Handled post-payment event-driven workflows, financial partner integrations, state management, and failure recovery on Python and AWS."}
+          </p>
+          <p class="work-highlight-line">
+            {lang === "ko"
+              ? "여러 단계와 외부 시스템이 연결된 금융 업무의 상태와 규칙을 어떻게 관리할지 고민했습니다."
+              : "Focused on managing multi-stage financial lifecycle states and business rules connected to external partners."}
+          </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
             <span>Python</span> <span aria-hidden="true">/</span>
@@ -514,20 +496,20 @@
             aria-expanded={expandedWork.paymonths}
             aria-controls="work-details-paymonths"
             aria-label={expandedWork.paymonths
-              ? c.work.experienceCollapseCTA
-              : c.work.experienceExpandCTA}
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
           >
             <span class="toggle-label">
               {expandedWork.paymonths
-                ? c.work.experienceCollapseCTA
-                : c.work.experienceExpandCTA}
+                ? c.work.collapseCTA
+                : c.work.expandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
         </div>
       </article>
 
-      <!-- 02. MOONBERG (Selected Project) -->
+      <!-- 02. MOONBERG -->
       <article
         id="moonberg"
         class="work-item"
@@ -539,28 +521,29 @@
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge badge-project">
+            <span class="work-domain-label">
               {lang === "ko"
-                ? "선정 프로젝트 · 재무 데이터 비동기 파이프라인"
-                : "Selected Project · Financial Data & Async Pipeline"}
+                ? "Financial Data Automation"
+                : "Financial Data Automation"}
             </span>
           </div>
 
           <h3 class="work-title">MOONBERG</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "Go API와 별도 Python worker가 조율하는 장시간 Bloomberg 데이터 수집 백엔드."
-              : "Long-running Bloomberg data collection coordinated by a Go API and a separate Python worker."}
+              ? "회계법인의 Bloomberg 데이터 수집과 reconciliation 업무를 자동화하기 위해 만든 비동기 작업 시스템입니다."
+              : "Asynchronous pipeline built to automate Bloomberg market data extraction and reconciliation for an accounting firm."}
           </p>
-
-          <div class="work-focus-pill">
-            <span class="focus-label">{lang === "ko" ? "운영 성과" : "Impact"}</span>
-            <span class="focus-text">
-              {lang === "ko"
-                ? "반복적인 데이터 수집 및 reconciliation 수작업 약 60~80% 감소"
-                : "Reduced repetitive data extraction & reconciliation tasks by ~60–80%"}
-            </span>
-          </div>
+          <p class="work-premise-sub">
+            {lang === "ko"
+              ? "Go API가 작업 상태를 관리하고 별도의 Python worker가 데이터 수집을 처리합니다."
+              : "A Go API manages persistent job lifecycles while a separate Python worker executes data collection."}
+          </p>
+          <p class="work-highlight-line">
+            {lang === "ko"
+              ? "반복적인 데이터 수집과 reconciliation 수작업을 약 60~80% 줄였습니다."
+              : "Reduced repetitive data collection and reconciliation tasks by ~60–80%."}
+          </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
             <span>Go</span> <span aria-hidden="true">/</span>
@@ -676,20 +659,20 @@
             aria-expanded={expandedWork.moonberg}
             aria-controls="work-details-moonberg"
             aria-label={expandedWork.moonberg
-              ? c.work.projectCollapseCTA
-              : c.work.projectExpandCTA}
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
           >
             <span class="toggle-label">
               {expandedWork.moonberg
-                ? c.work.projectCollapseCTA
-                : c.work.projectExpandCTA}
+                ? c.work.collapseCTA
+                : c.work.expandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
         </div>
       </article>
 
-      <!-- 03. ALEMBIC-DUMP (Selected Project) -->
+      <!-- 03. ALEMBIC-DUMP -->
       <article
         id="alembic-dump"
         class="work-item"
@@ -701,28 +684,29 @@
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge badge-project">
+            <span class="work-domain-label">
               {lang === "ko"
-                ? "선정 프로젝트 · 개발자 도구 및 오픈소스"
-                : "Selected Project · Developer Tooling & Open Source"}
+                ? "Developer Tooling · Open Source"
+                : "Developer Tooling · Open Source"}
             </span>
           </div>
 
-          <h3 class="work-title">ALEMBIC-DUMP</h3>
+          <h3 class="work-title">ALEMBIC DUMP</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "스키마 동기화, 데이터베이스 dump/load, 안전한 데이터 마스킹을 위한 Python 도구."
-              : "Python tooling for schema synchronization, database dump/load, and safe data masking."}
+              ? "여러 개발 브랜치에서 반복되던 PostgreSQL schema 및 migration 검증 과정을 자동화하기 위해 만든 Python 도구입니다."
+              : "Python developer tool built to automate repetitive PostgreSQL schema and migration verification workflows across branches."}
           </p>
-
-          <div class="work-focus-pill">
-            <span class="focus-label">{lang === "ko" ? "사전 검증" : "Verification"}</span>
-            <span class="focus-text">
-              {lang === "ko"
-                ? "마이그레이션 사전 검증 절차 ~30분 → 2분 이내 단축"
-                : "Migration pre-flight verification from ~30 min to under 2 min"}
-            </span>
-          </div>
+          <p class="work-premise-sub">
+            {lang === "ko"
+              ? "SSH tunnel, AWS Secrets Manager, PostgreSQL 연결과 데이터 masking을 하나의 작업 흐름으로 묶었습니다."
+              : "Bundled SSH tunneling, AWS Secrets Manager access, PostgreSQL connections, and column-level masking into a single workflow."}
+          </p>
+          <p class="work-highlight-line">
+            {lang === "ko"
+              ? "마이그레이션 사전 검증에 걸리던 시간을 약 30분에서 2분 내외로 줄였습니다."
+              : "Reduced migration pre-flight verification time from ~30 minutes to under 2 minutes."}
+          </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
             <span>Python</span> <span aria-hidden="true">/</span>
@@ -825,20 +809,20 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
             aria-expanded={expandedWork.alembic_dump}
             aria-controls="work-details-alembic-dump"
             aria-label={expandedWork.alembic_dump
-              ? c.work.projectCollapseCTA
-              : c.work.projectExpandCTA}
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
           >
             <span class="toggle-label">
               {expandedWork.alembic_dump
-                ? c.work.projectCollapseCTA
-                : c.work.projectExpandCTA}
+                ? c.work.collapseCTA
+                : c.work.expandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
         </div>
       </article>
 
-      <!-- 04. ZENITH (Selected Project) -->
+      <!-- 04. ZENITH -->
       <article
         id="zenith"
         class="work-item"
@@ -850,28 +834,24 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
 
         <div class="work-main-col">
           <div class="work-meta-top">
-            <span class="work-domain-badge badge-project">
+            <span class="work-domain-label">
               {lang === "ko"
-                ? "선정 프로젝트 · 시스템 & 세이프티 엔지니어링"
-                : "Selected Project · Systems & Safety Engineering"}
+                ? "macOS Developer Tool"
+                : "macOS Developer Tool"}
             </span>
           </div>
 
           <h3 class="work-title">ZENITH</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "Rust와 Tauri를 활용하여 개발 환경의 대용량 빌드 캐시를 빠르고 안전하게 정리하는 데스크톱 유틸리티."
-              : "Rust + Tauri desktop application focused on safely scanning and cleaning development build caches on macOS."}
+              ? "개발 도구가 남기는 캐시와 로컬 프로세스를 관리하기 위해 Rust와 Tauri로 만들고 있는 macOS 앱입니다."
+              : "macOS application built with Rust and Tauri to manage development build caches and local processes safely."}
           </p>
-
-          <div class="work-focus-pill">
-            <span class="focus-label">{lang === "ko" ? "안전 설계" : "Safety"}</span>
-            <span class="focus-text">
-              {lang === "ko"
-                ? "Frontend 삭제 권한 배제 & Rust SafetyPlanner 검증"
-                : "No frontend delete authority & Rust SafetyPlanner verification"}
-            </span>
-          </div>
+          <p class="work-premise-sub">
+            {lang === "ko"
+              ? "삭제 경로를 frontend에서 직접 결정하지 않고 Rust backend에서 검증하며, 삭제 전 preview와 보호 경로 검사를 거치도록 만들었습니다."
+              : "Keeps deletion decisions strictly within the Rust backend rather than the frontend, enforcing pre-delete previews and protected path guards."}
+          </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
             <span>Rust</span> <span aria-hidden="true">/</span>
@@ -1001,13 +981,13 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
             aria-expanded={expandedWork.zenith}
             aria-controls="work-details-zenith"
             aria-label={expandedWork.zenith
-              ? c.work.projectCollapseCTA
-              : c.work.projectExpandCTA}
+              ? c.work.collapseCTA
+              : c.work.expandCTA}
           >
             <span class="toggle-label">
               {expandedWork.zenith
-                ? c.work.projectCollapseCTA
-                : c.work.projectExpandCTA}
+                ? c.work.collapseCTA
+                : c.work.expandCTA}
             </span>
             <ChevronDown size={13} class="toggle-icon" />
           </button>
@@ -1027,14 +1007,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
       {#each c.oss.contributions as item (item.name)}
         <article class="oss-entry">
           <div class="oss-card-top">
-            <div>
-              <h4 class="oss-card-name">{item.name}</h4>
-              <p class="oss-card-sub">{item.subtitle}</p>
-            </div>
-            <span class="oss-status-pill status-{item.statusType}">
-              <span class="status-dot"></span>
-              {item.status}
-            </span>
+            <h4 class="oss-card-name">{item.name}</h4>
+            <p class="oss-card-meta">{item.meta}</p>
           </div>
 
           <p class="oss-card-desc">{item.desc}</p>

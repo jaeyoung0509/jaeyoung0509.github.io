@@ -123,7 +123,7 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(aboutHtml, /이재영/, "작성자 이름이 없습니다");
   assert.match(
     aboutHtml,
-    /복잡한 상태와 실패를 이해하고/,
+    /상태가 복잡하고 실패할 수 있는/,
     "Hero 핵심 태그라인이 없습니다",
   );
   assert.match(aboutHtml, /대한민국 서울/, "위치 정보가 없습니다");
@@ -132,7 +132,7 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(aboutHtml, /2022\.04 – 2025\.11/, "경력 기간이 올바르지 않습니다");
   assert.match(
     aboutHtml,
-    /문서에서 멈추지 않고 구현까지 따라갑니다/,
+    /어떻게 일하는가/,
     "About Me 제목이 없습니다",
   );
   assert.match(
@@ -142,7 +142,7 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   );
   assert.match(aboutHtml, /PAYMONTHS/, "PAYMONTHS 케이스 스터디가 없습니다");
   assert.match(aboutHtml, /MOONBERG/, "MOONBERG 케이스 스터디가 없습니다");
-  assert.match(aboutHtml, /ALEMBIC-DUMP/, "ALEMBIC-DUMP 케이스 스터디가 없습니다");
+  assert.match(aboutHtml, /ALEMBIC DUMP/, "ALEMBIC DUMP 프로젝트가 없습니다");
   assert.match(aboutHtml, /ZENITH/, "ZENITH 케이스 스터디가 없습니다");
   assert.match(
     aboutHtml,
