@@ -85,15 +85,16 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
+        eyebrow: "Approach",
         title: "Turning manual and failure-prone workflows into reliable systems.",
-        p1: "The problems I keep returning to are similar: payment retries that could duplicate a payout, data collection jobs that outlive an HTTP request, or migration checks skipped because they take too long—workflows where failure recovery is harder than the happy path.",
-        p2: "These issues are rarely solved by API specs alone. I trace where state actually persists through the implementation, and turn repeated fixes into clearer system boundaries or practical developer tools.",
+        p1: "I focus on systems where failure recovery is harder than the happy path—long-running workflows, async pipelines, and operational edge cases.",
+        p2: "Rather than stopping at API specs, I trace where state actually persists and how systems behave under real failure conditions.",
       },
       work: {
         title: "Selected Engineering Work",
         subtitle:
           "Systems I built, the failure modes they had to handle, and what I would change now.",
-        expandCTA: "Case study ↓",
+        expandCTA: "View details ↓",
         collapseCTA: "Close ↑",
         coreQuestionLabel: "Core Question",
       },
@@ -174,15 +175,16 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
+        eyebrow: "작업 방식",
         title: "문서에서 멈추지 않고 구현까지 따라갑니다.",
-        p1: "제가 자주 만난 문제는 비슷했습니다. 다시 들어온 결제 이벤트, HTTP 요청보다 오래 실행되는 데이터 수집, 사람이 반복해서 확인하던 migration 작업처럼 정상 경로보다 실패 이후가 더 어려운 문제들입니다.",
-        p2: "이런 문제는 API 사용법만으로 해결되지 않을 때가 많았습니다. 상태가 어디에 남는지 실제 구현까지 따라가 보고, 반복되는 해결 방식은 코드나 도구로 옮기는 편입니다.",
+        p1: "반복되는 운영 문제와 긴 수명주기 작업, 실패 이후가 더 어려운 비동기 시스템을 주로 다뤘습니다.",
+        p2: "API 사용법에 머무르지 않고 상태가 실제로 어디에 남는지, 구현 수준에서 어떻게 동작하는지 끝까지 확인하는 편입니다.",
       },
       work: {
         title: "주요 작업",
         subtitle:
           "실제 운영과 제작 과정에서 만난 문제, 선택한 구조, 그리고 지금 다시 만든다면 바꿀 점을 정리했습니다.",
-        expandCTA: "Case study ↓",
+        expandCTA: "자세히 보기 ↓",
         collapseCTA: "닫기 ↑",
         coreQuestionLabel: "핵심 질문",
       },
@@ -305,80 +307,59 @@
       {c.hero.subheadline}
     </p>
 
-    <div class="hero-cta-row">
+    <div class="hero-action-area">
       <a href="#work" class="btn-hero-primary">
         {c.hero.ctaWork} <ArrowDown size={14} />
       </a>
-      <a
-        href={siteConfig.author.github}
-        target="_blank"
-        rel="noreferrer"
-        class="btn-hero-secondary"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="15"
-          height="15"
-          fill="currentColor"
-          aria-hidden="true"
+      <div class="hero-links-cluster">
+        <a
+          href={siteConfig.author.github}
+          target="_blank"
+          rel="noreferrer"
+          class="hero-text-link"
         >
-          <path
-            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"
-          />
-        </svg>
-        GitHub <ArrowUpRight size={13} />
-      </a>
-      <a
-        href={siteConfig.author.linkedin}
-        target="_blank"
-        rel="noreferrer"
-        class="btn-hero-secondary"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          width="15"
-          height="15"
-          fill="currentColor"
-          aria-hidden="true"
+          GitHub <ArrowUpRight size={13} />
+        </a>
+        <span class="hero-link-sep" aria-hidden="true">·</span>
+        <a
+          href={siteConfig.author.linkedin}
+          target="_blank"
+          rel="noreferrer"
+          class="hero-text-link"
         >
-          <path
-            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
-          />
-        </svg>
-        LinkedIn <ArrowUpRight size={13} />
-      </a>
+          LinkedIn <ArrowUpRight size={13} />
+        </a>
+      </div>
     </div>
 
     <div class="hero-tech-strip">
-      {#each c.hero.techStack as tech, idx (tech)}
-        <span class="tech-item">{tech}</span>
-        {#if idx < c.hero.techStack.length - 1}
-          <span class="tech-divider">/</span>
-        {/if}
-      {/each}
+      <span class="tech-strip-label">Core /</span>
+      <div class="tech-items-group">
+        {#each c.hero.techStack as tech, idx (tech)}
+          <span class="tech-item">{tech}</span>
+          {#if idx < c.hero.techStack.length - 1}
+            <span class="tech-divider" aria-hidden="true">·</span>
+          {/if}
+        {/each}
+      </div>
     </div>
   </section>
 
-  <!-- Section Divider -->
-  <hr class="section-rule" />
-
-  <!-- How I Work (About) Section -->
-  <section class="portfolio-section" id="about">
+  <!-- Approach Section -->
+  <section class="portfolio-section section-approach" id="about">
     <div class="section-title-row">
-      <h2 class="section-heading-large">{c.about.title}</h2>
+      <span class="section-eyebrow">{c.about.eyebrow}</span>
+      <h2 class="section-heading-statement">{c.about.title}</h2>
     </div>
 
-    <div class="about-split-layout">
-      <p class="about-lead-paragraph">{c.about.p1}</p>
-      <p class="about-body-paragraph">{c.about.p2}</p>
+    <div class="about-statement-layout">
+      <p class="about-lead-statement">{c.about.p1}</p>
+      <p class="about-sub-statement">{c.about.p2}</p>
     </div>
   </section>
-
-  <!-- Section Divider -->
-  <hr class="section-rule" />
 
   <!-- Selected Work Section -->
-  <section class="portfolio-section" id="work">
+  <section class="portfolio-section section-work" id="work">
     <div class="section-title-row">
       <h2 class="section-heading-large">{c.work.title}</h2>
       <p class="section-heading-sub">{c.work.subtitle}</p>
@@ -407,23 +388,14 @@
               : "Backend system handling financial state and partial failure from payment to merchant settlement."}
           </p>
 
-          <div class="work-core-question">
-            <strong>{c.work.coreQuestionLabel}:</strong>
-            <span>
+          <div class="work-focus-pill">
+            <span class="focus-label">{lang === "ko" ? "핵심 과제" : "Core Focus"}</span>
+            <span class="focus-text">
               {lang === "ko"
-                ? "외부 시스템 일부만 성공했을 때 내부 상태를 어떻게 안전하게 복구할 것인가?"
-                : "How do you recover internal state safely when external partners experience partial failures?"}
+                ? "외부 시스템 부분 실패 시 내부 상태 안전 복구"
+                : "Safe internal state recovery upon external partial failures"}
             </span>
           </div>
-
-          <p class="work-stack-line" aria-label="Technology stack">
-            <span>Python</span> <span aria-hidden="true">/</span>
-            <span>AWS Lambda</span> <span aria-hidden="true">/</span>
-            <span>EventBridge</span> <span aria-hidden="true">/</span>
-            <span>SQS FIFO</span> <span aria-hidden="true">/</span>
-            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
-            <span>DynamoDB</span>
-          </p>
 
           <!-- Expanded Editorial Case Study -->
           {#if expandedWork.paymonths}
@@ -597,32 +569,14 @@
               : "Long-running Bloomberg data collection coordinated by a Go API and a separate Python worker."}
           </p>
 
-          <div class="work-core-question">
-            <strong>{c.work.coreQuestionLabel}:</strong>
-            <span>
-              {lang === "ko"
-                ? "HTTP 요청보다 오래 실행되는 수집 작업을 어떻게 모델링했는가?"
-                : "How do you model long-running data collection that outlives HTTP requests?"}
-            </span>
-          </div>
-
-          <div class="work-highlight-result">
-            <span class="result-bullet" aria-hidden="true">■</span>
-            <span>
+          <div class="work-focus-pill">
+            <span class="focus-label">{lang === "ko" ? "운영 성과" : "Impact"}</span>
+            <span class="focus-text">
               {lang === "ko"
                 ? "반복적인 데이터 수집 및 reconciliation 수작업 약 60~80% 감소"
                 : "Reduced repetitive data extraction & reconciliation tasks by ~60–80%"}
             </span>
           </div>
-
-          <p class="work-stack-line" aria-label="Technology stack">
-            <span>Go</span> <span aria-hidden="true">/</span>
-            <span>Python</span> <span aria-hidden="true">/</span>
-            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
-            <span>PGMQ</span> <span aria-hidden="true">/</span>
-            <span>Docker</span> <span aria-hidden="true">/</span>
-            <span>Vue</span>
-          </p>
 
           <!-- Expanded Editorial Case Study -->
           {#if expandedWork.moonberg}
@@ -762,32 +716,14 @@
               : "Python tooling for schema synchronization, database dump/load, and safe data masking."}
           </p>
 
-          <div class="work-core-question">
-            <strong>{c.work.coreQuestionLabel}:</strong>
-            <span>
-              {lang === "ko"
-                ? "왜 위키 문서가 아니라 재사용 가능한 Python 도구를 만들었는가?"
-                : "Why build a reusable Python tool instead of a static wiki checklist?"}
-            </span>
-          </div>
-
-          <div class="work-highlight-result">
-            <span class="result-bullet" aria-hidden="true">■</span>
-            <span>
+          <div class="work-focus-pill">
+            <span class="focus-label">{lang === "ko" ? "사전 검증" : "Verification"}</span>
+            <span class="focus-text">
               {lang === "ko"
                 ? "마이그레이션 사전 검증 절차 ~30분 → 2분 이내 단축"
                 : "Migration pre-flight verification from ~30 min to under 2 min"}
             </span>
           </div>
-
-          <p class="work-stack-line" aria-label="Technology stack">
-            <span>Python</span> <span aria-hidden="true">/</span>
-            <span>PostgreSQL</span> <span aria-hidden="true">/</span>
-            <span>Alembic</span> <span aria-hidden="true">/</span>
-            <span>SSH Tunnel</span> <span aria-hidden="true">/</span>
-            <span>Data Masking</span> <span aria-hidden="true">/</span>
-            <span>AWS Secrets Manager</span>
-          </p>
 
           <!-- Expanded Editorial Case Study -->
           {#if expandedWork.alembic_dump}
@@ -916,21 +852,14 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
               : "Rust + Tauri desktop application focused on safely scanning and cleaning development build caches on macOS."}
           </p>
 
-          <div class="work-core-question">
-            <strong>{c.work.coreQuestionLabel}:</strong>
-            <span>
+          <div class="work-focus-pill">
+            <span class="focus-label">{lang === "ko" ? "안전 설계" : "Safety"}</span>
+            <span class="focus-text">
               {lang === "ko"
-                ? "삭제 도구에서 성능보다 Safety(안전성)를 어떻게 우선했는가?"
-                : "How did we prioritize safety over raw performance in a disk cleanup tool?"}
+                ? "Frontend 삭제 권한 배제 & Rust SafetyPlanner 검증"
+                : "No frontend delete authority & Rust SafetyPlanner verification"}
             </span>
           </div>
-
-          <p class="work-stack-line" aria-label="Technology stack">
-            <span>Rust</span> <span aria-hidden="true">/</span>
-            <span>Tauri</span> <span aria-hidden="true">/</span>
-            <span>Svelte 5</span> <span aria-hidden="true">/</span>
-            <span>macOS</span>
-          </p>
 
           <!-- Expanded Editorial Case Study -->
           {#if expandedWork.zenith}
@@ -1066,11 +995,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
     </div>
   </section>
 
-  <!-- Section Divider -->
-  <hr class="section-rule" />
-
   <!-- Open Source -->
-  <section class="portfolio-section" id="oss">
+  <section class="portfolio-section section-oss" id="oss">
     <div class="section-title-row">
       <h2 class="section-heading-large">{c.oss.title}</h2>
       <p class="section-heading-sub">{c.oss.subtitle}</p>
@@ -1084,10 +1010,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
               <h4 class="oss-card-name">{item.name}</h4>
               <p class="oss-card-sub">{item.subtitle}</p>
             </div>
-            <span class="oss-status">
-              {#if item.statusType === "merged"}
-                <Check size={13} aria-hidden="true" />
-              {/if}
+            <span class="oss-status-pill status-{item.statusType}">
+              <span class="status-dot"></span>
               {item.status}
             </span>
           </div>
@@ -1122,11 +1046,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
     </div>
   </section>
 
-  <!-- Section Divider -->
-  <hr class="section-rule" />
-
   <!-- Experience Summary -->
-  <section class="portfolio-section" id="experience">
+  <section class="portfolio-section section-experience" id="experience">
     <div class="section-title-row">
       <h2 class="section-heading-large">{c.experience.title}</h2>
     </div>
