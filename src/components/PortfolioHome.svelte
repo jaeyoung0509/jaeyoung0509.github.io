@@ -84,12 +84,11 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
-        eyebrow: "Focus",
-        title: "What I Focus On",
-        p1: "In production, handling failure recovery rather than the happy path has consistently been the most critical problem.",
-        p2: "Whether duplicate inbound payment events, long-running data extraction jobs, or repetitive manual migration steps, I trace actual implementations when documentation is ambiguous and turn recurring recovery procedures into code and tools.",
-        p3: "When solving problems, I prefer aligning on context and constraints with PMs, operations, and fellow engineers over rushing to isolated conclusions. If domain terms or lifecycle states are interpreted differently across teams, even correct implementations lead to wrong outcomes—so standardizing shared language and operational boundaries comes first.",
-        p4: "When technical opinions diverge, I map out the operational constraints and tradeoffs of each option first. Once the team aligns on a direction—even if different from my initial preference—I execute against that decision and iterate based on real operational feedback.",
+        eyebrow: "Approach",
+        title: "Understanding Problems & Aligning Context with the Team",
+        p1: "In production, handling failure recovery rather than the happy path has consistently been the most critical problem. Managing duplicate payment events, long-running data collection, or repetitive migration workflows taught me the importance of knowing exactly where and how to resume execution after failures.",
+        p2: "When documentation is ambiguous, I trace actual implementations and turn recurring recovery procedures into code and tools.",
+        p3: "At the same time, rather than rushing to solo conclusions, I align on context and constraints with PMs, operations, and fellow engineers. When opinions diverge, I map out the costs and operational impacts of each option, and once a direction is decided, I execute fully aligned with the team's consensus.",
       },
       work: {
         title: "Selected Work",
@@ -171,12 +170,11 @@
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
-        eyebrow: "지향점",
-        title: "일할 때 집중하는 것",
-        p1: "정상 경로보다 실패 이후가 더 어려운 문제를 많이 다뤘습니다.",
-        p2: "중복으로 들어오는 결제 이벤트, 오래 실행되는 데이터 수집 작업, 사람이 반복해서 확인하던 migration 작업 등이 그랬습니다. 문서만으로 동작이 명확하지 않으면 실제 구현까지 확인하고, 반복되는 해결 과정은 코드나 도구로 옮겨 왔습니다.",
-        p3: "문제를 풀 때는 혼자 빠르게 결론을 내리기보다 PM, 운영 담당자, 동료 개발자와 맥락을 먼저 맞추는 방식을 선호합니다. 같은 용어나 상태를 서로 다르게 이해하면 구현이 맞아도 결과가 틀어질 수 있기 때문에, 도메인 언어와 제약을 정리하는 데 시간을 충분히 씁니다.",
-        p4: "기술적인 의견이 다를 때는 각 선택지의 제약과 운영 비용을 먼저 정리합니다. 충분히 논의한 뒤 팀에서 방향을 정하면 제 의견과 다르더라도 그 결정을 기준으로 실행하고, 실제 운영 결과를 보면서 다시 개선해 나갑니다.",
+        eyebrow: "작업 방식",
+        title: "문제를 이해하고, 팀과 맥락을 맞춥니다.",
+        p1: "정상 경로보다 실패 이후가 더 어려운 문제를 자주 다뤘습니다. 중복 결제 이벤트, 오래 실행되는 데이터 수집, 반복적인 migration 작업처럼 한 번 실패했을 때 상태를 어디서부터 다시 이어갈지가 중요한 문제들이었습니다.",
+        p2: "문서만으로 동작이 명확하지 않으면 실제 구현까지 확인하고, 반복되는 해결 과정은 코드나 도구로 옮깁니다.",
+        p3: "동시에 혼자 빠르게 결론을 내리기보다 PM, 운영 담당자, 동료 개발자와 문제의 맥락과 제약을 먼저 맞추려고 합니다. 의견이 다를 때는 각 선택지의 비용과 영향을 정리해 논의하고, 방향이 정해지면 그 결정을 기준으로 실행합니다.",
       },
       work: {
         title: "주요 작업",
@@ -349,7 +347,6 @@
       <p class="about-lead-statement">{c.about.p1}</p>
       <p class="about-sub-statement">{c.about.p2}</p>
       <p class="about-sub-statement">{c.about.p3}</p>
-      <p class="about-sub-statement">{c.about.p4}</p>
     </div>
   </section>
 
