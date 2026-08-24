@@ -125,6 +125,7 @@
         width="1800"
         height="1029"
         loading="eager"
+        fetchpriority="high"
         decoding="async"
       />
       {#if post.coverAlt}

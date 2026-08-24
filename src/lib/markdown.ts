@@ -232,6 +232,10 @@ export async function compileMarkdown(source: string): Promise<CompiledMarkdown>
           if (id && text) {
             headings.push({ depth, id, text });
           }
+        } else if (node.tagName === "img") {
+          node.properties = node.properties || {};
+          node.properties.loading = node.properties.loading || "lazy";
+          node.properties.decoding = node.properties.decoding || "async";
         }
       });
     })

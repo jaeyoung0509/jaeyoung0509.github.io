@@ -626,6 +626,7 @@ summary {
   overflow: hidden;
   background: var(--surface);
   text-decoration: none;
+  contain: paint;
 }
 
 .post-image img {
@@ -633,6 +634,7 @@ summary {
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+  image-rendering: auto;
   transition: transform var(--dur-short) var(--ease-out);
 }
 
@@ -745,6 +747,9 @@ summary {
 .article-cover {
   width: min(calc(100% - 40px), 1040px);
   margin: 48px auto 0;
+  contain: paint;
+  background: var(--surface);
+  border-radius: 2px;
 }
 
 .article-cover img {
@@ -753,6 +758,7 @@ summary {
   aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: 2px;
+  image-rendering: auto;
 }
 
 .article-cover figcaption {
