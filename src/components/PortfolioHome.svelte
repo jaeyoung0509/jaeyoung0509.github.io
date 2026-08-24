@@ -29,12 +29,15 @@
     lang = newLang;
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem("portfolio_lang", newLang);
         const url = new URL(window.location.href);
-        url.searchParams.set("lang", newLang);
+        if (newLang === "ko") {
+          url.searchParams.delete("lang");
+        } else {
+          url.searchParams.set("lang", newLang);
+        }
         window.history.replaceState({}, "", url.toString());
       } catch {
-        // Ignore localStorage/URL errors in restricted environments
+        // Ignore URL errors in restricted environments
       }
     }
   }
@@ -57,12 +60,7 @@
       if (paramLang === "ko" || paramLang === "en") {
         lang = paramLang;
       } else {
-        const saved = localStorage.getItem("portfolio_lang");
-        if (saved === "ko" || saved === "en") {
-          lang = saved;
-        } else if (navigator.language && navigator.language.startsWith("ko")) {
-          lang = "ko";
-        }
+        lang = "ko";
       }
 
       // Check deep link hash

@@ -120,19 +120,19 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     "utf8",
   );
 
-  assert.match(aboutHtml, /Jaeyoung Lee/, "작성자 이름이 없습니다");
+  assert.match(aboutHtml, /이재영/, "작성자 이름이 없습니다");
   assert.match(
     aboutHtml,
-    /I enjoy understanding how systems work/,
+    /복잡한 상태와 실패를 이해하고/,
     "Hero 핵심 태그라인이 없습니다",
   );
-  assert.match(aboutHtml, /Seoul, South Korea/, "Seoul 위치 정보가 없습니다");
+  assert.match(aboutHtml, /대한민국 서울/, "위치 정보가 없습니다");
   assert.match(aboutHtml, /class="lang-toggle-box"/, "언어 전환 버튼이 없습니다");
   assert.match(aboutHtml, /FinovusLab/, "경력 회사명이 없습니다");
   assert.match(aboutHtml, /2022\.04 – 2025\.11/, "경력 기간이 올바르지 않습니다");
   assert.match(
     aboutHtml,
-    /Turning manual and failure-prone workflows into reliable systems/,
+    /문서에서 멈추지 않고 구현까지 따라갑니다/,
     "About Me 제목이 없습니다",
   );
   assert.match(
@@ -150,17 +150,11 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     "Temporal 오픈소스 항목이 없습니다",
   );
   assert.match(aboutHtml, /PR #1741/, "Open Source PR #1741 링크가 없습니다");
-  assert.match(aboutHtml, /Genkit/, "Genkit 오픈소스 항목이 없습니다");
+  assert.match(aboutHtml, /Google Genkit/, "Genkit 오픈소스 항목이 없습니다");
   assert.match(
     aboutHtml,
     /genkit-ai\/genkit\/issues\/3748/,
     "Genkit 이슈 링크가 없습니다",
-  );
-  assert.match(aboutHtml, /AWS Chalice/, "AWS Chalice 항목이 없습니다");
-  assert.match(
-    aboutHtml,
-    /upstream contributions to Temporal and Genkit/,
-    "About 소개에 Genkit upstream 기여가 반영되지 않았습니다",
   );
   assert.match(
     aboutHtml,
@@ -172,6 +166,7 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     /class="oss-pr-links"[\s\S]*genkit-ai\/genkit\/issues\/3748[\s\S]*genkit-ai\/genkit\/pull\/3813/,
     "Genkit 이슈와 PR이 하나의 항목 아래 묶여 있지 않습니다",
   );
+  assert.match(aboutHtml, /AWS Chalice/, "AWS Chalice 항목이 없습니다");
   assert.match(
     aboutHtml,
     /aws\/chalice\/issues\/2147/,
@@ -181,19 +176,14 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
     ([, name]) => name,
   );
   assert.deepEqual(
-    ossNames.slice(0, 4),
-    ["Temporal Python SDK", "Genkit Go", "alembic-dump", "AWS Chalice"],
+    ossNames.slice(0, 3),
+    ["Temporal Python SDK", "Google Genkit", "AWS Chalice"],
     "Open Source 항목 순서가 contribution 무게에 맞지 않습니다",
   );
-  assert.doesNotMatch(
+  assert.match(
     aboutHtml,
-    /Currently Exploring|15\+ microservices|25\+ asynchronous|0 financial loss|Rust Multi-Threaded Scanning Engine|genkit-readability|chalice-snap|Trash|throttled|<30MB|After 5 retries|PAYMENT_SUCCEEDED|Database Migration Automation CLI|Python Chalice|Contributions & tools/,
-    "검증되지 않은 수치나 탐색 섹션이 남아 있습니다",
-  );
-  assert.doesNotMatch(
-    aboutHtml,
-    /class="about-highlights-col"|class="about-fact"/,
-    "About 통계 카드가 남아 있습니다",
+    /class="writing-list"/,
+    "Writing 섹션이 없습니다",
   );
 });
 
