@@ -96,8 +96,6 @@
           "Production systems I operated and developer tools I built.",
         expandCTA: "View details ↓",
         collapseCTA: "Close ↑",
-        confidentialityNote:
-          "*Implementation details and architecture topology are intentionally abstracted to protect proprietary company information.",
       },
       oss: {
         title: "Open Source",
@@ -182,8 +180,6 @@
           "실무에서 경험한 시스템과 직접 만든 프로젝트를 정리했습니다.",
         expandCTA: "자세히 보기 ↓",
         collapseCTA: "닫기 ↑",
-        confidentialityNote:
-          "*회사 내부 구현과 운영 정보를 보호하기 위해 아키텍처와 세부 수치는 일부 추상화했습니다.",
       },
       oss: {
         title: "오픈소스",
@@ -451,11 +447,6 @@
                     ? "담당자가 자료를 확인하며 수일 걸리던 사업자 신용평가를 외부 SaaS 연동으로 자동화해 정상 시간대에는 신청 후 10분 이내 처리되도록 했습니다. 작업 상태와 다음 실행 시각을 DynamoDB에 저장하고, 조건부 쓰기로 lease를 얻은 작업만 queue에 전달했습니다. 정부24·홈택스 등 외부 서비스 점검 중에는 다음 실행 시각을 점검 종료 이후로 옮겨 사용자가 다시 신청하지 않아도 기존 작업이 이어지게 했습니다."
                     : "Automated a manual credit-assessment process from several days to under 10 minutes during normal service hours. Job state and the next run time were persisted in DynamoDB; during government-service maintenance, the next run moved beyond the maintenance window so the original request could resume without user resubmission."}
                 </p>
-                <p class="cs-abstract-note">
-                  {lang === "ko"
-                    ? "*(구체적인 실제 운영 구조와 내부 복구 절차는 회사 자산에 해당하여 생략합니다.)*"
-                    : "*(Specific production topology and internal recovery procedures are omitted to protect proprietary company systems.)*"}
-                </p>
               </div>
 
               <!-- 4. Observability & Operability -->
@@ -481,11 +472,6 @@
                     : "More deployment units increased the cost of local reproduction and distributed tracing. I would now start with fewer deployable units and extract work only when fault isolation or independent retries justify the boundary."}
                 </p>
               </div>
-
-              <!-- Confidentiality Note -->
-              <p class="cs-confidential-note">
-                {c.work.confidentialityNote}
-              </p>
             </div>
           {/if}
         </div>
@@ -793,10 +779,10 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
               <!-- Retrospective / Next Steps -->
               <div class="cs-retro-block">
                 <p>
-                  <strong>{lang === "ko" ? "현재 범위:" : "Current scope:"}</strong>
+                  <strong>{lang === "ko" ? "확장 방향:" : "Roadmap:"}</strong>
                   {lang === "ko"
-                    ? "현재 공개 저장소에서 확인 가능한 범위는 PostgreSQL과 Alembic 중심입니다. 구현되지 않은 지원 계획보다 현재 사용법과 검증 흐름을 문서화하는 데 집중하고 있습니다."
-                    : "The public implementation currently focuses on PostgreSQL and Alembic. Documentation prioritizes the working verification flow over unimplemented database support."}
+                    ? "현재 안정화된 PostgreSQL 및 Alembic 환경을 기반으로, CLI 인터페이스 직관화와 설정 간소화 등 개발자 사용성(DX)을 지속해서 개선하고 있습니다. 나아가 로컬 경량 분석 및 테스트를 위한 DuckDB, 데이터 검증 및 변환을 위한 Pandas DataFrame, 그리고 범용 RDBMS인 MySQL 등 다양한 리소스와 데이터 소스를 유연하게 다룰 수 있도록 지원 범위를 확장하고 있습니다."
+                    : "Building on the stable PostgreSQL and Alembic foundation, ongoing work focuses on streamlining developer experience (DX) through intuitive CLI workflows and simpler configuration. Moving forward, the architecture is expanding to support a broader set of data resources—including DuckDB for lightweight local analytics and testing, Pandas DataFrames for flexible data validation, and MySQL connectivity."}
                 </p>
               </div>
             </div>
