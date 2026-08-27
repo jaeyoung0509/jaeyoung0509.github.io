@@ -74,45 +74,45 @@
           "Portfolio of Jaeyoung Lee, a backend software engineer with 3.5+ years building and operating payment, credit, contract, and settlement systems.",
       },
       hero: {
-        role: "Software Engineer",
+        role: "Backend Software Engineer",
         location: "Seoul, South Korea",
         name: "Jaeyoung Lee",
-        headline: "I build and operate backend systems that manage\ncomplex state and failure recovery.",
+        headline: "I built and operated systems for payments, credit,\ncontracts, and settlement—where recovery matters when things go wrong.",
         subheadline:
-          "Built and operated payment, credit evaluation, digital contracting, and merchant settlement backends for over 3.5 years. I build tools to remove everyday developer friction, and dive straight into library and open-source implementations whenever behavior feels ambiguous.",
+          "For over 3.5 years, I built and operated backends for payments, credit assessment, digital contracts, and settlement. When documentation does not explain the behavior, I read the implementation. When the same friction keeps coming back, I build a tool for it.",
         ctaWork: "Projects",
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
         eyebrow: "Approach",
-        title: "Understanding Problems & Aligning Context with the Team",
-        p1: "In financial backends handling payments, credit, and settlement, engineering resilience after failures matters far more than the happy path. I have focused extensively on ensuring idempotency against duplicate webhooks and designing bulletproof state recovery so long-running data workflows can resume safely after unexpected interruptions.",
-        p2: "When documentation is ambiguous, I trace actual library and framework implementations down to their source code, and I turn recurring developer friction into repeatable internal tools.",
-        p3: "Rather than rushing to solo conclusions, I proactively align on problem context and system constraints with PMs, operations, and fellow engineers. When technical trade-offs arise, I map out the operational impacts of each choice to build consensus and execute cleanly.",
+        title: "If I do not understand it, I check. If it repeats, I reduce it.",
+        p1: "Working on payments and credit assessment meant dealing with many external systems. I spent more time deciding where a failed job should resume than thinking about the once-through happy path. Duplicate events were processed only once, and long-running jobs saved intermediate state so they did not have to restart from the beginning.",
+        p2: "When documentation alone does not explain the behavior, I read the library or framework implementation. If I encounter the same problem several times, I move the solution into code or a small tool so nobody has to remember the workaround next time.",
+        p3: "When technology alone cannot settle a decision, I ask product and operations teammates how the work actually happens. Sometimes a less elegant implementation is the better choice because it disrupts the real workflow less.",
       },
       work: {
         title: "Projects",
         subtitle:
-          "Production backend systems I operated and developer tools I built.",
+          "Systems I operated at work, and tools I built because something kept getting in the way.",
         expandCTA: "View details ↓",
         collapseCTA: "Close ↑",
       },
       oss: {
         title: "Open Source",
         subtitle:
-          "Issues identified through hands-on usage and upstream contributions.",
+          "When a tool behaves oddly or falls short, I try to leave behind an issue or a patch instead of moving on.",
         contributions: [
           {
             name: "Temporal Python SDK",
             meta: "OpenAI Agents integration · PR #1741 · Merged",
-            desc: "While exploring the Temporal OpenAI Agents integration, traced execution differences between FunctionTools and Activity-backed tools in SDK source, contributing clearer documentation and diagram explanations upstream (PR #1741, merged).",
+            desc: "While testing the Temporal OpenAI Agents integration, I noticed that FunctionTools and Activity-backed tools ran in different places. The documentation did not explain why, so I followed the SDK implementation and added a diagram and documentation for the execution flow. PR #1741 was merged.",
             linkText: "PR #1741 ↗",
             linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
           },
           {
             name: "Google Genkit",
             meta: "Ollama Cloud Provider · PR #3813",
-            desc: "Reported Go Ollama documentation API mismatches in Issue #3748. Implemented the Ollama Cloud OpenAI-compatible provider with model capability mappings, documentation, and tests (PR #3813).",
+            desc: "While using the Ollama integration for Go, I found that the official example did not run as written and opened Issue #3748. I then used Ollama Cloud's OpenAI-compatible API to implement a provider, along with model capability mappings, tests, and documentation.",
             links: [
               {
                 label: "Issue #3748 ↗",
@@ -127,7 +127,7 @@
           {
             name: "AWS Chalice",
             meta: "Lambda versioning / alias · Issue #2147 · PR #2173 Review",
-            desc: "Discussed framework support for Python Lambda SnapStart in Issue #2147. Later reviewed PR #2173 (Lambda version/alias support), proposing pre-flight validation UX for alias constraints.",
+            desc: "While trying Python Lambda SnapStart with Chalice, I found that the framework made Lambda versions and aliases difficult to manage and discussed it in Issue #2147. I later reviewed PR #2173 and suggested validating invalid alias values before they reached deployment.",
             links: [
               {
                 label: "Issue #2147 ↗",
@@ -144,59 +144,59 @@
       experience: {
         title: "Experience",
         company: "FinovusLab",
-        role: "Software Engineer",
+        role: "Backend Software Engineer",
         period: "2022.04 – 2025.11",
         domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
         summary:
-          "Built and operated core payment, credit evaluation, digital contracting, and merchant settlement backends for a B2B BNPL platform. Handled post-payment async workflows, external partner integrations, duplicate event deduplication, and failure tracing.",
+          "Built and operated payment, credit assessment, digital contract, and settlement backends for a B2B BNPL platform. I mainly worked on post-payment asynchronous processing, external financial-service integrations, duplicate-event prevention, and production incident tracing.",
       },
     },
     ko: {
       meta: {
         title: "이재영 · Backend Software Engineer",
         description:
-          "결제, 신용평가, 전자계약, 정산 백엔드와 비동기 금융 워크플로를 개발하고 운영해 온 소프트웨어 엔지니어 이재영의 포트폴리오.",
+          "결제, 신용평가, 전자계약, 정산 백엔드와 비동기 금융 워크플로를 개발하고 운영해 온 백엔드 소프트웨어 엔지니어 이재영의 포트폴리오.",
       },
       hero: {
-        role: "소프트웨어 엔지니어",
+        role: "백엔드 소프트웨어 엔지니어",
         location: "대한민국 서울",
         name: "이재영",
-        headline: "복잡한 상태와 실패를 다루는\n백엔드 시스템을 만들고 운영해왔습니다.",
+        headline: "결제, 신용평가, 계약, 정산처럼\n한 번 잘못되면 복구가 중요한 시스템을 만들고 운영했습니다.",
         subheadline:
-          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 반복되는 번거로움은 직접 도구를 만들어 해결하고, 내부 동작이 모호할 때는 라이브러리와 오픈소스 코드 밑단까지 파고들어 확인합니다.",
+          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 문서만으로 이해가 안 되면 구현까지 내려가 보고, 같은 불편이 반복되면 직접 도구를 만들어 해결합니다.",
         ctaWork: "프로젝트 보기",
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
       about: {
         eyebrow: "일하는 방식",
-        title: "문제를 이해하고, 팀과 맥락을 맞춥니다.",
-        p1: "결제, 신용평가, 정산처럼 돈과 직결된 시스템에서는 성공 흐름(Happy path)보다 '실패했을 때 어떻게 복구할 것인가'가 엔지니어링의 본질이었습니다. 중복 웹훅 인입 시 결제가 두 번 처리되지 않도록 멱등성을 보장하고, 장시간 소요되는 데이터 수집이나 마이그레이션이 끊겨도 안전하게 이어갈 수 있도록 상태 복구 설계를 깊이 고민해 왔습니다.",
-        p2: "문서에 적힌 스펙만 믿기보다 오픈소스와 라이브러리의 내부 구현을 직접 뜯어보며 동작을 확인하고, 팀 내에서 반복되는 마찰과 비효율은 도구로 만들어 해결하는 것을 좋아합니다.",
-        p3: "동시에 혼자 빠르게 결론을 내리기보다 기획자, 운영 담당자, 동료 개발자와 문제의 맥락과 제약을 먼저 맞추려고 합니다. 의견이 다를 때는 각 선택지의 비용과 영향을 정리해 논의하고, 방향이 정해지면 그 결정을 기준으로 실행합니다.",
+        title: "모르면 확인하고, 반복되면 줄입니다.",
+        p1: "결제나 신용평가처럼 외부 시스템이 많이 얽힌 업무를 하다 보니, 정상적으로 한 번 처리되는 것보다 중간에 실패했을 때 어디서부터 다시 시작할지를 더 많이 고민했습니다. 중복 이벤트는 한 번만 처리되게 만들고, 오래 걸리는 작업은 중간 상태를 남겨 처음부터 다시 돌리지 않도록 했습니다.",
+        p2: "문서만 보고 동작이 잘 이해되지 않으면 라이브러리나 프레임워크 구현까지 내려가 확인합니다. 같은 문제를 여러 번 만나면 다음에는 사람이 기억하지 않아도 되도록 코드나 작은 도구로 옮기는 편입니다.",
+        p3: "기술만 보고 결정하기 어려운 문제는 기획자나 운영 담당자에게 실제 업무가 어떻게 돌아가는지 먼저 묻습니다. 구현이 조금 덜 예쁘더라도 실제 사용 흐름을 덜 깨뜨리는 쪽이 더 나은 경우도 꽤 있었습니다.",
       },
       work: {
         title: "주요 프로젝트",
         subtitle:
-          "현업에서 설계하고 운영한 백엔드 시스템과 직접 만든 오픈소스 프로젝트입니다.",
+          "회사에서 운영했던 시스템과, 일을 하거나 개발하면서 불편해서 직접 만든 도구들을 정리했습니다.",
         expandCTA: "자세히 보기 ↓",
         collapseCTA: "닫기 ↑",
       },
       oss: {
         title: "오픈소스",
         subtitle:
-          "사용하면서 발견한 문제를 정리하거나 직접 구현한 작업들입니다.",
+          "도구를 쓰다가 이상하거나 아쉬웠던 부분을 그냥 넘기지 않고, 이슈나 코드로 남긴 작업들입니다.",
         contributions: [
           {
             name: "Temporal Python SDK",
             meta: "OpenAI Agents integration · PR #1741 · Merged",
-            desc: "Temporal OpenAI Agents integration을 사용하며 FunctionTool과 Activity 기반 Tool의 실행 위치가 다르다는 점을 SDK 소스 코드에서 확인했습니다. 동작 구조를 명확히 설명하는 다이어그램과 문서를 보완해 PR #1741(Merged)을 기여했습니다.",
+            desc: "Temporal OpenAI Agents integration을 테스트하다가 FunctionTool과 Activity 기반 Tool의 실행 위치가 다르다는 걸 발견했습니다. 문서만으로는 이유를 이해하기 어려워 SDK 구현을 따라가 봤고, 실행 구조를 설명하는 다이어그램과 문서를 추가했습니다. PR #1741은 merge되었습니다.",
             linkText: "PR #1741 ↗",
             linkUrl: "https://github.com/temporalio/sdk-python/pull/1741",
           },
           {
             name: "Google Genkit",
             meta: "Ollama Cloud Provider · PR #3813",
-            desc: "Go Ollama 공식 문서 예제의 API 불일치를 Issue #3748로 리포트했습니다. 이후 Ollama Cloud의 OpenAI 호환 Provider를 구현하고, model capability mapping과 문서 및 테스트를 함께 추가했습니다.",
+            desc: "Go용 Ollama integration을 써보다가 공식 예제대로는 동작하지 않는 부분을 발견해 Issue #3748을 열었습니다. 이후 Ollama Cloud가 OpenAI-compatible API를 제공한다는 점을 이용해 provider를 구현하고, model capability mapping과 테스트, 문서를 함께 추가했습니다.",
             links: [
               {
                 label: "Issue #3748 ↗",
@@ -211,7 +211,7 @@
           {
             name: "AWS Chalice",
             meta: "Lambda versioning / alias · Issue #2147 · PR #2173 Review",
-            desc: "Chalice에서 Python Lambda SnapStart를 사용할 때 필요한 프레임워크 지원 여부를 Issue #2147에서 논의했습니다. 이후 Lambda version 및 alias 지원을 추가하는 PR #2173을 리뷰하며 alias 값을 배포 전에 사전 검증하는 방식을 제안했습니다.",
+            desc: "Chalice에서 Python Lambda SnapStart를 써보려다 Lambda version과 alias를 프레임워크에서 다루기 어렵다는 걸 확인해 Issue #2147에서 논의했습니다. 이후 관련 기능을 추가하는 PR #2173을 리뷰하면서, 잘못된 alias 값이 배포 단계까지 가지 않도록 미리 검증하는 방식을 제안했습니다.",
             links: [
               {
                 label: "Issue #2147 ↗",
@@ -228,11 +228,11 @@
       experience: {
         title: "경력",
         company: "FinovusLab",
-        role: "Software Engineer",
+        role: "Backend Software Engineer",
         period: "2022.04 – 2025.11",
         domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
         summary:
-          "B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다. 결제 이후 이벤트 기반 비동기 워크플로, 외부 금융 서비스 연동, 중복 이벤트 처리 및 분산 환경의 장애 추적을 담당했습니다.",
+          "B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다. 결제 이후 비동기 처리, 외부 금융 서비스 연동, 중복 이벤트 방지와 장애 추적 같은 운영 이슈를 주로 다뤘습니다.",
       },
     },
   });
@@ -381,13 +381,13 @@
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "외부 시스템의 지연과 실패가 결제 요청 경로로 전파되지 않도록, 결제 승인과 한도 변경은 동기로 유지하고 독립 재시도가 가능한 후속 업무만 Lambda, EventBridge와 SQS로 분리했습니다."
-              : "Kept payment approval and credit-limit changes synchronous, while moving independently retryable work to Lambda, EventBridge, and SQS."}
+              ? "결제 승인과 한도 변경처럼 바로 결과가 필요한 부분은 동기로 두고, 알림이나 후속 처리처럼 따로 재시도할 수 있는 작업은 Lambda, EventBridge와 SQS로 분리했습니다. 외부 시스템이 느리거나 실패해도 결제 요청 자체가 같이 막히지 않게 하기 위해서였습니다."
+              : "I kept payment approval and credit-limit changes synchronous because they need an immediate result. Notifications and other work that could be retried separately moved to Lambda, EventBridge, and SQS so a slow or failed external system would not block the payment request itself."}
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
-              ? "수일 걸리던 신용평가를 정상 시간대 10분 이내로 자동화하고, 주 15~20시간 걸리던 납부 안내 업무를 자동화했습니다."
-              : "Automated credit assessments from several days to under 10 minutes during normal service hours, and eliminated 15–20 hours of weekly manual payment-notice work."}
+              ? "수일 걸리던 신용평가 처리를 정상 시간대 기준 10분 이내로 줄였고, 주 15~20시간가량 걸리던 납부 안내 업무도 자동화했습니다."
+              : "Cut credit assessment from several days to under 10 minutes during normal service hours, and automated payment-notice work that had taken roughly 15–20 hours each week."}
           </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
@@ -425,13 +425,13 @@
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "동시성 제어: 한도 차감과 승인 트랜잭션의 원자성 보장"
+                    ? "동시성 제어: 한도 차감과 승인 상태를 함께 쓰기"
                     : "Concurrency Control: Atomic Limit Deduction & Approval"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "동일 고객의 중복 결제 요청이나 한도 조회가 겹치는 동시성 이슈를 방어하기 위해 DynamoDB 조건부 쓰기(Conditional Writes) 기반 락을 적용했습니다. 한도 차감, 승인 레코드 생성, 취소 시 한도 복원 흐름을 TransactWriteItems로 묶어 완벽한 원자성을 보장하고, 핵심 상태가 DB에 커밋된 직후에만 후속 이벤트를 발행하도록 설계했습니다. 아울러 다양한 산업군 파트너사의 정산 요구사항은 공통 규칙과 파트너별 정책으로 분리해 도메인 모델에 반영했습니다."
-                    : "To guard against duplicate checkout requests and overlapping limit inquiries for the same customer, I used DynamoDB conditional writes as distributed locks. Limit deductions, approval record creation, and rollback restorations were bundled into TransactWriteItems to guarantee atomicity, publishing follow-up domain events only after state was committed. Partner-specific terms were decoupled into reusable policies within the domain model."}
+                    ? "같은 고객의 결제 요청이나 한도 조회가 겹칠 때는 DynamoDB 조건부 쓰기(Conditional Writes)로 먼저 처리할 작업을 정했습니다. 한도 차감과 승인 레코드 생성, 취소 시 한도 복원은 TransactWriteItems 한 요청에 넣었고, DB 반영이 끝난 뒤에만 후속 이벤트를 발행했습니다. 파트너사마다 다른 정산 조건은 공통 규칙과 파트너별 정책으로 나눠 도메인 모델에 반영했습니다."
+                    : "When payment requests or credit-limit checks overlapped for the same customer, DynamoDB conditional writes decided which request could proceed. Limit deduction and approval creation—and limit restoration on cancellation—were placed in one TransactWriteItems request. Follow-up events were published only after the database write completed. Partner-specific settlement terms were split between shared rules and partner policies in the domain model."}
                 </p>
               </div>
 
@@ -458,8 +458,8 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "복잡한 정산 리포팅과 다차원 조회를 원활히 지원하기 위해 데이터를 Aurora PostgreSQL로 투영하고, 반복되던 백오피스 검색 조건을 SQLAlchemy 기반 QueryCriteria 패턴으로 표준화했습니다. 이를 통해 신규 조회 API 개발 기간을 2~3일에서 3~4시간으로 대폭 단축했습니다. 또한 고객과 결제 상태에 따라 발송 대상과 안내 데이터를 사전 산출하는 배치를 구축해, 매주 15~20시간씩 걸리던 수작업 납부 안내 추출과 발송을 완전히 자동화했습니다."
-                    : "To support complex multidimensional reporting, read data was projected into Aurora PostgreSQL, and recurring back-office filters were standardized using a SQLAlchemy QueryCriteria pattern. This cut turnaround time for new query APIs from 2–3 days to 3–4 hours. I also built pipelines to pre-compute recipient targeting and payment payloads, completely eliminating 15–20 hours of repetitive weekly manual operations."}
+                    ? "정산 리포팅과 여러 조건을 조합한 조회를 위해 데이터를 Aurora PostgreSQL로 옮기고, 반복되던 백오피스 검색 조건은 SQLAlchemy 기반 QueryCriteria 패턴으로 정리했습니다. 신규 조회 API를 만드는 데 걸리던 시간은 보통 2~3일에서 3~4시간으로 줄었습니다. 고객과 결제 상태에 따라 발송 대상과 안내 데이터를 미리 계산하는 배치도 만들어, 매주 15~20시간씩 걸리던 납부 안내 추출과 발송을 자동화했습니다."
+                    : "For settlement reports and queries with many filter combinations, I projected data into Aurora PostgreSQL and collected recurring back-office filters in a SQLAlchemy QueryCriteria pattern. A new query API that usually took 2–3 days could then be built in 3–4 hours. I also added a batch job that precomputed recipients and notice data, automating payment-notice work that had taken 15–20 hours each week."}
                 </p>
               </div>
 
@@ -520,18 +520,18 @@
           <h3 class="work-title">MOONBERG</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "감사 증빙을 위해 Bloomberg Terminal 조회 화면을 건별로 기록해야 했지만 사용할 수 있는 단말기는 한 대뿐이었습니다. 감사 시즌에 몰리는 요청을 순서대로 처리하고 실패 후 이어갈 수 있도록 비동기 작업 파이프라인을 만들었습니다."
-              : "Built an asynchronous pipeline for audit evidence that had to be captured case by case from a single Bloomberg Terminal."}
+              ? "감사 증빙을 위해 Bloomberg Terminal 조회 화면을 건별로 기록해야 했지만, 사용할 수 있는 단말기는 한 대뿐이었습니다. 감사 시즌에 몰리는 요청을 쌓아두고 하나씩 처리하면서, 중간에 실패해도 이어서 실행할 수 있는 작업 파이프라인을 만들었습니다."
+              : "Audit evidence required recording each Bloomberg Terminal result, but only one terminal was available. I built a pipeline that queued the requests that piled up during audit season, processed them one at a time, and resumed after an interrupted job."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "Go API가 요청을 PGMQ에 저장하고 Python worker가 단일 단말기에서 순차 실행하도록 구성했습니다. 작업 상태와 결과를 분리해 사용자 개입이나 실패 이후에도 재시도와 결과 검증을 따로 수행할 수 있게 했습니다."
-              : "The Go API persisted requests in PGMQ, and a Python worker executed them sequentially on the terminal. Job state and output were stored separately so retries and result validation could proceed independently."}
+              ? "Go API가 요청을 PGMQ에 쌓고, Python worker가 단일 Terminal에서 하나씩 실행하도록 만들었습니다. 진행 상태와 결과는 따로 저장해서 사람이 중간에 개입하거나 작업이 실패해도 처음부터 다시 돌리지 않고 이어서 처리할 수 있게 했습니다."
+              : "The Go API queued requests in PGMQ, and a Python worker ran them one at a time on the terminal. Progress and results were stored separately so an interrupted or manually paused job could continue instead of starting over."}
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
-              ? "반복적인 데이터 수집 및 대사 수작업을 약 60~80% 절감했습니다."
-              : "Reduced repetitive data collection and reconciliation tasks by ~60–80%."}
+              ? "데이터 수집과 대사에 들어가던 수작업을 약 60~80% 줄였습니다."
+              : "Reduced manual data collection and reconciliation work by roughly 60–80%."}
           </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
@@ -559,8 +559,8 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "회계 감사 증빙을 위해 Bloomberg Terminal의 조회 화면을 요청 건별로 캡처하고 대사해야 했지만, 라이선스 제약으로 사내에서 사용할 수 있는 단말기는 단 1대뿐이었습니다. 감사 시즌마다 요청이 한꺼번에 몰려 전담 인력이 밤샘 수작업을 해야 할 정도였고, 한 작업에도 수 분씩 소요되었습니다. 단 1대의 물리 장비에서 요청을 유실 없이 순서대로 소화하기 위해, 요청 접수(HTTP API)와 실제 단말기 실행 워커를 완전히 분리하는 비동기 큐잉 파이프라인을 구축했습니다."
-                    : "Audit evidence required capturing and reconciling Bloomberg Terminal outputs for each financial query, but only a single terminal was available due to licensing constraints. During audit season, requests flooded in faster than manual workflows could manage, with single jobs taking minutes. To reliably process jobs sequentially without packet loss on one physical machine, I decoupled HTTP ingestion from physical execution into an asynchronous queue pipeline."}
+                    ? "감사 증빙을 위해 Bloomberg Terminal 조회 화면을 요청마다 캡처하고 대사해야 했지만, 사용할 수 있는 단말기는 한 대뿐이었습니다. 감사 시즌에는 한 작업에 수 분씩 걸리는 요청이 한꺼번에 몰렸습니다. 요청을 먼저 받아 쌓아두고 단말기에서는 하나씩 실행할 수 있도록 HTTP API와 실행 worker를 분리했습니다."
+                    : "Audit evidence required capturing and reconciling a Bloomberg Terminal result for every request, but only one terminal was available. During audit season, requests that each took several minutes arrived in batches. I separated the HTTP API from the execution worker so requests could be queued first and run one at a time on the terminal."}
                 </p>
               </div>
 
@@ -573,8 +573,8 @@
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "경량성과 빠른 응답 속도를 위해 Go로 접수 API를 구축해 요청 즉시 추적용 Job ID를 발급하고, PostgreSQL 기반 메시지 큐인 PGMQ에 작업을 적재했습니다. 전용 단말기에서 구동되는 Python 워커는 queued → dispatched → running → succeeded/failed 상태를 엄격히 따르며 한 번에 하나씩 작업을 실행합니다. 특히 작업 진행 상태와 최종 수집 산출물(스크린샷, 정규화 데이터)의 저장을 분리해, 클라이언트 재접속 후에도 완료된 증빙 데이터를 안전하게 재조회할 수 있도록 구성했습니다."
-                    : "Built a lightweight intake API in Go to issue immediate tracking Job IDs and enqueue work into PGMQ (Postgres Message Queue). A Python worker running on the dedicated terminal consumed jobs sequentially through strict state transitions: queued, dispatched, running, and succeeded/failed. State transitions and output artifacts were decoupled in storage, allowing clients to reliably fetch audit payloads even after connection drops."}
+                    ? "Go API는 요청을 받으면 추적용 Job ID를 돌려주고 PostgreSQL 기반 메시지 큐인 PGMQ에 작업을 쌓았습니다. 전용 단말기의 Python worker는 queued → dispatched → running → succeeded/failed 상태를 기록하며 한 번에 하나씩 실행했습니다. 진행 상태와 수집 결과를 따로 저장해, 클라이언트가 다시 접속해도 완료된 증빙을 조회할 수 있게 했습니다."
+                    : "The Go API returned a tracking job ID and queued the work in PGMQ, a PostgreSQL-based message queue. A Python worker on the dedicated terminal recorded queued, dispatched, running, and succeeded/failed states while executing one job at a time. Progress and collected output were stored separately so completed evidence remained available after a client reconnected."}
                 </p>
               </div>
 
@@ -619,8 +619,8 @@
                     </p>
                     <p class="cs-fail-a">
                       {lang === "ko"
-                        ? "사람이 단말기를 직접 조작하거나 다른 작업이 끼어들어 데이터가 오염되는 상황을 항상 염두에 두었습니다. PGMQ의 가시성 타임아웃을 활용해 중간에 끊긴 작업은 큐로 되돌려 안전하게 재시도되도록 하고, 작업 상태와 수집 결과를 분리 저장해 재실행과 증빙 데이터 검증이 서로 꼬이지 않게 했습니다."
-                        : "Because other team members might physically use the terminal, preventing data contamination was a primary constraint. PGMQ visibility timeouts safely requeue interrupted jobs for retry, while keeping execution states separate from collected evidence ensures retries and validations never collide."}
+                        ? "사람이 단말기를 직접 조작하거나 다른 작업이 끼어들면 실행 중이던 작업이 중단될 수 있었습니다. 이때 PGMQ의 가시성 타임아웃이 지난 작업은 큐로 돌아가 다시 실행됩니다. 작업 상태와 수집 결과는 따로 저장해 재실행이 기존 증빙 데이터를 덮어쓰지 않게 했습니다."
+                        : "Someone using the terminal could interrupt a running job. After the PGMQ visibility timeout, that job returned to the queue for another attempt. Execution state and collected output were stored separately so a retry did not overwrite existing evidence."}
                     </p>
                   </div>
                 </div>
@@ -683,13 +683,13 @@
           <h3 class="work-title">ALEMBIC DUMP</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "여러 개발자가 하나의 기능을 여러 서비스와 브랜치에서 나눠 개발하면서 Alembic migration 순서와 DB 상태가 달라지는 문제가 반복됐습니다. 로컬 sample data만으로는 실제 데이터 타입과 cardinality에 영향을 받는 query까지 검증하기 어려웠습니다."
-              : "Parallel work across services and branches repeatedly produced mismatched Alembic revision order and database state. Local sample data was not enough to validate queries affected by real data types and cardinality."}
+              ? "여러 개발자가 하나의 기능을 여러 서비스와 브랜치에서 나눠 작업하다 보니 Alembic migration 순서와 각자의 로컬 DB 상태가 자주 어긋났습니다. sample data만으로는 실제 데이터 타입이나 cardinality에 따라 달라지는 query까지 확인하기 어려웠습니다."
+              : "When several developers split one feature across services and branches, Alembic migration order and local database state often drifted apart. Sample data was not enough to check queries whose behavior depended on real data types or cardinality."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "실제에 가까운 schema와 데이터 형상을 로컬에 재현하고 migration 상태를 확인하는 과정을 단일 워크플로로 묶었습니다."
-              : "Combined representative local schema and data setup with migration-state checks in one workflow."}
+              ? "운영 DB의 schema와 필요한 데이터를 마스킹해 로컬로 가져오고, Alembic migration 상태까지 한 번에 맞출 수 있는 CLI를 만들었습니다."
+              : "I built a CLI that masks and copies the required schema and data from the production database into a local environment, then brings the Alembic migration state in sync."}
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
@@ -769,8 +769,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                     </p>
                     <p class="cs-fail-a">
                       {lang === "ko"
-                        ? "원격 스테이징 DB에서 추출한 원본 데이터에 YAML 설정 기반의 컬럼별 마스킹 규칙을 인메모리에서 먼저 적용한 뒤 로컬 DB에 적재합니다. 민감 개인정보는 완전히 난수화하거나 마스킹 처리되지만, 실제 운영과 동일한 데이터 타입, 외래키 제약조건, 데이터 형상을 온전히 보존하여 완벽한 로컬 테스트 환경을 제공합니다."
-                        : "Column-level masking rules configured in YAML are applied in-memory before source data touches the local database. While sensitive customer records are hashed or replaced, real data types, foreign-key constraints, and structural cardinalities remain intact, providing a representative local testing sandbox without security risks."}
+                        ? "원격 스테이징 DB에서 읽은 데이터에는 YAML로 설정한 컬럼별 마스킹 규칙을 메모리에서 먼저 적용한 뒤 로컬 DB에 적재합니다. 개인정보 값은 난수나 마스킹된 값으로 바꾸되, 데이터 타입과 외래키 제약조건, 테스트에 필요한 데이터 분포는 유지했습니다."
+                        : "Column-level masking rules from YAML are applied in memory before data is written to the local database. Personal values are randomized or masked while preserving data types, foreign-key constraints, and the data distribution needed for testing."}
                     </p>
                   </div>
                 </div>
@@ -833,18 +833,13 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
           <h3 class="work-title">ZENITH</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "빌드 캐시 정리, Docker 데이터 비우기, 로컬 AI 모델과 포트 점유 프로세스 관리가 여러 도구에 파편화되어 있었습니다. 여러 유료 툴을 전전하지 않고, 개발자에게 꼭 필요한 시스템 정리 기능을 하나의 가볍고 안전한 로컬 앱으로 모으고자 오픈소스로 개발했습니다."
-              : "Managing build caches, Docker storage, local AI models, and lingering background processes often means juggling multiple disjointed utilities and paid tools. I built Zenith to unify these everyday developer cleanup tasks into a single, lightweight, and transparent local app."}
+              ? "빌드 캐시, Docker 데이터, 로컬 AI 모델처럼 개발하면서 쌓이는 파일을 정리할 때마다 여러 도구를 오가야 했습니다. 제가 자주 쓰는 기능만 한곳에서 쓸 수 있는 가벼운 macOS 앱을 직접 만들기 시작했습니다."
+              : "Cleaning up build caches, Docker data, and local AI models meant jumping between several tools. I started building a lightweight macOS app that puts the cleanup features I use most in one place."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "실수로 소스 코드가 지워지는 일이 없도록 Rust 백엔드가 보호 경로와 서명을 철저히 재검증하고, UI에는 실제 경로 대신 스캔 세션 ID만 전달해 오삭제 위험을 원천 차단했습니다. 삭제 전 미리보기와 포트 점유 프로세스 강제 종료도 함께 지원합니다."
-              : "To prevent accidental deletion of source code or critical configs, the Rust backend rigorously re-validates signature scopes and protected paths, while the Svelte UI receives only opaque scan IDs. It supports dry-run previews, risk classifications, and selective termination of processes holding local ports."}
-          </p>
-          <p class="work-highlight-line">
-            {lang === "ko"
-              ? "엄격한 안전 경계(Safety Boundary)와 ID 기반 삭제 모델로 소스 코드 손상 위험 없이 수십 GB의 개발 아티팩트를 안전하게 정리합니다."
-              : "Safely reclaims tens of gigabytes of disk space from build artifacts without risking active source code, using strict safety boundaries and ID-based execution."}
+              ? "삭제 기능은 UI에서 받은 경로를 그대로 신뢰하지 않도록 만들었습니다. Rust 쪽에서 먼저 파일을 스캔해 ID를 발급하고, 실제 삭제 시점에 보호 경로와 파일 정보를 다시 확인합니다. 삭제 전에는 지워질 항목을 미리 볼 수 있고, 포트를 점유한 프로세스도 함께 정리할 수 있습니다."
+              : "The delete flow does not trust a path supplied by the UI. Rust scans each file and issues an ID first, then checks protected paths and file metadata again when deletion begins. The app also previews what will be removed and can stop processes holding local ports."}
           </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
@@ -865,13 +860,13 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "안전 설계: 오삭제를 원천 방지하는 안전 경계(Safety Boundary)"
-                    : "Safety Design: Zero-Data-Loss Safety Boundaries"}
+                    ? "삭제 경로를 UI에서 받지 않는 이유"
+                    : "Why the UI Does Not Supply Delete Paths"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "로컬 개발 과정에서 수십 기가바이트의 Cargo target/, node_modules, Docker 캐시가 알게 모르게 디스크를 잠식합니다. 시스템 정리 도구에서 가장 치명적인 사고는 소스 코드나 키체인 같은 중요 파일의 오삭제이므로, 단순 대량 삭제보다 엄격한 '안전 삭제 경계(Safety Boundary)'를 최우선 원칙으로 설계했습니다."
-                    : "Tens of gigabytes of hidden Cargo target/ directories, node_modules, and Docker caches accumulate across a developer's machine. Because accidental deletion of active source files or credentials is catastrophic, Zenith prioritizes bulletproof safety boundaries over naive bulk removal."}
+                    ? "Cargo target/, node_modules, Docker 캐시는 개발하다 보면 수십 GB까지 쌓입니다. 하지만 정리 앱이 UI에서 받은 파일 경로를 그대로 삭제하면 소스 코드도 대상이 될 수 있습니다. 그래서 삭제 후보를 Rust가 직접 스캔해 정하고, UI는 그 결과에 붙은 ID만 선택하도록 만들었습니다."
+                    : "Cargo target/ directories, node_modules, and Docker caches can grow to tens of gigabytes. But a cleanup app that deletes any path supplied by its UI could also remove source code. Rust therefore discovers the candidates itself, and the UI can select only the IDs returned by that scan."}
                 </p>
               </div>
 
@@ -879,13 +874,13 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
               <div class="cs-block">
                 <h4 class="cs-heading">
                   {lang === "ko"
-                    ? "권한 격리: 프론트엔드의 경로 직접 참조 차단 및 백엔드 원샷 검증"
-                    : "Authority Isolation: Shielding Raw Paths via Rust Backend Execution Plans"}
+                    ? "스캔 ID로만 삭제 요청하기"
+                    : "Deleting Only by Scan ID"}
                 </h4>
                 <p class="cs-prose">
                   {lang === "ko"
-                    ? "Svelte UI는 파일 경로나 정리 로직을 직접 다루지 않고, 현재 스캔 세션에서 발급된 불투명한 임시 Item ID만 Rust 백엔드로 전달합니다. Rust의 SafetyPlanner가 사전 등록된 서명 스코프와 리스크 분류(Safe / Rebuild / Manual)를 엄격히 재검증한 뒤 안전한 원샷 삭제 계획(One-shot Delete Plan)을 생성합니다."
-                    : "The Svelte UI never references filesystem paths directly; it only transmits opaque item IDs from the active scan back to Rust. Rust's SafetyPlanner re-validates registered signature scopes and risk tiers (Safe / Rebuild / Manual) to generate a verifiable one-shot execution plan."}
+                    ? "Svelte UI는 실제 파일 경로 대신 현재 스캔에서 발급된 임시 Item ID만 Rust로 보냅니다. Rust의 SafetyPlanner는 ID에 연결된 경로가 등록된 아티팩트 패턴에 맞는지, Safe / Rebuild / Manual 중 어떤 항목인지 다시 확인한 뒤 삭제 계획을 만듭니다."
+                    : "The Svelte UI sends Rust only a temporary item ID from the current scan, not a filesystem path. Rust's SafetyPlanner checks the linked path against registered artifact patterns and its Safe, Rebuild, or Manual category before creating the delete plan."}
                 </p>
                 <ul class="cs-bullet-list">
                   <li>
@@ -893,14 +888,14 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                     <span>
                       {lang === "ko"
                         ? "사전에 정의된 빌드 아티팩트 서명(Signature Scope) 내에서만 삭제 후보를 생성합니다."
-                        : "Generates cleanup candidates strictly within pre-registered build artifact signature scopes."}
+                        : "Creates cleanup candidates only from registered build-artifact patterns."}
                     </span>
                   </li>
                   <li>
                     <Check size={14} class="check-accent" />
                     <span>
                       {lang === "ko"
-                        ? "심볼릭 링크(Symlink)와 소스 코드 루트, 키체인 등 보호 경로를 완벽히 차단하고, 삭제 직전 파일 시스템 Identity(inode/metadata)를 재검증해 스캔 후 대상이 변경되었을 경우 즉시 실행을 중단합니다."
+                        ? "심볼릭 링크(Symlink), 소스 코드 루트, 키체인 같은 보호 경로는 후보에서 제외합니다. 삭제 직전에는 inode와 metadata를 다시 읽고, 스캔 이후 대상이 달라졌으면 실행을 중단합니다."
                         : "Re-verifies filesystem identity (inode/metadata) immediately before deletion, blocking symlinks and protected paths to abort if files changed post-scan."}
                     </span>
                   </li>
@@ -946,8 +941,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                     </p>
                     <p class="cs-fail-a">
                       {lang === "ko"
-                        ? "파일 탐색은 UI 메인 스레드와 분리된 Rust의 spawn_blocking 백그라운드 워커에서 비동기로 수행하고, 진행률과 집계 데이터는 Tauri IPC 이벤트로 스트리밍해 UI 프레임 드랍을 원천 차단했습니다. 또한 깃 루트, 키체인 같은 보호 경로 규칙과 삭제 직전 inode 기반 identity 재검증으로, 스캔 이후 대상이 달라졌을 때 즉시 삭제를 중단하도록 방어했습니다."
-                        : "Deep scanning runs asynchronously in background Rust workers via spawn_blocking, streaming progress and size metrics over Tauri IPC to maintain seamless UI responsiveness. Strict protected-path rules combined with pre-execution inode re-verification instantly halt operations if file targets shift."}
+                        ? "파일 탐색은 UI 메인 스레드와 분리된 Rust spawn_blocking worker에서 수행합니다. 진행률과 집계 데이터는 Tauri IPC 이벤트로 보내 스캔 중에도 UI를 조작할 수 있게 했습니다. 삭제 직전에는 보호 경로 규칙과 inode를 다시 확인하고, 스캔 이후 대상이 달라졌으면 삭제하지 않습니다."
+                        : "File traversal runs in a Rust spawn_blocking worker away from the UI thread. Progress and size totals are sent through Tauri IPC events so the UI remains usable during a scan. Before deletion, Rust checks protected-path rules and the inode again, and skips the operation if the target changed after scanning."}
                     </p>
                   </div>
                 </div>
@@ -958,8 +953,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 <p>
                   <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
-                    ? "시스템 정리 도구는 화려한 기능보다 '실수로 지우지 않는다'는 신뢰가 핵심이라는 생각으로 안전 경계와 ID 기반 검증 구조를 가장 신경 썼습니다. 현재 macOS 환경에서 기본 동작을 단단히 다진 만큼, 향후 Windows/Linux 크로스 플랫폼 지원과 장시간 방치된 프로세스 자동 감지 기능으로 확장해 나갈 계획입니다."
-                    : "For a system cleanup tool, the absolute certainty that it will never delete active work matters far more than a long feature list. Having proven the safety model on macOS, the next milestone is expanding cross-platform support to Windows and Linux, along with automated detection for long-running orphaned processes."}
+                    ? "정리 기능을 더 붙이는 것보다, 어떤 경로가 왜 삭제 대상이 됐는지 확인할 수 있는 구조를 먼저 만들었습니다. 현재는 macOS에서 쓰고 있고, 다음에는 Windows/Linux 지원과 오래 떠 있는 프로세스 감지 기능을 추가할 계획입니다."
+                    : "Before adding more cleanup features, I built a flow that makes it possible to inspect which path was selected and why. It currently runs on macOS; Windows and Linux support and detection for long-running processes are next."}
                 </p>
               </div>
             </div>

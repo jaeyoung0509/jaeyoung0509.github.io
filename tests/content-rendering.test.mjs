@@ -123,7 +123,7 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(aboutHtml, /이재영/, "작성자 이름이 없습니다");
   assert.match(
     aboutHtml,
-    /복잡한 상태와 실패를 다루는/,
+    /한 번 잘못되면 복구가 중요한 시스템/,
     "Hero 핵심 태그라인이 없습니다",
   );
   assert.match(aboutHtml, /대한민국 서울/, "위치 정보가 없습니다");
@@ -132,12 +132,12 @@ test("About 페이지에 Hero, About Me, Selected Work(ZENITH 포함), Open Sour
   assert.match(aboutHtml, /2022\.04 – 2025\.11/, "경력 기간이 올바르지 않습니다");
   assert.match(
     aboutHtml,
-    /문제를 이해하고, 팀과 맥락을 맞춥니다/,
+    /모르면 확인하고, 반복되면 줄입니다/,
     "About Me 제목이 없습니다",
   );
   assert.match(
     aboutHtml,
-    /동시에 혼자 빠르게 결론을 내리기보다/,
+    /실제 업무가 어떻게 돌아가는지 먼저 묻습니다/,
     "About 페이지에 협업 및 맥락 정렬 설명이 없습니다",
   );
   assert.match(
