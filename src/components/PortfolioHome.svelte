@@ -376,7 +376,7 @@
           <h3 class="work-title">PAYMONTHS</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "개인사업자와 법인사업자를 위한 B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산과 팩토링 후속 처리를 개발하고 운영했습니다."
+              ? "사업자를 위한 B2B BNPL 플랫폼에서 결제, 신용평가, 전자계약, 정산과 팩토링 후속 처리를 개발하고 운영했습니다."
               : "Built and operated a B2B BNPL platform for sole proprietors and corporations across payments, credit assessment, contracting, and settlement."}
           </p>
           <p class="work-premise-sub">
