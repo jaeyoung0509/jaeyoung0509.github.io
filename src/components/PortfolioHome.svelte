@@ -79,7 +79,7 @@
         name: "Jaeyoung Lee",
         headline: "I build and operate backend systems that manage\ncomplex state and failure recovery.",
         subheadline:
-          "Built and operated payment, credit evaluation, digital contracting, and merchant settlement backends for over 3.5 years. Outside work, I build small developer tools for repetitive friction and trace libraries and open source code to their implementation.",
+          "Built and operated payment, credit evaluation, digital contracting, and merchant settlement backends for over 3.5 years. I build tools to remove everyday developer friction, and dive straight into library and open-source implementations whenever behavior feels ambiguous.",
         ctaWork: "Selected Work",
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
@@ -163,7 +163,7 @@
         name: "이재영",
         headline: "복잡한 상태와 실패를 다루는\n백엔드 시스템을 만들고 운영해왔습니다.",
         subheadline:
-          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 반복되는 문제는 작은 도구로 만들고, 동작이 궁금한 부분은 라이브러리와 오픈소스 구현까지 확인합니다.",
+          "결제, 신용평가, 전자계약, 정산 백엔드를 3.5년 이상 개발하고 운영했습니다. 반복되는 번거로움은 직접 도구를 만들어 해결하고, 내부 동작이 모호할 때는 라이브러리와 오픈소스 코드 밑단까지 파고들어 확인합니다.",
         ctaWork: "주요 작업 보기",
         techStack: ["Python", "Go", "PostgreSQL", "AWS"],
       },
@@ -614,13 +614,13 @@
                   <div class="cs-failure-item">
                     <p class="cs-fail-q">
                       {lang === "ko"
-                        ? "매크로 실행 중 사용자가 개입하거나 워커가 중단되면?"
-                        : "What if a user intervenes or the worker stops mid-run?"}
+                        ? "단말기에서 데이터 수집 중 사용자가 개입하거나 프로세스가 중단되면?"
+                        : "What if someone touches the terminal or the worker process stops mid-run?"}
                     </p>
                     <p class="cs-fail-a">
                       {lang === "ko"
-                        ? "사용자 개입이나 단말기의 다른 작업으로 결과 데이터가 섞일 수 있는 상황을 고려했습니다. PGMQ의 가시성 타임아웃으로 중단된 작업을 다시 처리할 수 있게 하고, 실행 상태와 결과 데이터를 분리해 재시도와 산출물 검증을 독립적으로 수행했습니다."
-                        : "User interaction or unrelated terminal work could contaminate the result. PGMQ visibility timeouts made interrupted jobs retryable, while separate state and output storage kept retries independent from evidence validation."}
+                        ? "사람이 단말기를 직접 조작하거나 다른 작업이 끼어들어 데이터가 오염되는 상황을 항상 염두에 두었습니다. PGMQ의 가시성 타임아웃을 활용해 중간에 끊긴 작업은 큐로 되돌려 안전하게 재시도되도록 하고, 작업 상태와 수집 결과를 분리 저장해 재실행과 증빙 데이터 검증이 서로 꼬이지 않게 했습니다."
+                        : "Because other team members might physically use the terminal, preventing data contamination was a primary constraint. PGMQ visibility timeouts safely requeue interrupted jobs for retry, while keeping execution states separate from collected evidence ensures retries and validations never collide."}
                     </p>
                   </div>
                 </div>
@@ -833,13 +833,18 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
           <h3 class="work-title">ZENITH</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "캐시 정리, Docker 데이터, 로컬 AI 모델과 장시간 실행되는 개발 프로세스 관리가 여러 도구에 흩어져 있었습니다. 각각의 유료 도구를 구독하지 않고 하나의 로컬 앱에서 관리해 다른 개발자와도 공유하고자 2026년에 Zenith를 시작했습니다."
-              : "Started Zenith in 2026 to bring build caches, Docker data, local AI models, and long-running development processes into one local app instead of several paid tools."}
+              ? "빌드 캐시 정리, Docker 데이터 비우기, 로컬 AI 모델과 포트 점유 프로세스 관리가 여러 도구에 파편화되어 있었습니다. 여러 유료 툴을 전전하지 않고, 개발자에게 꼭 필요한 시스템 정리 기능을 하나의 가볍고 안전한 로컬 앱으로 모으고자 오픈소스로 개발했습니다."
+              : "Managing build caches, Docker storage, local AI models, and lingering background processes often means juggling multiple disjointed utilities and paid tools. I built Zenith to unify these everyday developer cleanup tasks into a single, lightweight, and transparent local app."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "Rust 백엔드가 삭제 후보와 보호 경로를 다시 검증하고, Svelte UI는 경로 대신 현재 스캔에서 발급된 ID만 전달하도록 구성했습니다. 삭제 전 Preview, 위험도 분류, 포트 점유 프로세스 확인과 선택 종료를 지원합니다."
-              : "The Rust backend re-validates deletion candidates and protected paths, while the Svelte UI sends only IDs from the current scan. It supports previews, risk tiers, and selective termination of processes occupying local ports."}
+              ? "실수로 소스 코드가 지워지는 일이 없도록 Rust 백엔드가 보호 경로와 서명을 철저히 재검증하고, UI에는 실제 경로 대신 스캔 세션 ID만 전달해 오삭제 위험을 원천 차단했습니다. 삭제 전 미리보기와 포트 점유 프로세스 강제 종료도 함께 지원합니다."
+              : "To prevent accidental deletion of source code or critical configs, the Rust backend rigorously re-validates signature scopes and protected paths, while the Svelte UI receives only opaque scan IDs. It supports dry-run previews, risk classifications, and selective termination of processes holding local ports."}
+          </p>
+          <p class="work-highlight-line">
+            {lang === "ko"
+              ? "엄격한 안전 경계(Safety Boundary)와 ID 기반 삭제 모델로 소스 코드 손상 위험 없이 수십 GB의 개발 아티팩트를 안전하게 정리합니다."
+              : "Safely reclaims tens of gigabytes of disk space from build artifacts without risking active source code, using strict safety boundaries and ID-based execution."}
           </p>
 
           <p class="work-stack-line" aria-label="Technology stack">
@@ -953,8 +958,8 @@ dump_and_load(settings, alembic_dir="./alembic")</code></pre>
                 <p>
                   <strong>{lang === "ko" ? "회고:" : "Retrospective:"}</strong>
                   {lang === "ko"
-                    ? "현재는 macOS에서 동작하는 기능과 삭제 전 재검증에 집중하고 있습니다. 지원 범위를 넓히기 전에 실제 사용 화면과 설치 방법, 현재 지원 기능을 먼저 명확히 문서화하려고 합니다."
-                    : "The current focus is the working macOS flow and pre-delete validation. Before expanding platform support, I am documenting installation, current capabilities, and the app's actual behavior."}
+                    ? "시스템 정리 도구는 화려한 기능보다 '실수로 지우지 않는다'는 신뢰가 핵심이라는 생각으로 안전 경계와 ID 기반 검증 구조를 가장 신경 썼습니다. 현재 macOS 환경에서 기본 동작을 단단히 다진 만큼, 향후 Windows/Linux 크로스 플랫폼 지원과 장시간 방치된 프로세스 자동 감지 기능으로 확장해 나갈 계획입니다."
+                    : "For a system cleanup tool, the absolute certainty that it will never delete active work matters far more than a long feature list. Having proven the safety model on macOS, the next milestone is expanding cross-platform support to Windows and Linux, along with automated detection for long-running orphaned processes."}
                 </p>
               </div>
             </div>
