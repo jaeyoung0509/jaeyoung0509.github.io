@@ -88,7 +88,7 @@
         title: "If I do not understand it, I check. If it repeats, I reduce it.",
         p1: "Working on payments and credit assessment meant dealing with many external systems. I spent more time deciding where a failed job should resume than thinking about the once-through happy path. Duplicate events were processed only once, and long-running jobs saved intermediate state so they did not have to restart from the beginning.",
         p2: "When documentation alone does not explain the behavior, I read the library or framework implementation. If I encounter the same problem several times, I move the solution into code or a small tool so nobody has to remember the workaround next time.",
-        p3: "When technology alone cannot settle a decision, I ask product and operations teammates how the work actually happens. Sometimes a less elegant implementation is the better choice because it disrupts the real workflow less.",
+        p3: "When technology alone cannot settle a decision, I ask product and operations teammates how the work actually happens. Sometimes the better choice is the one that fits the real workflow, even if it is not the most technically tidy option.",
       },
       work: {
         title: "Projects",
@@ -172,7 +172,7 @@
         title: "모르면 확인하고, 반복되면 줄입니다.",
         p1: "결제나 신용평가처럼 외부 시스템이 많이 얽힌 업무를 하다 보니, 정상적으로 한 번 처리되는 것보다 중간에 실패했을 때 어디서부터 다시 시작할지를 더 많이 고민했습니다. 중복 이벤트는 한 번만 처리되게 만들고, 오래 걸리는 작업은 중간 상태를 남겨 처음부터 다시 돌리지 않도록 했습니다.",
         p2: "문서만 보고 동작이 잘 이해되지 않으면 라이브러리나 프레임워크 구현까지 내려가 확인합니다. 같은 문제를 여러 번 만나면 다음에는 사람이 기억하지 않아도 되도록 코드나 작은 도구로 옮기는 편입니다.",
-        p3: "기술만 보고 결정하기 어려운 문제는 기획자나 운영 담당자에게 실제 업무가 어떻게 돌아가는지 먼저 묻습니다. 구현이 조금 덜 예쁘더라도 실제 사용 흐름을 덜 깨뜨리는 쪽이 더 나은 경우도 꽤 있었습니다.",
+        p3: "기술만 보고 결정하기 어려운 문제는 기획자나 운영 담당자에게 실제 업무가 어떻게 돌아가는지 먼저 묻습니다. 기술적으로 가장 깔끔한 방식보다 실제 사용 흐름에 맞는 선택이 더 나을 때도 있었습니다.",
       },
       work: {
         title: "주요 프로젝트",
@@ -520,8 +520,8 @@
           <h3 class="work-title">MOONBERG</h3>
           <p class="work-premise">
             {lang === "ko"
-              ? "감사 증빙을 위해 Bloomberg Terminal 조회 화면을 건별로 기록해야 했지만, 사용할 수 있는 단말기는 한 대뿐이었습니다. 감사 시즌에 몰리는 요청을 쌓아두고 하나씩 처리하면서, 중간에 실패해도 이어서 실행할 수 있는 작업 파이프라인을 만들었습니다."
-              : "Audit evidence required recording each Bloomberg Terminal result, but only one terminal was available. I built a pipeline that queued the requests that piled up during audit season, processed them one at a time, and resumed after an interrupted job."}
+              ? "회계법인에서 실제로 사용한 도구입니다. 감사 증빙을 위해 Bloomberg Terminal 조회 화면을 건별로 기록해야 했지만, 사용할 수 있는 단말기는 한 대뿐이었습니다. 감사 시즌에 몰리는 요청을 쌓아두고 하나씩 처리하면서, 중간에 실패해도 이어서 실행할 수 있는 작업 파이프라인을 만들었습니다."
+              : "This tool was used by an accounting firm. Audit evidence required recording each Bloomberg Terminal result, but only one terminal was available. I built a pipeline that queued the requests that piled up during audit season, processed them one at a time, and resumed after an interrupted job."}
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
@@ -688,8 +688,8 @@
           </p>
           <p class="work-premise-sub">
             {lang === "ko"
-              ? "운영 DB의 schema와 필요한 데이터를 마스킹해 로컬로 가져오고, Alembic migration 상태까지 한 번에 맞출 수 있는 CLI를 만들었습니다."
-              : "I built a CLI that masks and copies the required schema and data from the production database into a local environment, then brings the Alembic migration state in sync."}
+              ? "개발·스테이징 환경의 schema와 테스트 데이터를 로컬로 덤프하고, Alembic migration 상태까지 한 번에 맞출 수 있는 CLI를 만들었습니다."
+              : "I built a CLI that dumps schemas and test data from development and staging environments into a local database, then brings the Alembic migration state in sync."}
           </p>
           <p class="work-highlight-line">
             {lang === "ko"
