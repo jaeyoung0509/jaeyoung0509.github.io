@@ -88,7 +88,7 @@
         title: "If I do not understand it, I check. If it repeats, I reduce it.",
         p1: "Working on payments and credit assessment meant dealing with many external systems. I spent more time deciding where a failed job should resume than thinking about the once-through happy path. Duplicate events were processed only once, and long-running jobs saved intermediate state so they did not have to restart from the beginning.",
         p2: "When documentation alone does not explain the behavior, I read the library or framework implementation. If I encounter the same problem several times, I move the solution into code or a small tool so nobody has to remember the workaround next time.",
-        p3: "When technology alone cannot settle a decision, I ask product and operations teammates how the work actually happens. Sometimes the better choice is the one that fits the real workflow, even if it is not the most technically tidy option.",
+        p3: "I looked beyond the backend implementation and considered the screens and flows people actually used. I worked with designers, frontend engineers, PMs, and operations teammates, then applied what we learned from operational feedback and customer interviews to improve the product.",
       },
       work: {
         title: "Projects",
@@ -172,7 +172,7 @@
         title: "모르면 확인하고, 반복되면 줄입니다.",
         p1: "결제나 신용평가처럼 외부 시스템이 많이 얽힌 업무를 하다 보니, 정상적으로 한 번 처리되는 것보다 중간에 실패했을 때 어디서부터 다시 시작할지를 더 많이 고민했습니다. 중복 이벤트는 한 번만 처리되게 만들고, 오래 걸리는 작업은 중간 상태를 남겨 처음부터 다시 돌리지 않도록 했습니다.",
         p2: "문서만 보고 동작이 잘 이해되지 않으면 라이브러리나 프레임워크 구현까지 내려가 확인합니다. 같은 문제를 여러 번 만나면 다음에는 사람이 기억하지 않아도 되도록 코드나 작은 도구로 옮기는 편입니다.",
-        p3: "기술만 보고 결정하기 어려운 문제는 기획자나 운영 담당자에게 실제 업무가 어떻게 돌아가는지 먼저 묻습니다. 기술적으로 가장 깔끔한 방식보다 실제 사용 흐름에 맞는 선택이 더 나을 때도 있었습니다.",
+        p3: "백엔드 구현에만 머무르지 않고 사용자가 실제로 거치는 화면과 흐름도 함께 살폈습니다. 디자이너, 프론트엔드 개발자, PM, 운영 담당자와 의견을 맞추고, 운영 피드백과 고객 인터뷰에서 확인한 내용을 제품 개선에 반영했습니다.",
       },
       work: {
         title: "주요 프로젝트",
