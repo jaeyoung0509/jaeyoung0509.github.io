@@ -70,7 +70,7 @@
   const content = $derived({
     en: {
       meta: {
-        title: "Jaeyoung Lee — Backend Software Engineer",
+        title: "Jaeyoung Lee — Software Engineer",
         description:
           "Portfolio of Jaeyoung Lee, a backend software engineer who spent 3 years and 7 months building and operating payment, credit, contract, and settlement systems.",
       },
@@ -87,9 +87,10 @@
       about: {
         eyebrow: "How I work",
         title: "A successful API response did not always mean the job was done.",
-        p1: "I stored the processing state and the next step so duplicate events did not repeat a state change or an external API call. A credit assessment interrupted by scheduled downtime at Gov24 or Hometax could resume without asking the user to apply again.",
-        p2: "When the documentation does not explain a behavior, I read the SDK code. I leave what I find in an issue or pull request, and turn recurring operational work into a CLI or a small app.",
-        p3: "I tried to use payment, contract, and settlement terms consistently between conversations with operations teammates and the concepts represented in code.",
+        p1: "In workflows where contracts, settlement, and notifications followed a payment, I stored the processing state and restart point so duplicate events did not repeat a state change or an external API call.",
+        p2: "If scheduled downtime at Gov24 or Hometax interrupted a credit assessment, the existing job resumed afterward without asking the user to apply again.",
+        p3: "I established a ubiquitous language so product, operations, and engineering used payment, contract, and settlement states and rules consistently. I applied strategic and tactical DDD in documentation and code by defining domain boundaries and partner-specific policies, and expressing rules through state transitions and domain events.",
+        p4: "When documentation alone did not explain an SDK's behavior, I checked the implementation and shared what I found through issues and pull requests. I turned recurring operational work into CLIs and internal tools.",
       },
       work: {
         title: "Projects",
@@ -154,7 +155,7 @@
     },
     ko: {
       meta: {
-        title: "이재영 · Backend Software Engineer",
+        title: "이재영 · Software Engineer",
         description:
           "B2B BNPL의 결제, 신용평가, 전자계약, 정산 백엔드를 3년 7개월 동안 개발하고 운영한 이재영의 포트폴리오.",
       },
@@ -174,6 +175,7 @@
         p1: "결제 이후 계약·정산·알림이 여러 단계로 이어지는 환경에서 처리 상태와 재시작 지점을 관리했습니다. 같은 이벤트가 다시 들어와도 상태 변경과 외부 API 호출이 중복되지 않도록 했습니다.",
         p2: "정부24나 홈택스 점검으로 신용평가가 중단되면, 점검 종료 후 사용자의 재신청 없이 이어서 처리되도록 구성했습니다.",
         p3: "기획·운영·개발이 결제·계약·정산의 상태와 규칙을 같은 의미로 이해할 수 있도록 유비쿼터스 언어를 정리했습니다. 업무 경계와 파트너별 정책을 나누고, 상태 전이와 도메인 이벤트로 규칙을 표현하는 등 DDD의 전략적·전술적 설계를 문서와 코드에 함께 반영했습니다.",
+        p4: "문서만으로 SDK의 동작을 파악하기 어려울 때는 구현 코드를 확인하고, 확인한 내용은 이슈와 PR로 공유했습니다. 반복되는 운영 작업은 CLI와 내부 도구로 자동화했습니다.",
       },
       work: {
         title: "주요 프로젝트",
@@ -344,6 +346,7 @@
       <p class="about-lead-statement">{c.about.p1}</p>
       <p class="about-sub-statement">{c.about.p2}</p>
       <p class="about-sub-statement">{c.about.p3}</p>
+      <p class="about-sub-statement">{c.about.p4}</p>
     </div>
   </section>
 
