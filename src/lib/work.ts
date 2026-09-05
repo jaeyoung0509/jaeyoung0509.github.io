@@ -79,23 +79,6 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
             "요청이 여러 Lambda를 거칠 때 같은 ID로 묶어 로그를 남겨, 장애가 나면 그 ID 하나로 흐름을 따라갈 수 있게 했습니다. 외부 금융망이 느려지거나 잠깐 멈추면 지수 백오프로 재시도하고, 계속 실패하는 메시지는 DLQ에 따로 모아 콘솔에서 다시 처리할 수 있게 했습니다.",
         },
       ],
-      mermaidDiagram: `flowchart TD
-    Client[Client / PG Webhook] -->|1. 결제 승인 요청| API[Payment API Lambda]
-    API -->|2. TransactWriteItems 원자적 실행\n결제 승인 + 한도 차감/복원| DDB[(DynamoDB)]
-    DDB -->|3. DynamoDB Streams\nTransactional Outbox| Outbox[Outbox Handler Lambda]
-    Outbox -->|4. 도메인 이벤트 발행| EB[AWS EventBridge]
-    
-    EB -->|Order Paid| Q1[SQS FIFO: 계약 큐]
-    EB -->|Order Paid| Q2[SQS FIFO: 정산 큐]
-    
-    Q1 -->|order_id 기준 순서 보장| CWorker[Contract Service Lambda]
-    CWorker -->|전자계약 API| ExtContract[외부 전자서명 연동]
-    
-    Q2 -->|order_id 기준 순서 보장| SWorker[Settlement Service Lambda]
-    SWorker -->|펌뱅킹 이체 API| ExtBank[은행 VAN / PG]
-    
-    Q1 -.->|재시도 초과| DLQ1[계약 DLQ]
-    Q2 -.->|재시도 초과| DLQ2[정산 DLQ]`,
     },
     {
       slug: "moonberg",
@@ -288,23 +271,6 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
             "One request ID is passed across Lambdas with structured JSON logs, so an incident can be followed with a single ID. On banking network timeouts, retries use exponential backoff and repeatedly failing messages go to a DLQ for reprocessing from the console.",
         },
       ],
-      mermaidDiagram: `flowchart TD
-    Client[Client / PG Webhook] -->|1. Submit Payment| API[Payment API Lambda]
-    API -->|2. Atomic TransactWriteItems\nPayment PAID + Limit Deducted| DDB[(DynamoDB)]
-    DDB -->|3. DynamoDB Streams\nTransactional Outbox| Outbox[Outbox Handler Lambda]
-    Outbox -->|4. Emit Domain Event| EB[AWS EventBridge]
-    
-    EB -->|Order Paid| Q1[SQS FIFO: Contract Queue]
-    EB -->|Order Paid| Q2[SQS FIFO: Settlement Queue]
-    
-    Q1 -->|Ordered by order_id| CWorker[Contract Service Lambda]
-    CWorker -->|E-Signature API| ExtContract[External Contract Gateway]
-    
-    Q2 -->|Ordered by order_id| SWorker[Settlement Service Lambda]
-    SWorker -->|Bank Transfer API| ExtBank[Bank VAN / PG]
-    
-    Q1 -.->|Retries exhausted| DLQ1[Contract DLQ]
-    Q2 -.->|Retries exhausted| DLQ2[Settlement DLQ]`,
     },
     {
       slug: "moonberg",

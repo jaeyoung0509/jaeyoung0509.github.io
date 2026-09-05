@@ -50,7 +50,7 @@ export interface CaseStudy {
   options: CaseStudyOption[];
   decision: string;
   whyChosen: string[];
-  architecture: {
+  architecture?: {
     caption: string;
     isSimplified?: boolean;
     mermaidDiagram?: string;
@@ -164,28 +164,6 @@ export const caseStudies: CaseStudy[] = [
       "Ordering was non-negotiable for sequential financial transitions. A seller payout must never execute before the legally binding contract is electronically sealed.",
       "However, queue semantics alone do not guarantee correctness. If a Lambda consumer crashes right after committing to the database but before acknowledging the message, SQS will redeliver the message. We therefore designed for optimistic FIFO delivery combined with deterministic database-level unique index guards.",
     ],
-    architecture: {
-      caption: "PAYMONTHS Asynchronous Financial Workflow (Simplified architecture overview)",
-      isSimplified: true,
-      mermaidDiagram: `flowchart TD
-    Client[Client / PG Webhook] -->|1. Submit Payment| API[Payment API Lambda]
-    API -->|2. Atomic TransactWriteItems\\nPayment PAID + Limit Deducted| DDB[(DynamoDB)]
-    DDB -->|3. DynamoDB Streams\\nTransactional Outbox| Outbox[Outbox Handler Lambda]
-    Outbox -->|4. Emit Domain Event| EB[AWS EventBridge]
-    
-    EB -->|Rule: Order Paid| Q1[SQS FIFO: Contract Queue]
-    EB -->|Rule: Order Paid| Q2[SQS FIFO: Settlement Queue]
-    
-    Q1 -->|Ordered by order_id| CWorker[Contract Service Lambda]
-    CWorker -->|E-Signature API| ExtContract[External Contract Gateway]
-    CWorker -->|Emit Contract Signed| EB
-    
-    Q2 -->|Ordered by order_id| SWorker[Settlement Service Lambda]
-    SWorker -->|Bank Transfer API| ExtBank[Bank VAN / Payment Gateway]
-    
-    Q1 -.->|Retries exhausted| DLQ1[Contract DLQ]
-    Q2 -.->|Retries exhausted| DLQ2[Settlement DLQ]`,
-    },
     failureModes: [
       {
         scenario: "What if the payment webhook arrives multiple times due to network retries?",
