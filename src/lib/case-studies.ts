@@ -99,7 +99,7 @@ export const caseStudies: CaseStudy[] = [
     context: [
       "PAYMONTHS is a B2B BNPL (Buy Now Pay Later) fintech platform that allows corporate buyers to purchase goods on installment while paying suppliers immediately upon delivery.",
       "A single purchase order triggers an interconnected workflow spanning identity verification, credit limit assessment, legally binding electronic contract issuance, payment gateway (PG) execution, and scheduled bank settlement payouts.",
-      "Starting from an early FastAPI monolithic prototype, the system evolved into an event-driven serverless architecture on AWS (Lambda, EventBridge, SQS FIFO, DynamoDB, PostgreSQL) to accommodate growing transaction volumes.",
+      "Starting from an early FastAPI monolithic MVP, the system decoupled synchronous payment and credit-limit transactions (DynamoDB TransactWriteItems and conditional writes) from asynchronous downstream operations (DynamoDB Streams Transactional Outbox, SQS FIFO, EventBridge, Lambda) to prevent partner API latency and outages from impacting payment approval.",
     ],
     whatIOwned: [
       "Designed the end-to-end asynchronous backend architecture for payment processing, automated electronic contracting, and multi-phased seller settlement.",
@@ -169,8 +169,9 @@ export const caseStudies: CaseStudy[] = [
       isSimplified: true,
       mermaidDiagram: `flowchart TD
     Client[Client / PG Webhook] -->|1. Submit Payment| API[Payment API Lambda]
-    API -->|2. Persist PAID State| DB[(PostgreSQL)]
-    API -->|3. Emit Event| EB[AWS EventBridge]
+    API -->|2. Atomic TransactWriteItems\\nPayment PAID + Limit Deducted| DDB[(DynamoDB)]
+    DDB -->|3. DynamoDB Streams\\nTransactional Outbox| Outbox[Outbox Handler Lambda]
+    Outbox -->|4. Emit Domain Event| EB[AWS EventBridge]
     
     EB -->|Rule: Order Paid| Q1[SQS FIFO: Contract Queue]
     EB -->|Rule: Order Paid| Q2[SQS FIFO: Settlement Queue]
@@ -227,11 +228,11 @@ export const caseStudies: CaseStudy[] = [
     summary:
       "Architecture case study on coordinating Bloomberg data collection between a Go API, PostgreSQL/PGMQ, and isolated Python workers for a financial workflow used by an accounting firm.",
     meta: [
-      { label: "ROLE", value: "Backend Engineer / Product Owner" },
+      { label: "ROLE", value: "Backend Engineer / Independent Project" },
       { label: "DOMAIN", value: "Financial Data Extraction & Analysis" },
       { label: "FOCUS", value: "Long-Running Jobs · Durable Queue · Job State" },
       { label: "STACK", value: "Go / Python / PostgreSQL / PGMQ / Vue / Docker" },
-      { label: "PERIOD", value: "2023 – 2024" },
+      { label: "PERIOD", value: "2025.10 – Present" },
     ],
     stack: ["Go", "Python", "PostgreSQL", "Vue", "Docker"],
     signals: [
