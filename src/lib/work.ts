@@ -4,6 +4,11 @@ export interface WorkChapter {
   bullets?: string[];
 }
 
+export interface WorkResult {
+  metric: string;
+  label?: string;
+}
+
 export interface WorkProject {
   slug: string;
   number: string;
@@ -12,7 +17,7 @@ export interface WorkProject {
   premise: string;
   problem: string;
   solution: string;
-  results: string[];
+  results: WorkResult[];
   stack: string[];
   chapters?: WorkChapter[];
   mermaidDiagram?: string;
@@ -33,10 +38,16 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "신용평가·전자계약·결제수단 등록 흐름을 다시 만들고, 결제 승인과 그 이후 처리를 나눴습니다. 작업 진행 상태를 저장해 두어 외부 장애가 나도 중단된 지점부터 다시 처리할 수 있게 했습니다.",
       results: [
-        "3영업일+ → 정상 시간대 10분 이내 (가입~외상결제 가능)",
-        "계약 단계 이탈률 약 50% → 5% 미만",
-        "첫 결제 승인 소요 시간 3영업일 → 1분 미만",
-        "백오피스 운영자 1인 처리량 10배+ (주 15~20시간 수작업 자동화)",
+        {
+          metric: "3영업일+ → 10분 이내",
+          label: "가입부터 첫 외상결제 가능까지 · 정상 시간대",
+        },
+        { metric: "약 50% → 5% 미만", label: "계약 단계 이탈률" },
+        { metric: "3영업일 → 1분 미만", label: "첫 결제 승인 소요 시간" },
+        {
+          metric: "1인 처리량 10배+",
+          label: "백오피스 반복 업무 · 주 15~20시간 수작업 자동화",
+        },
       ],
       stack: [
         "Python",
@@ -98,9 +109,12 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "Go 백엔드 API(Job ID 발급) + PostgreSQL PGMQ(작업 큐) + Terminal 전용 Python worker(순차 처리) + Vue 3 Console로 요청 접수와 단말기 실행을 완전히 분리.",
       results: [
-        "업무별 반복 수작업 약 60~80% 절감",
-        "단말기 독점 및 동시 세션 충돌 방지",
-        "중단된 작업은 상태 확인 후 이어서 재실행 가능",
+        { metric: "약 60~80% 절감", label: "업무별 반복 수작업" },
+        { metric: "충돌 없이 순차 처리", label: "단말기 독점·동시 세션 충돌 방지" },
+        {
+          metric: "이어서 재실행 가능",
+          label: "중단된 작업은 상태 확인 후",
+        },
       ],
       stack: ["Go", "Python", "PostgreSQL", "PGMQ", "Docker", "Vue"],
       chapters: [
@@ -142,9 +156,15 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "Bastion 접속, AWS Secrets Manager 인증정보 조회, SSH 터널링, PostgreSQL SSL 연결, 마이그레이션 상태 조회를 단일 CLI 명령으로 통합 자동화.",
       results: [
-        "마이그레이션 사전 검증 소요 시간 약 10분 → 1분 내외 단축",
-        "실데이터 기반 쿼리 플랜 및 인덱스 동작 배포 전 로컬 검증",
-        "팀 내 로컬 데이터베이스 환경 세팅 및 디버깅 표준화",
+        { metric: "약 10분 → 1분 내외", label: "마이그레이션 사전 검증" },
+        {
+          metric: "배포 전 로컬에서 검증",
+          label: "실데이터 기반 쿼리 플랜·인덱스 동작",
+        },
+        {
+          metric: "단일 명령으로 표준화",
+          label: "로컬 DB 환경 세팅·디버깅",
+        },
       ],
       stack: [
         "Python",
@@ -178,9 +198,18 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "Tauri(Rust + Svelte 5) 기반 데스크톱 앱. 미리 정한 캐시·빌드 패턴만 정리 대상으로 삼고, 코드·키체인·인증정보 경로는 제외합니다. 포트를 차지한 프로세스 조회·종료도 지원합니다.",
       results: [
-        "원클릭 개발 환경 디스크 공간 회수 및 안전 검증",
-        "포트 충돌 프로세스 탐색 및 즉각 종료",
-        "스캔·정리는 로컬에서만 처리, 외부로 결과 전송 없음",
+        {
+          metric: "원클릭 디스크 회수",
+          label: "미리 정한 캐시·빌드 패턴만 정리 대상",
+        },
+        {
+          metric: "포트 충돌 해결",
+          label: "점유 프로세스 탐색·종료",
+        },
+        {
+          metric: "외부 전송 없음",
+          label: "스캔·정리는 로컬에서만 처리",
+        },
       ],
       stack: ["Rust", "Tauri", "Svelte 5", "macOS"],
       chapters: [
@@ -214,10 +243,16 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "Redesigned credit assessment, digital contracts, and payment method registration. Split payment approval from follow-up work, and saved job progress so interrupted work could be retried after external outages.",
       results: [
-        "3+ business days → Under 10 mins during operating hours (Onboarding to ready)",
-        "Contract drop-off rate ~50% → Under 5%",
-        "First payment approval 3 business days → Under 1 min",
-        "Back-office per-operator capacity 10x+ (15–20 hrs/week automated)",
+        {
+          metric: "3+ days → Under 10 mins",
+          label: "Onboarding to first payment · operating hours",
+        },
+        { metric: "~50% → Under 5%", label: "Contract drop-off rate" },
+        { metric: "3 days → Under 1 min", label: "First payment approval" },
+        {
+          metric: "10x+ capacity",
+          label: "Per-operator · 15–20 hrs/week of manual work automated",
+        },
       ],
       stack: [
         "Python",
@@ -283,9 +318,15 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "Decoupled job submission from execution using a Go backend API (Job ID generation) + PostgreSQL PGMQ (job queue) + dedicated Terminal Python worker (sequential execution) + Vue 3 Web Console.",
       results: [
-        "Reduced repetitive manual work by roughly 60–80%",
-        "Prevented terminal contention and concurrent session conflicts",
-        "Interrupted jobs can be rerun from saved state",
+        { metric: "60–80% less", label: "Repetitive manual work" },
+        {
+          metric: "No session conflicts",
+          label: "Sequential execution on a single terminal",
+        },
+        {
+          metric: "Rerun from saved state",
+          label: "Interrupted jobs continue where they stopped",
+        },
       ],
       stack: ["Go", "Python", "PostgreSQL", "PGMQ", "Docker", "Vue"],
       chapters: [
@@ -327,9 +368,18 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "Automated bastion access, AWS Secrets Manager credential lookup, SSH tunneling, PostgreSQL SSL connections, and migration status inspection into a single unified CLI command.",
       results: [
-        "Reduced pre-flight migration verification time from ~10 mins to under 1 min",
-        "Verified real-data query plans and index behaviors locally prior to release",
-        "Standardized local staging database replication across the engineering team",
+        {
+          metric: "~10 mins → Under 1 min",
+          label: "Pre-flight migration verification",
+        },
+        {
+          metric: "Verified locally pre-release",
+          label: "Real-data query plans and index behavior",
+        },
+        {
+          metric: "One-command replication",
+          label: "Local staging DB setup across the team",
+        },
       ],
       stack: [
         "Python",
@@ -363,9 +413,18 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       solution:
         "Lightweight native desktop app built with Tauri (Rust + Svelte 5). Classifies cleanup candidates by safety tiers, strictly excludes source code, Keychain, and credentials, and provides inspection/termination of port-holding processes.",
       results: [
-        "One-click disk recovery with strict safety verification",
-        "Instant detection and termination of port-conflicting processes",
-        "Scans and cleanup run locally without sending scan results externally.",
+        {
+          metric: "One-click disk recovery",
+          label: "Only allow-listed caches and build outputs",
+        },
+        {
+          metric: "Instant port-conflict fix",
+          label: "Find and stop port-holding processes",
+        },
+        {
+          metric: "No external transmission",
+          label: "Scans and cleanup run locally",
+        },
       ],
       stack: ["Rust", "Tauri", "Svelte 5", "macOS"],
       chapters: [

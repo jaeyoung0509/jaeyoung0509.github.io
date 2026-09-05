@@ -55,9 +55,23 @@
       <div class="work-psr-row">
         <dt class="work-psr-label">Result</dt>
         <dd class="work-psr-content">
-          <ul class="work-psr-results">
-            {#each project.results as result (result)}
-              <li>{result}</li>
+          <ul class="result-metric-list">
+            {#each project.results as result (result.metric)}
+              <li class="result-metric-row">
+                <span class="result-metric-value">
+                  {#if result.metric.includes("→")}
+                    {@const parts = result.metric.split("→")}
+                    {parts[0].trim()}
+                    <span class="metric-arrow" aria-hidden="true">→</span>
+                    {parts.slice(1).join("→").trim()}
+                  {:else}
+                    {result.metric}
+                  {/if}
+                </span>
+                {#if result.label}
+                  <span class="result-metric-label">{result.label}</span>
+                {/if}
+              </li>
             {/each}
           </ul>
         </dd>
