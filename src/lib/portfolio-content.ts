@@ -71,11 +71,11 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
     },
     about: {
       eyebrow: "일하는 방식",
-      title: "문제를 찾고, 시스템의 경계를 나누고, 운영 가능한 상태로 만듭니다.",
+      title: "결제와 운영 과정에서 반복되는 문제를 시스템으로 줄여왔습니다.",
       paragraphs: [
-        "고객 이탈과 반복되는 운영 공수 같은 실제 비즈니스 문제에서 시작합니다. 가입부터 첫 외상결제까지 3영업일 이상 걸리고 계약 단계에서 고객의 약 50%가 이탈하던 온보딩 병목을 줄이기 위해, 서류 직접 확인과 수기 검토에 의존하던 과정을 외부 기관 연동과 비동기 파이프라인으로 전환했습니다.",
-        "즉시 일관성이 보장되어야 하는 결제 승인과 한도 차감/복원은 동기 트랜잭션으로 묶고, 외부 시스템 상태나 지연에 영향받는 계약·정산·알림은 비동기로 격리했습니다. 파트너마다 상이한 계약 및 정산 규칙은 하드코딩 대신 정책 객체와 도메인 모델로 명확히 분리하여 변경 영향도를 낮췄습니다.",
-        "장애나 외부 기관 점검으로 파이프라인이 중단되더라도 고객의 재신청 없이 멈춘 지점부터 안전하게 재개되도록 상태를 영속화하고 멱등성을 보장했습니다. 문서만으로 라이브러리의 동작을 파악하기 어려울 때는 내부 코드를 추적해 오픈소스 이슈와 PR로 기여하고, 반복되는 운영 작업은 도구와 자동화로 해결합니다.",
+        "FinovusLab에서 B2B 외상결제를 만들 때, 가입부터 첫 결제까지 3영업일 넘게 걸렸습니다. 계약 단계에서 들어온 고객의 절반쯤이 기다리다 떠났고, 운영팀은 서류를 눈으로 확인하고 일일이 연락해야 했습니다.",
+        "그래서 서류 확인을 외부 기관 연동과 비동기 심사로 바꿨습니다. 결제 승인과 한도 차감·복원은 하나의 트랜잭션으로 묶었고, 계약·정산·알림은 뒤로 빼서 외부 상태에 흔들리지 않게 했습니다. 파트너마다 달랐던 계약·정산 규칙은 공통 규칙과 파트너별 정책으로 나눠 관리했습니다.",
+        "외부 점검이나 장애로 파이프라인이 멈춰도, 저장해 둔 진행 상태에서 이어서 처리되도록 했습니다. 고객이 다시 신청하지 않아도 되는 구조입니다. 문서만으로 이해가 안 되는 동작은 코드를 직접 따라가 보고, 반복되는 운영 작업은 스크립트와 도구로 줄였습니다.",
       ],
     },
     workSection: {
@@ -160,11 +160,11 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
     about: {
       eyebrow: "How I Work",
       title:
-        "Finding the problem, drawing system boundaries, and keeping operations manageable.",
+        "I reduce repeated payment and operations problems with backend systems.",
       paragraphs: [
-        "I start from concrete business bottlenecks, such as customer drop-off and manual operational overhead. To eliminate an onboarding flow that took 3+ business days and lost ~50% of applicants at the contract stage, I transformed manual document reviews into automated external integrations and asynchronous pipelines.",
-        "I isolate synchronous and asynchronous responsibilities: payment authorization and credit limit updates require immediate transactional consistency, while external-dependent contracts, settlements, and notices are decoupled asynchronously. Rather than tangled conditionals, differing partner rules were separated into explicit domain models and policy objects.",
-        "Systems are designed to remain operable even when external services fail or undergo maintenance, persisting intermediate states and enforcing idempotency so jobs resume without customer reapplication. When documentation falls short, I trace source code to solve root causes—contributing findings back through open-source PRs—and turn repetitive manual tasks into reliable automation tools.",
+        "When I joined the B2B credit-payment service at FinovusLab, onboarding to the first payment took over 3 business days. About half the customers dropped off at the contract step while waiting, and the ops team checked documents by eye and followed up one by one.",
+        "I replaced manual reviews with external verification and async screening. Payment approval and limit deduction/restoration run in one transaction, while contracts, settlements, and notifications run afterwards so external delays don't block payment. Partner-specific contract and settlement rules are kept as shared rules plus per-partner policies.",
+        "If a pipeline stops for external maintenance or an outage, it continues from the saved progress — customers don't need to reapply. When docs don't explain a behavior, I read the source directly, and I turn repeated ops work into scripts and tools.",
       ],
     },
     workSection: {

@@ -1461,18 +1461,25 @@ summary {
 .hero-main-lead {
   font-size: clamp(22px, 3vw, 30px);
   font-weight: 650;
-  line-height: 1.35;
+  line-height: 1.4;
   color: var(--ink);
   margin: 0 0 18px;
   letter-spacing: -0.015em;
+  max-width: 24ch;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
 }
 
 .hero-sub-lead {
   font-size: 16.5px;
-  line-height: 1.75;
+  line-height: 1.8;
   color: var(--muted);
-  max-width: 660px;
+  max-width: 62ch;
   margin: 0 0 28px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
 }
 
 .hero-action-area {
@@ -1571,10 +1578,65 @@ summary {
 
 .portfolio-section {
   margin-top: 72px;
+  scroll-margin-top: 24px;
 }
 
 .section-title-row {
   margin-bottom: 32px;
+}
+
+/* Scroll reveal (progressive enhancement; JS adds .reveal) */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.65s var(--ease-out),
+    transform 0.65s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero entrance (CSS-only, runs on page load) */
+
+.hero-top-meta {
+  animation: hero-rise 0.6s var(--ease-out) both;
+}
+
+.hero-display-name {
+  animation: hero-rise 0.6s var(--ease-out) 0.06s both;
+}
+
+.hero-main-lead {
+  animation: hero-rise 0.6s var(--ease-out) 0.12s both;
+}
+
+.hero-sub-lead {
+  animation: hero-rise 0.6s var(--ease-out) 0.18s both;
+}
+
+.hero-action-area {
+  animation: hero-rise 0.6s var(--ease-out) 0.24s both;
+}
+
+.hero-tech-strip {
+  animation: hero-rise 0.6s var(--ease-out) 0.3s both;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 .section-eyebrow {
@@ -1593,9 +1655,13 @@ summary {
   font-family: var(--font-display);
   font-size: clamp(24px, 3.4vw, 34px);
   font-weight: 780;
-  line-height: 1.25;
+  line-height: 1.35;
   color: var(--ink);
   letter-spacing: -0.015em;
+  max-width: 22ch;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
 }
 
 .section-heading-large {
@@ -1624,22 +1690,56 @@ summary {
   max-width: 68ch;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 22px;
 }
 
 .about-lead-statement {
-  font-size: 18px;
+  font-size: clamp(17px, 2.2vw, 19px);
   font-weight: 600;
   color: var(--ink);
-  line-height: 1.7;
-  margin: 0 0 2px 0;
+  line-height: 1.75;
+  margin: 0;
+  padding-left: 16px;
+  border-left: 3px solid var(--accent);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
+}
+
+.about-point-list {
+  list-style: none;
+  margin: 2px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.about-point {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
+
+.about-point-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--faint);
+  letter-spacing: 0.04em;
+  padding-top: 5px;
 }
 
 .about-sub-statement {
   font-size: 15.5px;
   color: var(--muted);
-  line-height: 1.8;
+  line-height: 1.85;
   margin: 0;
+  max-width: 62ch;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
 }
 
 /* Selected Work */
@@ -1649,17 +1749,24 @@ summary {
   flex-direction: column;
 }
 
+.work-reveal {
+  border-top: 1px solid var(--line);
+}
+
+.work-reveal:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.oss-reveal {
+  display: block;
+}
+
 .work-item {
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr) auto;
   gap: 24px;
   align-items: start;
   padding: 44px 0;
-  border-top: 1px solid var(--line);
-}
-
-.work-item:last-child {
-  border-bottom: 1px solid var(--line);
 }
 
 .work-large-num {
@@ -3010,6 +3117,15 @@ summary {
     max-width: none;
   }
 
+  .about-lead-statement {
+    padding-left: 12px;
+  }
+
+  .about-point {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 8px;
+  }
+
   .oss-card-top {
     align-items: flex-start;
     flex-direction: column;
@@ -3085,5 +3201,11 @@ summary {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+    animation: none !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

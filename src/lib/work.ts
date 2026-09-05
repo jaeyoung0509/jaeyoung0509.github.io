@@ -27,11 +27,11 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       domain: "FINTECH · B2B 결제·신용",
       title: "PAYMONTHS",
       premise:
-        "고객 온보딩 병목과 복잡한 금융 후속 처리를 운영 가능한 워크플로우로 재설계",
+        "가입부터 첫 결제까지 막히던 온보딩과 결제 뒤에 따라오는 계약·정산 처리를 다시 만든 작업",
       problem:
         "가입부터 첫 외상결제까지 3영업일 이상 소요되고 계약 단계 고객 약 50% 이탈. 백오피스에서는 매주 15~20시간의 반복 업무 발생.",
       solution:
-        "신용평가·전자계약·결제수단 등록 흐름을 재설계하고, 핵심 결제 상태와 외부 후속 처리를 동기/비동기로 분리. 상태 영속화, Transactional Outbox, SQS FIFO, 재시도·DLQ를 통해 실패 이후 재처리 가능하도록 구성.",
+        "신용평가·전자계약·결제수단 등록 흐름을 다시 만들고, 결제 승인과 그 이후 처리를 나눴습니다. 작업 진행 상태를 저장해 두어 외부 장애가 나도 중단된 지점부터 다시 처리할 수 있게 했습니다.",
       results: [
         "3영업일+ → 정상 시간대 10분 이내 (가입~외상결제 가능)",
         "계약 단계 이탈률 약 50% → 5% 미만",
@@ -50,22 +50,22 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
         {
           heading: "1. 온보딩 병목 해소: 3영업일 심사를 10분 자동화로 단축",
           prose:
-            "기존에는 사업자 신용평가를 위해 운영자가 서류를 수기 검토하느라 가입부터 첫 외상결제까지 3영업일 이상 소요되었고, 계약 단계에서 약 50%의 고객이 이탈했습니다. 외부 SaaS 연동과 스크래핑 파이프라인을 구축해 정상 시간대 심사를 10분 이내로 단축하고 전자계약 절차를 간소화했습니다. 특히 홈택스나 정부24의 야간 정기 점검 시 심사가 중단되던 문제는 DynamoDB에 작업 진행 상태와 다음 실행 시각을 영속화하여, 점검 종료 후 고객의 재신청 없이 자동으로 작업을 재개하도록 설계했습니다.",
+            "기존에는 사업자 신용평가를 위해 운영자가 서류를 일일이 확인하느라 가입부터 첫 외상결제까지 3영업일 이상 걸렸고, 계약 단계에서 들어온 고객의 절반쯤이 떠났습니다. 외부 기관 연동과 스크래핑 파이프라인을 붙여 정상 시간대 심사를 10분 안으로 줄이고 전자계약 절차를 간단하게 바꿨습니다. 홈택스·정부24 야간 점검으로 심사가 멈추는 시간에는 DynamoDB에 진행 상태와 다음 실행 시각을 저장해 뒀다가, 점검이 끝나면 고객 재신청 없이 이어서 진행되도록 했습니다.",
         },
         {
           heading: "2. 결제·한도 정합성: DynamoDB 조건부 쓰기와 Outbox 패턴",
           prose:
-            "동일 고객의 동시 결제 요청이나 주문 취소 시 한도 초과(Over-limit) 승인이나 중복 결제가 발생하지 않도록, 결제 승인과 한도 차감/복원을 DynamoDB 조건부 쓰기(Conditional Writes)와 TransactWriteItems 단일 원자적 트랜잭션으로 처리하여 즉시 일관성을 확보했습니다. 또한 DB 커밋 후 외부 브로커 발행 실패로 인한 듀얼 라이트 문제를 방지하기 위해 DynamoDB Streams 기반 Transactional Outbox 패턴을 적용하여, 결제 승인이 완결된 건에 한해서만 안전하게 후속 이벤트를 전파했습니다.",
+            "같은 고객이 동시에 결제하거나 주문을 취소해도 한도를 넘겨 승인하거나 두 번 결제되지 않도록, 결제 승인과 한도 차감·복원을 DynamoDB TransactWriteItems 하나로 묶어 처리했습니다. 결제 상태와 이벤트 기록을 같은 트랜잭션 경계에 두고, DynamoDB Streams로 후속 이벤트를 발행해 DB에는 저장됐는데 이벤트가 빠지는 경우를 없앴습니다.",
         },
         {
           heading: "3. 계약·정산 자동화: SQS FIFO 기반 순서 보장과 도메인 정책 분리",
           prose:
-            "결제 승인 후 이어지는 전자계약 체결, 정산 지급, 알림 등의 복잡한 금융 후속 처리를 결제 트랜잭션에서 분리하여 SQS FIFO와 Lambda 기반 비동기 파이프라인으로 구성했습니다. 결제 승인 직후 첫 결제 처리를 3영업일에서 1분 미만으로 단축했으며, 파트너사마다 상이한 계약 및 정산 규정은 전략 정책과 도메인 모델로 분리하여 복잡도를 낮췄습니다. 또한 결제/연체 상태 전이에 따른 납부 안내 대상을 사전 산출하고 CMS 출금동의 상태를 재검증하는 파이프라인을 구축해 주 15~20시간의 반복 업무를 자동화하고 백오피스 운영자 1인 처리량을 10배 이상 향상시켰습니다.",
+            "결제 승인 뒤에 따라오는 전자계약·정산·알림은 결제 트랜잭션과 떼어 SQS FIFO와 Lambda 파이프라인으로 돌렸습니다. 첫 결제 처리가 3영업일에서 1분 안으로 줄었고, 파트너마다 달랐던 계약·정산 규칙은 공통 규칙과 파트너별 정책으로 나눠 관리했습니다. 결제·연체 상태가 바뀔 때 안내 대상을 미리 뽑고 CMS 출금동의 상태를 다시 확인하는 과정을 넣어, 주 15~20시간 들던 반복 작업을 자동화했습니다.",
         },
         {
           heading: "4. 관측성 및 장애 격리: 상관관계 ID와 DLQ 기반 재처리 체계",
           prose:
-            "분산 서버리스 환경에서 장애 발생 시 원인 추적을 위해 전 구간 상관관계 ID(Correlation ID) 전파와 구조화된 JSON 로깅을 표준화하여 장애 진단 시간을 분 단위로 단축했습니다. 외부 금융망 지연이나 일시 장애 시 지수 백오프 재시도와 Dead Letter Queue(DLQ)로 실패 메시지를 격리하고, 수동 DB 조작 없이 안전하게 재처리할 수 있는 운영 체계를 마련했습니다.",
+            "요청이 여러 Lambda를 거칠 때 같은 ID로 묶어 로그를 남겨, 장애가 나면 그 ID 하나로 흐름을 따라갈 수 있게 했습니다. 외부 금융망이 느려지거나 잠깐 멈추면 지수 백오프로 재시도하고, 계속 실패하는 메시지는 DLQ에 따로 모아 콘솔에서 다시 처리할 수 있게 했습니다.",
         },
       ],
       mermaidDiagram: `flowchart TD
@@ -100,7 +100,7 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       results: [
         "업무별 반복 수작업 약 60~80% 절감",
         "단말기 독점 및 동시 세션 충돌 방지",
-        "작업 중단 시 멈춘 지점부터 안전한 재실행 보장",
+        "중단된 작업은 상태 확인 후 이어서 재실행 가능",
       ],
       stack: ["Go", "Python", "PostgreSQL", "PGMQ", "Docker", "Vue"],
       chapters: [
@@ -112,12 +112,12 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
         {
           heading: "Go API와 PostgreSQL PGMQ 기반 작업 큐",
           prose:
-            "Go API는 요청 접수 즉시 Job ID를 반환하고 PostgreSQL 기반 메시지 큐인 PGMQ에 작업을 적재합니다. 전용 Terminal의 Python worker가 작업을 하나씩 안전하게 실행하고 진행률과 정규화된 결과를 저장합니다. 운영자는 언제든 웹 콘솔에서 진행 상황과 완료된 증빙 데이터를 조회할 수 있습니다.",
+            "Go API는 요청 접수 즉시 Job ID를 반환하고 PostgreSQL 기반 메시지 큐인 PGMQ에 작업을 적재합니다. 전용 Terminal의 Python worker가 작업을 하나씩 순서대로 실행하고 진행률과 정규화된 결과를 저장합니다. 운영자는 언제든 웹 콘솔에서 진행 상황과 완료된 증빙 데이터를 조회할 수 있습니다.",
         },
         {
           heading: "단말기 세션 중단 대응 및 멱등적 재실행",
           prose:
-            "현장 단말기 사용이나 네트워크 불안정으로 프로세스가 끊길 경우에 대비해 작업 단계별 상태를 영속화했습니다. 중단된 작업만 상태 확인 후 안전하게 재개되며, 이미 완료된 이전 작업의 결과는 온전하게 보존됩니다.",
+            "현장 단말기 사용이나 네트워크 불안정으로 프로세스가 끊길 경우에 대비해 작업 단계별 상태를 저장했습니다. 중단된 작업은 저장된 상태부터 이어서 실행되고, 이미 끝난 이전 작업의 결과는 그대로 둡니다.",
         },
       ],
       mermaidDiagram: `flowchart TD
@@ -172,15 +172,15 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       domain: "macOS 개발 도구 · 개인 프로젝트",
       title: "ZENITH",
       premise:
-        "개발자 캐시·Docker 자원 정리와 포트 점유 프로세스 제어를 위한 안전 우선 macOS 네이티브 앱",
+        "개발자 캐시·Docker 정리와 포트 점유 프로세스 확인을 위한 macOS 데스크톱 앱",
       problem:
         "패키지 매니저 캐시, Docker 빌드 캐시, 로컬 AI 모델이 수십 GB의 디스크를 차지하고 좀비 프로세스가 로컬 포트를 점유할 때마다 여러 도구를 수작업으로 실행해야 했으며, 임의 경로 삭제 위험 존재.",
       solution:
-        "Tauri (Rust + Svelte 5) 기반 경량 데스크톱 앱. 캐시/빌드 패턴 화이트리스트 안전 등급 분류, 코드/키체인/인증정보 제외 필터링, 로컬 포트 점유 프로세스 탐색 및 안전 종료 지원.",
+        "Tauri(Rust + Svelte 5) 기반 데스크톱 앱. 미리 정한 캐시·빌드 패턴만 정리 대상으로 삼고, 코드·키체인·인증정보 경로는 제외합니다. 포트를 차지한 프로세스 조회·종료도 지원합니다.",
       results: [
         "원클릭 개발 환경 디스크 공간 회수 및 안전 검증",
         "포트 충돌 프로세스 탐색 및 즉각 종료",
-        "외부 네트워크 전송 없는 100% 로컬 프라이버시 보장",
+        "스캔·정리는 로컬에서만 처리, 외부로 결과 전송 없음",
       ],
       stack: ["Rust", "Tauri", "Svelte 5", "macOS"],
       chapters: [
@@ -196,7 +196,7 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
         {
           heading: "로컬 완결형 처리와 포트 프로세스 관리",
           prose:
-            "모든 시스템 스캔과 정리는 로컬 머신 내부에서만 완결되며 외부로 어떠한 파일 정보도 전송되지 않습니다. 개발 중 자주 발생하는 로컬 포트 충돌 프로세스를 감지하여 필요한 경우 안전하게 종료할 수 있습니다.",
+            "스캔과 정리는 로컬에서만 실행되고, 스캔 결과는 외부로 보내지 않습니다. 포트를 차지한 프로세스를 찾아 필요할 때 종료할 수 있습니다.",
         },
       ],
     },
@@ -208,11 +208,11 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       domain: "FINTECH · B2B PAYMENTS & CREDIT",
       title: "PAYMONTHS",
       premise:
-        "Redesigning customer onboarding bottlenecks and complex financial follow-up into manageable workflows",
+        "Rework of blocked onboarding and the contract and settlement work that follows payment",
       problem:
         "Onboarding to first transaction took 3+ business days with ~50% drop-off at the contract stage. Back-office operations spent 15–20 hours weekly on recurring manual tasks.",
       solution:
-        "Redesigned credit assessment, digital contracts, and payment method registration. Separated core payment state from external follow-up tasks into sync/async boundaries. Enforced resilient recovery using state persistence, Transactional Outbox, SQS FIFO, retries, and DLQs.",
+        "Redesigned credit assessment, digital contracts, and payment method registration. Split payment approval from follow-up work, and saved job progress so interrupted work could be retried after external outages.",
       results: [
         "3+ business days → Under 10 mins during operating hours (Onboarding to ready)",
         "Contract drop-off rate ~50% → Under 5%",
@@ -238,19 +238,19 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
           heading:
             "2. Payment & credit limit consistency: DynamoDB atomic transactions and Outbox",
           prose:
-            "To prevent over-limit approvals and duplicate charges during concurrent transactions or cancellations, payment authorization and limit deduction/restoration were executed within atomic DynamoDB TransactWriteItems and conditional writes. To eliminate dual-write hazards between database commits and event brokers, I applied the Transactional Outbox pattern via DynamoDB Streams, ensuring reliable event delivery only after transaction commit.",
+            "To keep concurrent payments and cancellations from approving over the limit or charging twice, payment approval and limit deduction/restoration run in one DynamoDB TransactWriteItems transaction. Payment state and the event record are written in the same transaction boundary, and follow-up events are published from DynamoDB Streams so a committed payment never loses its event.",
         },
         {
           heading:
             "3. Contract & settlement automation: SQS FIFO ordering and domain policy isolation",
           prose:
-            "Decoupled downstream financial tasks—such as electronic contract signing, seller payouts, and notifications—from synchronous payment authorization into an SQS FIFO and Lambda asynchronous pipeline. This shortened first payment approval from 3 business days to under 1 minute. Varied partner settlement rules were factored into isolated domain models and policy objects. Pre-calculating notice recipients on payment status changes and verifying CMS direct debit consent automated 15–20 hours of weekly manual operations, boosting per-operator capacity by 10x+.",
+            "Contract signing, seller payouts, and notifications run apart from payment approval in an SQS FIFO and Lambda pipeline. First payment approval went from 3 business days to under 1 minute. Partner-specific settlement rules live as shared rules plus per-partner policies. Pre-calculating notice recipients on status changes and re-checking CMS direct-debit consent removed 15–20 hours of weekly manual work.",
         },
         {
           heading:
             "4. Observability & failure isolation: Correlation IDs and DLQ re-drive",
           prose:
-            "Standardized distributed tracing using Correlation ID propagation and structured JSON logging across all services, cutting incident diagnosis time to minutes. For external banking network timeouts and temporary outages, exponential backoff retries and Dead Letter Queues (DLQs) isolated poisoned messages, establishing an operational workflow for safe automated re-drives without direct database manipulation.",
+            "One request ID is passed across Lambdas with structured JSON logs, so an incident can be followed with a single ID. On banking network timeouts, retries use exponential backoff and repeatedly failing messages go to a DLQ for reprocessing from the console.",
         },
       ],
       mermaidDiagram: `flowchart TD
@@ -285,7 +285,7 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       results: [
         "Reduced repetitive manual work by roughly 60–80%",
         "Prevented terminal contention and concurrent session conflicts",
-        "Guaranteed recovery of interrupted jobs from point of failure",
+        "Interrupted jobs can be rerun from saved state",
       ],
       stack: ["Go", "Python", "PostgreSQL", "PGMQ", "Docker", "Vue"],
       chapters: [
@@ -302,7 +302,7 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
         {
           heading: "Recovering from interrupted terminal sessions",
           prose:
-            "In case of on-site terminal preemption or network interruption, step-level progress is persisted. Interrupted tasks can be resumed safely without invalidating or repeating completed steps.",
+            "In case of on-site terminal preemption or network interruption, step-level progress is saved. Interrupted tasks continue from the saved state without repeating completed steps.",
         },
       ],
       mermaidDiagram: `flowchart TD
@@ -357,7 +357,7 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       domain: "macOS DEVELOPER TOOL · INDEPENDENT PROJECT",
       title: "ZENITH",
       premise:
-        "Safety-first macOS native app for cleaning developer caches, Docker resources, and managing port processes",
+        "macOS desktop app for cleaning developer caches and Docker resources and checking port processes",
       problem:
         "Developer caches, Docker artifacts, and local AI weights consumed tens of gigabytes while orphaned processes locked local ports, requiring multiple disparate commands and carrying risks of accidental file deletion.",
       solution:
@@ -365,7 +365,7 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
       results: [
         "One-click disk recovery with strict safety verification",
         "Instant detection and termination of port-conflicting processes",
-        "100% on-device execution with zero external data telemetry",
+        "Scans and cleanup run locally without sending scan results externally.",
       ],
       stack: ["Rust", "Tauri", "Svelte 5", "macOS"],
       chapters: [
@@ -381,7 +381,7 @@ export const workProjects: Record<"ko" | "en", WorkProject[]> = {
         {
           heading: "On-device privacy and port process control",
           prose:
-            "All scans and cleanup operations execute strictly on-device without telemetry. Developers can also detect and cleanly terminate orphaned processes holding local development ports.",
+            "All scans and cleanup run on the local machine, and scan results are not sent elsewhere. Developers can also find processes holding local ports and stop them when needed.",
         },
       ],
     },
