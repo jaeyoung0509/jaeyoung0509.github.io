@@ -3,7 +3,7 @@
 
   let {
     title = "Writing",
-    subtitle = "개발하면서 궁금했던 것들을 직접 확인하고 기록합니다.",
+    subtitle = "결제·워크플로·Go·Temporal — 운영하며 부딪힌 것을 재현하고 기록합니다.",
     children,
   }: {
     title?: string;

@@ -11,7 +11,7 @@
   <title>Writing · Jaeyoung Lee</title>
   <meta
     name="description"
-    content="백엔드 시스템, 비동기 워크플로, Go, Temporal, 개발자 도구를 직접 실험하며 기록합니다."
+    content="결제·워크플로·Go·Temporal — 운영하며 부딪힌 것을 재현하고 기록합니다."
   />
   <link rel="canonical" href={`${siteConfig.url}/blog/`} />
 </svelte:head>

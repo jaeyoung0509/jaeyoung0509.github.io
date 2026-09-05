@@ -30,3 +30,15 @@ export function formatDate(date: string, locale: "ko" | "en" = "ko") {
     timeZone: "Asia/Seoul",
   }).format(new Date(date));
 }
+
+export function formatIndexDate(date: string): string {
+  const parts = new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Seoul",
+  }).formatToParts(new Date(date));
+  const get = (type: string) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return `${get("year")}.${get("month")}.${get("day")}`;
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Search, SlidersHorizontal } from "lucide-svelte";
+  import { Search } from "lucide-svelte";
   import type { PostMeta } from "$lib/post-shared";
   import PostRow from "./PostRow.svelte";
   import { onMount } from "svelte";
@@ -66,7 +66,6 @@
       />
     </label>
     <div class="tag-filters" aria-label="태그 필터">
-      <SlidersHorizontal size={16} aria-hidden="true" />
       <button
         class={!activeTag ? "is-active" : undefined}
         type="button"
@@ -87,9 +86,9 @@
   </section>
 
   <section class="post-list container" aria-live="polite">
-    <p class="result-count">{filtered.length}개의 글</p>
-    {#each filtered as post, index (post.slug)}
-      <PostRow {post} eager={index < 3} />
+    <p class="result-count">{filtered.length} posts</p>
+    {#each filtered as post (post.slug)}
+      <PostRow {post} />
     {/each}
     {#if filtered.length === 0}
       <p class="empty-state">검색 조건에 맞는 글이 없습니다.</p>
