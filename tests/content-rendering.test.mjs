@@ -205,8 +205,8 @@ test("홈(기본 블로그) 및 블로그 아카이브 정적 페이지를 올�
   for (const html of [homeHtml, blogHtml]) {
     assert.match(html, /jaeyoung lee/, "헤더 브랜드가 없습니다");
     assert.match(html, /Writing/, "Writing 페이지 제목이 없습니다");
-    assert.match(html, /운영하며 부딪힌 것을 재현하고 기록합니다/, "소개 문구가 없습니다");
-    assert.match(html, /class="post-index-row"/, "블로그 글 목록이 없습니다");
+    assert.doesNotMatch(html, /운영하며 부딪힌 것을 재현하고 기록합니다/, "제거된 소개 문구가 남아있습니다");
+    assert.match(html, /class="post-row"/, "블로그 글 목록이 없습니다");
     assert.match(html, /class="search-field"/, "검색 필드가 없습니다");
     assert.match(html, /class="tag-filters"/, "태그 필터가 없습니다");
     assert.match(html, /Makefile에서 Just로 이사오기/, "포스트 제목이 없습니다");

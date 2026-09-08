@@ -86,9 +86,9 @@
   </section>
 
   <section class="post-list container" aria-live="polite">
-    <p class="result-count">{filtered.length} posts</p>
-    {#each filtered as post (post.slug)}
-      <PostRow {post} />
+    <p class="result-count">{filtered.length}개의 글</p>
+    {#each filtered as post, index (post.slug)}
+      <PostRow {post} eager={index < 3} />
     {/each}
     {#if filtered.length === 0}
       <p class="empty-state">검색 조건에 맞는 글이 없습니다.</p>

@@ -3,7 +3,7 @@
 
   let {
     title = "Writing",
-    subtitle = "결제·워크플로·Go·Temporal — 운영하며 부딪힌 것을 재현하고 기록합니다.",
+    subtitle = "",
     children,
   }: {
     title?: string;
