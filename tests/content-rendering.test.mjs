@@ -212,6 +212,16 @@ test("홈(기본 블로그) 및 블로그 아카이브 정적 페이지를 올�
     assert.ok(videoPost, "Temporal AI 글 카드가 없습니다");
     assert.match(videoPost[1], /src="https:\/\/i\.ytimg\.com\/vi\/k8cnVCMYmNc\/hqdefault\.jpg"/, "별도 썸네일보다 YouTube 썸네일을 우선해야 합니다");
     assert.match(videoPost[1], /alt="OpenAI와 Temporal로 Durable Agent 만들기"/, "YouTube 썸네일에는 영상 제목을 사용해야 합니다");
+    for (const [slug, cover] of [
+      ["migrate-makefile-to-just", "/images/thumbnail.jpeg"],
+      ["go-mutex-atomic-cache-coherence-benchmark", "/images/20260812_165412.jpg"],
+      ["temporal-loan-application-workflow", "/images/temporal-logo.png"],
+    ]) {
+      const card = html.match(new RegExp(`<a[^>]+href="/blog/${slug}/"[^>]*>([\\s\\S]*?)</a>`));
+      assert.ok(card, `${slug}: 글 카드가 없습니다`);
+      assert.ok(card[1].includes(`src="${cover}"`), `${slug}: 기존 커버 이미지를 도식보다 우선해야 합니다`);
+      assert.doesNotMatch(card[1], /src="\/images\/thumbnails\//, `${slug}: 커버가 있으면 도식을 사용하지 않아야 합니다`);
+    }
     assert.doesNotMatch(html, /운영하며 부딪힌 것을 재현하고 기록합니다/, "제거된 소개 문구가 남아있습니다");
     assert.match(html, /class="post-row"/, "블로그 글 목록이 없습니다");
     assert.match(html, /class="search-field"/, "검색 필드가 없습니다");

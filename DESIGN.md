@@ -14,7 +14,8 @@ engineer's maintained notebook rather than a product landing page.
   primary tags lead into an unframed three-column article grid, collapsing to
   two columns on tablets and one on phones. Additional tags use a disclosure.
   Thumbnails share an 8:5 frame. Video posts automatically use the YouTube
-  thumbnail first; other posts use a dedicated thumbnail or their cover image.
+  thumbnail first, then the original cover image. Dedicated diagrams are a
+  fallback only when neither a video nor a cover image is available.
   Article covers remain independent from index thumbnails.
 - Article: Long Document with a right-side table of contents.
 - About: Split Studio for the introduction, followed by an unframed, single-column

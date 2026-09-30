@@ -8,14 +8,14 @@
   const coverImage = $derived(
     post.coverYoutubeId
       ? `https://i.ytimg.com/vi/${post.coverYoutubeId}/hqdefault.jpg`
-      : post.thumbnail ?? post.cover ?? "/images/editorial-backend-desk.jpg",
+      : post.cover ?? post.thumbnail ?? "/images/editorial-backend-desk.jpg",
   );
   const coverAlt = $derived(
     post.coverYoutubeId
       ? post.coverYoutubeTitle ?? post.title
-      : post.thumbnail
-        ? post.thumbnailAlt ?? post.title
-        : post.coverAlt ?? post.title,
+      : post.cover
+        ? post.coverAlt ?? post.title
+        : post.thumbnailAlt ?? post.title,
   );
 </script>
 
