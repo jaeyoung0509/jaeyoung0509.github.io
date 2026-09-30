@@ -3,6 +3,11 @@
   import { page } from "$app/state";
 </script>
 
+<svelte:head>
+  <title>페이지를 찾을 수 없습니다 · Jaeyoung Lee</title>
+  <meta name="robots" content="noindex" />
+</svelte:head>
+
 <section class="not-found container">
   <span>{page.status || 404}</span>
   <h1>페이지를 찾을 수 없습니다</h1>

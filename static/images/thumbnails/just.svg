@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+<title id="title">Makefile to Just</title><desc id="desc">Makefile task commands move to a Just recipe.</desc>
+<style>:root{--paper:#f6f8f7;--ink:#1f2421;--muted:#5f6762;--line:#c9cfcb;--accent:#176b51}text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;fill:var(--ink)}.label{font-size:25px;fill:var(--muted)}.node{fill:var(--paper);stroke:var(--line);stroke-width:2}.path{fill:none;stroke:var(--accent);stroke-width:4}</style>
+<rect width="1200" height="750" fill="var(--paper)"/><text x="80" y="110" class="label">DEVELOPER TOOLS</text>
+<text x="80" y="245" font-size="80">make → just</text><path d="M80 300H1120" stroke="var(--line)"/><text x="80" y="400" font-size="38">just test</text><text x="80" y="475" font-size="38">just build</text><text x="80" y="550" font-size="38">just lint</text><text x="700" y="475" class="label">TASKS, SIMPLIFIED</text>
+<path d="M80 660H1120" stroke="var(--line)" stroke-width="2"/><text x="80" y="706" class="label">JAEYOUNG LEE / ENGINEERING NOTES</text></svg>

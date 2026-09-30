@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-labelledby="title desc">
+<title id="title">Durable AI workflow</title><desc id="desc">Model and tool activities persist their results in a Temporal workflow.</desc>
+<style>:root{--paper:#f6f8f7;--ink:#1f2421;--muted:#5f6762;--line:#c9cfcb;--accent:#176b51}text{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;fill:var(--ink)}.label{font-size:25px;fill:var(--muted)}.node{fill:var(--paper);stroke:var(--line);stroke-width:2}.path{fill:none;stroke:var(--accent);stroke-width:4}</style>
+<rect width="1200" height="750" fill="var(--paper)"/><text x="80" y="110" class="label">TEMPORAL / AI AGENTS</text>
+<text x="80" y="245" font-size="68">Durable AI Workflow</text><rect x="80" y="345" width="300" height="150" class="node"/><rect x="450" y="345" width="300" height="150" class="node"/><rect x="820" y="345" width="300" height="150" class="node"/><text x="120" y="430" font-size="34">Model</text><text x="490" y="430" font-size="34">Tool</text><text x="860" y="430" font-size="34">Result</text><path d="M380 420H450M750 420H820M230 495V570H970V495" class="path"/><text x="470" y="615" class="label">PERSIST &amp; RESUME</text>
+<path d="M80 660H1120" stroke="var(--line)" stroke-width="2"/><text x="80" y="706" class="label">JAEYOUNG LEE / ENGINEERING NOTES</text></svg>

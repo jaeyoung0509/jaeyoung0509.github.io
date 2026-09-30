@@ -9,7 +9,6 @@ export const GET: RequestHandler = () => {
 
   const staticUrls = [
     `<url><loc>${siteConfig.url}/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>`,
-    `<url><loc>${siteConfig.url}/blog/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`,
     `<url><loc>${siteConfig.url}/about/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>`,
   ];
 

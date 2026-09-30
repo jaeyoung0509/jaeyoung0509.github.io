@@ -23,6 +23,8 @@ export interface StudioPostData {
   featured: boolean;
   draft: boolean;
   cover?: string;
+  thumbnail?: string;
+  thumbnailAlt?: string;
   coverAlt?: string;
   coverYoutubeId?: string;
   coverYoutubeTitle?: string;
@@ -84,6 +86,8 @@ export function getAllStudioPosts(): StudioPostData[] {
         featured: Boolean(data.featured),
         draft: Boolean(data.draft),
         cover: data.cover ? String(data.cover) : undefined,
+        thumbnail: data.thumbnail ? String(data.thumbnail) : undefined,
+        thumbnailAlt: data.thumbnailAlt ? String(data.thumbnailAlt) : undefined,
         coverAlt: data.coverAlt ? String(data.coverAlt) : undefined,
         coverYoutubeId: data.coverYoutubeId
           ? String(data.coverYoutubeId)
@@ -134,6 +138,8 @@ export function getStudioPost(slug: string): StudioPostData | null {
     featured: Boolean(data.featured),
     draft: Boolean(data.draft),
     cover: data.cover ? String(data.cover) : undefined,
+    thumbnail: data.thumbnail ? String(data.thumbnail) : undefined,
+    thumbnailAlt: data.thumbnailAlt ? String(data.thumbnailAlt) : undefined,
     coverAlt: data.coverAlt ? String(data.coverAlt) : undefined,
     coverYoutubeId: data.coverYoutubeId
       ? String(data.coverYoutubeId)
@@ -197,6 +203,8 @@ export function saveStudioPost(
   frontmatter.draft = Boolean(post.draft);
 
   if (post.cover) frontmatter.cover = post.cover;
+  if (post.thumbnail) frontmatter.thumbnail = post.thumbnail;
+  if (post.thumbnailAlt) frontmatter.thumbnailAlt = post.thumbnailAlt;
   if (post.coverAlt) frontmatter.coverAlt = post.coverAlt;
   if (post.coverYoutubeId) frontmatter.coverYoutubeId = post.coverYoutubeId;
   if (post.coverYoutubeTitle)
@@ -384,4 +392,3 @@ export function deleteUnusedImages(filenames: string[]): {
 
   return { deleted, failed };
 }
-

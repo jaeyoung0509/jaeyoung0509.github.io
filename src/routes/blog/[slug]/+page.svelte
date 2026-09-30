@@ -4,6 +4,7 @@
   import CodeCopyEnhancer from "$components/CodeCopyEnhancer.svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
   import GiscusComments from "$components/GiscusComments.svelte";
+  import Seo from "$components/Seo.svelte";
   import { formatDate } from "$lib/post-shared";
   import { siteConfig } from "$lib/site";
   import type { PageData } from "./$types";
@@ -27,7 +28,7 @@
       dateModified: new Date(
         post.updatedAt ?? post.publishedAt,
       ).toISOString(),
-      inLanguage: "ko-KR",
+      inLanguage: post.locale === "en" ? "en-US" : "ko-KR",
       author: {
         "@type": "Person",
         name: siteConfig.author.name,
@@ -35,19 +36,24 @@
       },
       image: new URL(image, siteConfig.url).toString(),
       mainEntityOfPage: `${siteConfig.url}/blog/${post.slug}/`,
-    }),
+    }).replaceAll("<", "\\u003c"),
+  );
+  // Keep the closing script tag out of the Svelte source parser's raw-text context.
+  const jsonLdScript = $derived(
+    '<script type="application/ld+json">' + jsonLd + "</scr" + "ipt>",
   );
 </script>
 
+<Seo
+  title={`${post.title} | ${siteConfig.name}`}
+  description={post.description}
+  path={`/blog/${post.slug}/`}
+  {image}
+  type="article"
+  locale={post.locale === "en" ? "en_US" : "ko_KR"}
+/>
+
 <svelte:head>
-  <title>{post.title} | {siteConfig.name}</title>
-  <meta name="description" content={post.description} />
-  <link rel="canonical" href={`${siteConfig.url}/blog/${post.slug}/`} />
-  <meta property="og:type" content="article" />
-  <meta property="og:locale" content="ko_KR" />
-  <meta property="og:url" content={`${siteConfig.url}/blog/${post.slug}/`} />
-  <meta property="og:title" content={post.title} />
-  <meta property="og:description" content={post.description} />
   <meta
     property="article:published_time"
     content={new Date(post.publishedAt).toISOString()}
@@ -61,22 +67,13 @@
   {#each post.tags as tag (tag)}
     <meta property="article:tag" content={tag} />
   {/each}
-  <meta property="og:image" content={image} />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={post.title} />
-  <meta name="twitter:description" content={post.description} />
-  <meta name="twitter:image" content={image} />
-  {#if jsonLd}
-    <script type="application/ld+json">
-      {@html jsonLd}
-    </script>
-  {/if}
+  {@html jsonLdScript}
 </svelte:head>
 
 <article>
   <header class="article-header">
     <div class="article-header-inner">
-      <a class="back-link" href="/blog/">
+      <a class="back-link" href="/">
         <ArrowLeft size={15} /> 전체 글
       </a>
       <h1>{post.title}</h1>

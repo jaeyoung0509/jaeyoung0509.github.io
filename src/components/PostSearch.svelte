@@ -8,9 +8,16 @@
 
   let query = $state("");
   let activeTag = $state("");
+  let showAllTags = $state(false);
 
   const tags = $derived(
-    [...new Set(posts.flatMap((post) => post.tags))].sort(),
+    [...new Set(posts.flatMap((post) => post.tags))].sort((a, b) =>
+      posts.filter((post) => post.tags.includes(b)).length -
+      posts.filter((post) => post.tags.includes(a)).length || a.localeCompare(b),
+    ),
+  );
+  const visibleTags = $derived(
+    showAllTags ? tags : tags.filter((tag, index) => index < 6 || tag === activeTag),
   );
 
   const filtered = $derived(
@@ -33,7 +40,7 @@
   function selectTag(tag: string) {
     if (typeof window === "undefined") return;
     activeTag = tag;
-    const basePath = window.location.pathname === "/" ? "/" : "/blog/";
+    const basePath = "/";
     const url = tag
       ? `${basePath}?tag=${encodeURIComponent(tag)}`
       : basePath;
@@ -65,23 +72,36 @@
         autocomplete="off"
       />
     </label>
-    <div class="tag-filters" aria-label="태그 필터">
+    <div class="tag-filters" id="writing-tags" aria-label="태그 필터">
       <button
         class={!activeTag ? "is-active" : undefined}
         type="button"
+        aria-pressed={!activeTag}
         onclick={() => selectTag("")}
       >
         전체
       </button>
-      {#each tags as tag (tag)}
+      {#each visibleTags as tag (tag)}
         <button
           class={activeTag === tag ? "is-active" : undefined}
           type="button"
+          aria-pressed={activeTag === tag}
           onclick={() => selectTag(tag)}
         >
           #{tag}
         </button>
       {/each}
+      {#if tags.length > 6}
+        <button
+          class="tag-disclosure"
+          type="button"
+          aria-expanded={showAllTags}
+          aria-controls="writing-tags"
+          onclick={() => (showAllTags = !showAllTags)}
+        >
+          {showAllTags ? "접기" : "더 보기"}
+        </button>
+      {/if}
     </div>
   </section>
 
@@ -95,5 +115,4 @@
     {/if}
   </section>
 {/if}
-
 

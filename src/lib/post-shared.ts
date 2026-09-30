@@ -10,6 +10,8 @@ export type PostMeta = {
   featured: boolean;
   draft: boolean;
   cover?: string;
+  thumbnail?: string;
+  thumbnailAlt?: string;
   coverAlt?: string;
   coverYoutubeId?: string;
   coverYoutubeTitle?: string;

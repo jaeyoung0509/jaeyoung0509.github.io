@@ -237,6 +237,7 @@ test("RSS 피드, 사이트맵, robots.txt, 404 페이지가 올바르게 생성
   assert.match(sitemapXml, /<urlset xmlns="http:\/\/www.sitemaps.org\/schemas\/sitemap\/0.9">/, "Sitemap XML 형식이 올바르지 않습니다");
   assert.match(sitemapXml, /https:\/\/jaeyoung0509.github.io\/blog\/go-mutex-atomic-cache-coherence-benchmark\//, "Sitemap에 포스트 URL이 없습니다");
   assert.match(sitemapXml, /https:\/\/jaeyoung0509.github.io\/about\//, "Sitemap에 about URL이 없습니다");
+  assert.doesNotMatch(sitemapXml, /<loc>https:\/\/jaeyoung0509.github.io\/blog\/<\/loc>/, "중복 아카이브는 Sitemap에서 제외되어야 합니다");
 
   assert.match(robotsTxt, /User-agent: \*/, "robots.txt 내용이 올바르지 않습니다");
   assert.match(robotsTxt, /Sitemap: https:\/\/jaeyoung0509.github.io\/sitemap.xml/, "robots.txt sitemap 설정이 없습니다");
@@ -251,4 +252,43 @@ test("RSS 피드, 사이트맵, robots.txt, 404 페이지가 올바르게 생성
     /\/_app\/immutable\/entry\/start\./,
     "404 페이지에 SvelteKit 번들이 로드되지 않았습니다",
   );
+});
+
+test("공개 페이지의 SEO 정보가 중복되지 않고 글의 JSON-LD가 유효하다", async () => {
+  const origin = "https://jaeyoung0509.github.io";
+  const sitemap = await readFile(new URL("../out/sitemap.xml", import.meta.url), "utf8");
+  const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  urls.push(`${origin}/blog/`);
+
+  for (const url of urls) {
+    const pathname = new URL(url).pathname;
+    const html = await readFile(new URL(`../out${pathname}index.html`, import.meta.url), "utf8");
+    const head = html.slice(0, html.indexOf("</head>"));
+    const canonical = pathname === "/blog/" ? `${origin}/` : url;
+
+    for (const attribute of [
+      'name="description"', 'property="og:type"', 'property="og:locale"',
+      'property="og:title"', 'property="og:description"', 'property="og:image"',
+      'property="og:url"', 'name="twitter:title"', 'name="twitter:description"',
+      'name="twitter:image"',
+    ]) {
+      assert.equal(head.split(attribute).length - 1, 1, `${pathname}: ${attribute}는 하나여야 합니다`);
+    }
+    assert.equal(head.match(/rel="canonical"/g)?.length, 1, `${pathname}: canonical 중복`);
+    assert.ok(head.includes(`rel="canonical" href="${canonical}"`), `${pathname}: 잘못된 canonical`);
+    for (const match of head.matchAll(/<meta (?:property="og:image"|name="twitter:image") content="([^"]+)"/g)) {
+      assert.ok(match[1].startsWith("https://"), `${pathname}: 이미지 URL은 절대 주소여야 합니다`);
+    }
+
+    if (pathname.startsWith("/blog/") && pathname !== "/blog/") {
+      const scripts = [...head.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+      assert.equal(scripts.length, 1, `${pathname}: JSON-LD가 하나여야 합니다`);
+      const data = JSON.parse(scripts[0][1]);
+      assert.equal(data["@type"], "BlogPosting");
+      assert.equal(data.mainEntityOfPage, url);
+      assert.ok(data.headline && data.description && data.author.name);
+      assert.ok(Number.isFinite(Date.parse(data.datePublished)));
+      assert.ok(data.image.startsWith("https://"));
+    }
+  }
 });

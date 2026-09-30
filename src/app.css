@@ -1,5 +1,5 @@
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4
- * genre: modern-minimal editorial · macrostructure: Index-first · about: Split Studio
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R5 V4
+ * genre: modern-minimal editorial · macrostructure: Image-supported writing index · about: Split Studio
  * theme: project editorial system
  * nav: N1a minimal · footer: Ft2 inline · design-system: DESIGN.md
  * contrast: pass · mobile: pass (34, 49–57)
@@ -3278,5 +3278,127 @@ summary {
   .reveal {
     opacity: 1 !important;
     transform: none !important;
+  }
+}
+
+/* Writing refinements · existing editorial system · restrained, content-first */
+.page-header {
+  padding: var(--space-xl) 0 var(--space-md);
+}
+
+.page-header h1,
+.article-header h1,
+.post-copy h3 {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  letter-spacing: 0;
+}
+
+.filters {
+  align-items: start;
+  padding: var(--space-sm) 0;
+}
+
+.search-field,
+.tag-filters button {
+  min-height: 44px;
+}
+
+.tag-filters {
+  gap: var(--space-2xs);
+  flex-wrap: wrap;
+  overflow: visible;
+  padding-bottom: 0;
+}
+
+.tag-filters button {
+  white-space: nowrap;
+}
+
+.tag-filters .tag-disclosure {
+  color: var(--accent);
+  border-color: transparent;
+}
+
+.tag-filters .tag-disclosure:hover {
+  color: var(--accent-strong);
+  background: var(--surface);
+  border-color: var(--line);
+  transform: none;
+}
+
+.post-list {
+  row-gap: var(--space-lg);
+  padding-top: var(--space-md);
+  padding-bottom: var(--space-xl);
+}
+
+.result-count {
+  color: var(--muted);
+}
+
+.post-row {
+  animation: none;
+}
+
+.post-image {
+  aspect-ratio: 8 / 5;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+.post-image img {
+  height: 100%;
+  aspect-ratio: 8 / 5;
+  object-fit: contain;
+}
+
+.header-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  white-space: nowrap;
+}
+
+.brand {
+  min-height: 44px;
+  border-radius: 2px;
+  letter-spacing: 0;
+}
+
+@media (max-width: 760px) {
+  .page-header {
+    padding: var(--space-lg) 0 var(--space-md);
+  }
+
+  .page-header h1 {
+    font-size: 38px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .post-list {
+    row-gap: var(--space-md);
+  }
+
+  .article-header h1 {
+    font-size: clamp(28px, 7vw, 40px);
+  }
+}
+
+@media (max-width: 414px) {
+  .brand {
+    font-size: 16px;
+  }
+
+  .header-nav {
+    gap: var(--space-xs);
+  }
+
+  .header-nav a {
+    font-size: 12px;
   }
 }

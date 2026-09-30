@@ -8,6 +8,7 @@
   import { portfolioContent } from "$lib/portfolio-content";
   import { workProjects } from "$lib/work";
   import { siteConfig } from "$lib/site";
+  import Seo from "$components/Seo.svelte";
 
   let lang = $state<"en" | "ko">("ko");
   let expandedWork = $state<Record<string, boolean>>({
@@ -98,13 +99,13 @@
   const projects = $derived(workProjects[lang]);
 </script>
 
-<svelte:head>
-  <title>{c.meta.title}</title>
-  <meta name="description" content={c.meta.description} />
-  <meta property="og:title" content={c.meta.title} />
-  <meta property="og:description" content={c.meta.description} />
-  <meta property="og:image" content={c.meta.ogImage} />
-</svelte:head>
+<Seo
+  title={c.meta.title}
+  description={c.meta.description}
+  image={c.meta.ogImage}
+  path="/about/"
+  locale={lang === "ko" ? "ko_KR" : "en_US"}
+/>
 
 <div class="portfolio-container">
   <!-- Hero Section -->

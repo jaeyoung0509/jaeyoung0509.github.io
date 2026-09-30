@@ -83,6 +83,8 @@ function parsePostFile(slug: string): Post {
     featured: Boolean(data.featured),
     draft: Boolean(data.draft),
     cover: data.cover ? String(data.cover) : undefined,
+    thumbnail: data.thumbnail ? String(data.thumbnail) : undefined,
+    thumbnailAlt: data.thumbnailAlt ? String(data.thumbnailAlt) : undefined,
     coverAlt: data.coverAlt ? String(data.coverAlt) : undefined,
     coverYoutubeId: data.coverYoutubeId
       ? String(data.coverYoutubeId)
