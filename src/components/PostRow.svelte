@@ -6,9 +6,16 @@
   let { post, eager = false }: { post: PostMeta; eager?: boolean } = $props();
 
   const coverImage = $derived(
-    post.thumbnail ?? (post.coverYoutubeId
+    post.coverYoutubeId
       ? `https://i.ytimg.com/vi/${post.coverYoutubeId}/hqdefault.jpg`
-      : post.cover ?? "/images/editorial-backend-desk.jpg"),
+      : post.thumbnail ?? post.cover ?? "/images/editorial-backend-desk.jpg",
+  );
+  const coverAlt = $derived(
+    post.coverYoutubeId
+      ? post.coverYoutubeTitle ?? post.title
+      : post.thumbnail
+        ? post.thumbnailAlt ?? post.title
+        : post.coverAlt ?? post.title,
   );
 </script>
 
@@ -21,7 +28,7 @@
     <div class="post-image">
       <img
         src={coverImage}
-        alt={post.thumbnailAlt ?? post.coverYoutubeTitle ?? post.coverAlt ?? post.title}
+        alt={coverAlt}
         width="1200"
         height="750"
         loading={eager ? "eager" : "lazy"}

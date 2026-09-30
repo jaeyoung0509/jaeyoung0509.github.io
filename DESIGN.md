@@ -13,8 +13,9 @@ engineer's maintained notebook rather than a product landing page.
 - Home and archive: Image-supported writing index. A compact search and six
   primary tags lead into an unframed three-column article grid, collapsing to
   two columns on tablets and one on phones. Additional tags use a disclosure.
-  Thumbnails share an 8:5 frame and show app screenshots or technical diagrams;
-  article covers remain independent from index thumbnails.
+  Thumbnails share an 8:5 frame. Video posts automatically use the YouTube
+  thumbnail first; other posts use a dedicated thumbnail or their cover image.
+  Article covers remain independent from index thumbnails.
 - Article: Long Document with a right-side table of contents.
 - About: Split Studio for the introduction, followed by an unframed, single-column
   project index that reads like edited engineering notes rather than a product grid.
