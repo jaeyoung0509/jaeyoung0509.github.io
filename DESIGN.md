@@ -13,7 +13,8 @@ engineer's maintained notebook rather than a product landing page.
 - Home and archive: Image-supported writing index. A compact search and six
   primary tags lead into an unframed three-column article grid, collapsing to
   two columns on tablets and one on phones. Additional tags use a disclosure.
-  Thumbnails share an 8:5 frame. Video posts automatically use the YouTube
+  Thumbnails fill an 8:5 frame with centered cropping, preserving image
+  proportions without empty side bars. Video posts automatically use the YouTube
   thumbnail first, then the original cover image. Dedicated diagrams are a
   fallback only when neither a video nor a cover image is available.
   Article covers remain independent from index thumbnails.

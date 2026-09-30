@@ -3351,7 +3351,8 @@ summary {
 .post-image img {
   height: 100%;
   aspect-ratio: 8 / 5;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
 }
 
 .header-nav a {
