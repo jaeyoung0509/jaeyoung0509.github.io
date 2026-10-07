@@ -1,6 +1,5 @@
 <script lang="ts">
   import { ChevronDown } from "lucide-svelte";
-  import { slide } from "svelte/transition";
   import type { WorkProject } from "$lib/work";
   import ProjectDetail from "./ProjectDetail.svelte";
 
@@ -20,12 +19,7 @@
     collapseCTA: string;
   } = $props();
 
-  function disclosureDuration() {
-    if (typeof window === "undefined") return 0;
-    return window.matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? 0
-      : 250;
-  }
+
 </script>
 
 <article id={project.slug} class="work-item" class:is-expanded={isExpanded}>
@@ -43,17 +37,17 @@
 
     <dl class="work-psr-group">
       <div class="work-psr-row">
-        <dt class="work-psr-label">Problem</dt>
+        <dt class="work-psr-label">{lang === "ko" ? "배경" : "Problem"}</dt>
         <dd class="work-psr-content">{project.problem}</dd>
       </div>
 
       <div class="work-psr-row">
-        <dt class="work-psr-label">Solution</dt>
+        <dt class="work-psr-label">{lang === "ko" ? "작업" : "Solution"}</dt>
         <dd class="work-psr-content">{project.solution}</dd>
       </div>
 
       <div class="work-psr-row">
-        <dt class="work-psr-label">Result</dt>
+        <dt class="work-psr-label">{lang === "ko" ? "변경 내용" : "Result"}</dt>
         <dd class="work-psr-content">
           <ul class="result-metric-list">
             {#each project.results as result (result.metric)}
@@ -88,7 +82,7 @@
     </p>
 
     {#if isExpanded}
-      <div transition:slide={{ duration: disclosureDuration() }}>
+      <div>
         <ProjectDetail {project} {lang} />
       </div>
     {/if}

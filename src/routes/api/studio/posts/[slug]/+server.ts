@@ -1,6 +1,6 @@
 import { json, error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { getStudioPost, ensureDevMode } from "$lib/studio";
+import { getStudioPost, ensureDevMode } from "$lib/server/studio";
 
 export const prerender = false;
 

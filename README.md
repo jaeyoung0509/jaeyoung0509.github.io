@@ -1,6 +1,6 @@
 # jaeyoung0509
 
-A statically exported engineering blog built with **SvelteKit 2 (Svelte 5 Runes)**, Tailwind CSS, Bits UI, and Markdown/MDX.
+A statically exported engineering blog built with **SvelteKit 2 (Svelte 5 Runes)**, Tailwind CSS, and Markdown/MDX.
 Korean is the primary content language.
 
 ## Features
@@ -8,7 +8,7 @@ Korean is the primary content language.
 - File-based posts authored in `content/posts/*.mdx`
 - Frontmatter for publishing dates, tags, locale, draft status, and cover media
 - Static export for GitHub Pages (`@sveltejs/adapter-static`)
-- Search and tag filtering powered by Svelte 5 Runes & Bits UI
+- Search and tag filtering powered by Svelte 5 Runes
 - Generated table of contents with scroll spy
 - Shiki build-time syntax highlighting and code-copy controls
 - Mermaid diagrams in fenced code blocks
@@ -50,6 +50,8 @@ cover: "/images/cover.jpg"
 coverAlt: "Accessible image description"
 ---
 ```
+
+Start the body with `##` headings; the article title is rendered from frontmatter.
 
 Posts with `draft: true` are excluded from post listings, the sitemap, the RSS
 feed, and generated static routes.
@@ -140,3 +142,25 @@ workflow can pass them to the build.
 `.github/workflows/deploy.yml` builds and deploys the static export to GitHub
 Pages on pushes to `main`. Configure the repository's Pages source as
 `GitHub Actions`.
+
+## Local Studio
+
+`/studio/` and its APIs are available only with `npm run dev`.
+New posts and autosaves remain drafts. Use the publish dialog to publish a draft;
+saving an already published post preserves its publication status. Slug conflicts
+return an error without replacing another post. Renames write the new file before
+removing the old path.
+
+## Styles and shared code
+
+- `tokens.css`: colours, fonts, spacing, and reading width
+- `src/styles/`: base, layout, writing, article, portfolio, and Studio styles
+- `src/lib/post-shared.ts`: post types, metadata, summaries, and reading time
+- `src/lib/server/`: file storage and Git operations
+- `src/lib/studio/`: autosave session, text insertion, and split-pane controls
+- `src/lib/mermaid.ts`: shared lazy diagram rendering for articles and Studio
+
+Pretendard is hosted locally. `npm run images` generates responsive WebP variants
+of existing post covers and thumbnails. It also runs before development and builds;
+original images remain the fallback. After changing a cover while the dev server is
+running, run `npm run images` to refresh its responsive variants.

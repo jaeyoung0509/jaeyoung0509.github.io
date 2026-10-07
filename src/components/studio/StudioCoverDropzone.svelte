@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Image, Upload, RefreshCw, Trash2 } from "lucide-svelte";
+  import { Upload, RefreshCw, Trash2 } from "lucide-svelte";
 
   let {
     cover = $bindable(),
@@ -20,7 +20,7 @@
   let fileInputRef = $state<HTMLInputElement | null>(null);
 
   const effectiveCover = $derived(
-    cover || (coverYoutubeId ? `https://i.ytimg.com/vi/${coverYoutubeId}/hqdefault.jpg` : undefined),
+    coverYoutubeId ? `https://i.ytimg.com/vi/${coverYoutubeId}/hqdefault.jpg` : cover,
   );
 
   async function handleFiles(files: FileList | null) {
@@ -140,7 +140,7 @@
     border: 1px dashed var(--line-strong);
     border-radius: 4px;
     background: var(--surface);
-    transition: all var(--dur-short) var(--ease-out);
+    transition: color var(--dur-short), background-color var(--dur-short), border-color var(--dur-short) var(--ease-out);
     padding: 16px 20px;
   }
 
@@ -247,7 +247,7 @@
     display: none;
   }
 
-  .animate-spin {
+  :global(.animate-spin) {
     animation: spin 1s linear infinite;
   }
 

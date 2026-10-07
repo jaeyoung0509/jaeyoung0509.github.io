@@ -1,14 +1,20 @@
 <script lang="ts">
   import type { PostHeading } from "$lib/post-shared";
+  import { onMount } from "svelte";
+  import { ChevronDown } from "lucide-svelte";
 
   let { headings }: { headings: PostHeading[] } = $props();
 
-  let activeId = $state("");
+  let activeId = $derived(headings[0]?.id ?? "");
+  let isDesktop = $state(false);
+  let isOpen = $state(false);
 
-  $effect(() => {
-    if (!activeId && headings.length > 0) {
-      activeId = headings[0].id;
-    }
+  onMount(() => {
+    const media = window.matchMedia("(min-width: 1051px)");
+    const sync = () => { isDesktop = media.matches; isOpen = media.matches; };
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
   });
 
   $effect(() => {
@@ -49,14 +55,18 @@
 </script>
 
 <aside class="article-toc">
-  <details open>
-    <summary>이 글의 목차</summary>
+  <details open={isOpen} ontoggle={(event) => { isOpen = event.currentTarget.open; }}>
+    <summary onclick={(event) => { if (isDesktop) event.preventDefault(); }}>
+      <span>이 글의 목차 <span class="toc-count">· {headings.length}개 항목</span></span>
+      <ChevronDown size={16} aria-hidden="true" />
+    </summary>
     <nav aria-label="이 글의 목차">
       <ol>
         {#each headings as heading (heading.id)}
           <li class={`toc-depth-${heading.depth}`}>
             <a
               class={activeId === heading.id ? "is-active" : undefined}
+              aria-current={activeId === heading.id ? "location" : undefined}
               href={`#${heading.id}`}
             >
               {heading.text}

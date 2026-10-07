@@ -55,11 +55,11 @@ bounces, parallax, or decorative animation.
 
 ## Implementation
 
-- Components are styled with semantic class names in `src/app.css`.
+- Components use semantic class names. `src/app.css` imports shared tokens from
+  `tokens.css` and styles by page area from `src/styles/`.
 - Tailwind v4 is loaded for its base layer and remains available, but page and
   component styling should not be rewritten as utility-class chains.
-- `bits-ui` may provide accessible interaction primitives; it does not define the
-  site's visual language.
+- Studio dialogs use the native dialog element for focus handling.
 - Prefer existing design tokens over component-local colour, spacing, or radius values.
 
 ## About Page Grammar
@@ -89,3 +89,6 @@ bounces, parallax, or decorative animation.
 - Mobile widths use one column and must not scroll horizontally.
 - Background surfaces are reserved for code, search controls, and genuinely stateful
   UI—not for grouping ordinary portfolio copy.
+
+- About copy describes responsibilities and implementation work in plain language.
+  Avoid broad personal claims and performance figures without supporting context.

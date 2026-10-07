@@ -1,22 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  const repo =
-    import.meta.env.PUBLIC_GISCUS_REPO ??
-    import.meta.env.NEXT_PUBLIC_GISCUS_REPO ??
-    import.meta.env.VITE_GISCUS_REPO;
-  const repoId =
-    import.meta.env.PUBLIC_GISCUS_REPO_ID ??
-    import.meta.env.NEXT_PUBLIC_GISCUS_REPO_ID ??
-    import.meta.env.VITE_GISCUS_REPO_ID;
-  const category =
-    import.meta.env.PUBLIC_GISCUS_CATEGORY ??
-    import.meta.env.NEXT_PUBLIC_GISCUS_CATEGORY ??
-    import.meta.env.VITE_GISCUS_CATEGORY;
-  const categoryId =
-    import.meta.env.PUBLIC_GISCUS_CATEGORY_ID ??
-    import.meta.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID ??
-    import.meta.env.VITE_GISCUS_CATEGORY_ID;
+  import * as publicEnvironment from "$env/static/public";
+  const config: Record<string, string> = publicEnvironment;
+  const repo = config.PUBLIC_GISCUS_REPO;
+  const repoId = config.PUBLIC_GISCUS_REPO_ID;
+  const category = config.PUBLIC_GISCUS_CATEGORY;
+  const categoryId = config.PUBLIC_GISCUS_CATEGORY_ID;
 
   const isConfigured = Boolean(repo && repoId && category && categoryId);
 

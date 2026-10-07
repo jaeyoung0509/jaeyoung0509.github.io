@@ -1,6 +1,11 @@
 <script lang="ts">
-  import { tick, onDestroy } from "svelte";
+  import { onDestroy } from "svelte";
   import { ListTree, X, Image as ImageIcon } from "lucide-svelte";
+
+  import MermaidHandler from "$components/MermaidHandler.svelte";
+  import CodeCopyEnhancer from "$components/CodeCopyEnhancer.svelte";
+  import type { PostHeading } from "$lib/post-shared";
+  import { errorMessage } from "$lib/errors";
 
   let {
     title,
@@ -37,44 +42,40 @@
   } = $props();
 
   const effectiveCover = $derived(
-    cover || (coverYoutubeId ? `https://i.ytimg.com/vi/${coverYoutubeId}/hqdefault.jpg` : undefined),
+    coverYoutubeId ? `https://i.ytimg.com/vi/${coverYoutubeId}/hqdefault.jpg` : cover,
   );
 
   let html = $state("");
-  let headings = $state<{ depth: number; id: string; text: string }[]>([]);
+  let headings = $state<PostHeading[]>([]);
+  let contentRoot = $state<HTMLElement | null>(null);
+  let compileError = $state("");
   let showToc = $state(false);
   let isCompiling = $state(false);
   let debounceTimer: NodeJS.Timeout | null = null;
   let abortController: AbortController | null = null;
 
   async function compile(source: string) {
-    if (abortController) {
-      abortController.abort();
-    }
-    abortController = new AbortController();
-
+    abortController?.abort();
+    const request = new AbortController();
+    abortController = request;
     isCompiling = true;
+    compileError = "";
     try {
-      const res = await fetch("/api/studio/preview", {
+      const response = await fetch("/api/studio/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: source }),
-        signal: abortController.signal,
+        signal: request.signal,
       });
-
-      if (res.ok) {
-        const data = await res.json();
-        html = data.html;
-        headings = data.headings || [];
-        await tick();
-        await renderMermaid();
-      }
-    } catch (err: any) {
-      if (err.name !== "AbortError") {
-        console.error("Preview compile failed:", err);
-      }
+      if (!response.ok) throw new Error("미리보기를 불러오지 못했습니다.");
+      const result = await response.json();
+      if (request.signal.aborted) return;
+      html = result.html;
+      headings = result.headings ?? [];
+    } catch (error) {
+      if (!request.signal.aborted) compileError = errorMessage(error);
     } finally {
-      isCompiling = false;
+      if (abortController === request) isCompiling = false;
     }
   }
 
@@ -83,38 +84,6 @@
     const target = scrollRef.querySelector(`#${CSS.escape(id)}`);
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-
-  async function renderMermaid() {
-    if (typeof window === "undefined" || !scrollRef) return;
-    const diagrams = scrollRef.querySelectorAll(".mermaid-diagram");
-    if (diagrams.length === 0) return;
-
-    try {
-      const mermaidModule = await import("mermaid");
-      const mermaid = mermaidModule.default;
-      mermaid.initialize({
-        startOnLoad: false,
-        theme: "dark",
-        securityLevel: "loose",
-        fontFamily: "var(--font-mono)",
-      });
-
-      diagrams.forEach(async (el, idx) => {
-        const chart = el.getAttribute("data-chart");
-        if (chart && !el.querySelector("svg")) {
-          try {
-            const id = `mermaid-preview-${Date.now()}-${idx}`;
-            const { svg } = await mermaid.render(id, chart);
-            el.innerHTML = svg;
-          } catch (e) {
-            el.innerHTML = `<pre class="mermaid-error">${chart}</pre>`;
-          }
-        }
-      });
-    } catch {
-      // Ignore fallback
     }
   }
 
@@ -127,6 +96,7 @@
 
     return () => {
       if (debounceTimer) clearTimeout(debounceTimer);
+      abortController?.abort();
     };
   });
 
@@ -137,6 +107,8 @@
 </script>
 
 <div
+  role="region"
+  aria-label="글 미리보기"
   class="studio-preview-pane"
   bind:this={scrollRef}
   onscroll={onScroll}
@@ -152,6 +124,7 @@
         type="button"
         class="toc-pill-btn {showToc ? 'is-active' : ''}"
         onclick={() => (showToc = !showToc)}
+        aria-expanded={showToc}
         title="목차 보기"
       >
         <ListTree size={12} />
@@ -212,6 +185,7 @@
     <header class="preview-header">
       <h1 class="preview-title">{title || "제목을 입력하세요"}</h1>
 
+      {#if description}<p class="preview-description">{description}</p>{/if}
       <div class="preview-meta-line">
         <span class="preview-date">{publishedAt}</span>
         <span class="preview-dot">·</span>
@@ -228,11 +202,15 @@
 
     <div class="preview-divider"></div>
 
-    <div class="prose">
+    <p class="preview-compile-status" role="status">{compileError || (isCompiling ? "미리보기 업데이트 중…" : "")}</p>
+    <div class="prose" bind:this={contentRoot}>
       {@html html || '<p class="empty-state-text">본문을 작성하면 실제 스타일의 미리보기가 실시간으로 렌더링됩니다.</p>'}
     </div>
   </div>
 </div>
+
+<MermaidHandler root={contentRoot} />
+<CodeCopyEnhancer root={contentRoot} contentKey={html} />
 
 <style>
   .studio-preview-pane {
@@ -259,6 +237,7 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    min-height: 44px;
     padding: 4px 10px;
     font-size: 11px;
     font-family: var(--font-mono);
@@ -266,10 +245,9 @@
     color: var(--muted);
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 20px;
+    border-radius: 2px;
     cursor: pointer;
-    backdrop-filter: blur(4px);
-    transition: all var(--dur-short) var(--ease-out);
+    transition: color var(--dur-short), background-color var(--dur-short), border-color var(--dur-short) var(--ease-out);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   }
 
@@ -282,7 +260,7 @@
 
   .toc-popover {
     position: absolute;
-    top: 32px;
+    top: 48px;
     right: 0;
     width: 240px;
     max-height: 360px;
@@ -292,18 +270,6 @@
     border-radius: 4px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     padding: 10px;
-    animation: tocFadeIn 0.15s ease-out;
-  }
-
-  @keyframes tocFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-4px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 
   .toc-popover-header {
@@ -324,7 +290,9 @@
     background: transparent;
     color: var(--muted);
     cursor: pointer;
-    padding: 2px;
+    padding: 8px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .toc-list {
@@ -351,13 +319,14 @@
     background: transparent;
     font-size: 12px;
     color: var(--muted);
-    padding: 4px 6px;
+    padding: 8px 6px;
+    min-height: 44px;
     border-radius: 3px;
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: all var(--dur-short) var(--ease-out);
+    transition: color var(--dur-short), background-color var(--dur-short), border-color var(--dur-short) var(--ease-out);
   }
 
   .toc-link:hover {
@@ -487,6 +456,8 @@
   .empty-state-text {
     color: var(--faint);
     padding: 40px 0;
-    font-style: italic;
   }
+  .preview-description { margin: 0 0 16px; color: var(--muted); line-height: 1.75; }
+  .preview-compile-status { min-height: 20px; margin: 0 0 12px; color: var(--muted); font-size: 12px; }
+  @media (max-width: 760px) { .studio-preview-pane { padding: 64px 20px 100px; } }
 </style>

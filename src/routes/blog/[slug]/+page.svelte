@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { ArrowLeft, CalendarDays, Clock3 } from "lucide-svelte";
+  import ResponsiveImage from "$components/ResponsiveImage.svelte";
   import ArticleToc from "$components/ArticleToc.svelte";
   import CodeCopyEnhancer from "$components/CodeCopyEnhancer.svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
@@ -7,10 +9,16 @@
   import Seo from "$components/Seo.svelte";
   import { formatDate } from "$lib/post-shared";
   import { siteConfig } from "$lib/site";
+  import { page } from "$app/state";
+  import { writingHref } from "$lib/post-navigation";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
   const post = $derived(data.post);
+  let contentEl = $state<HTMLElement | null>(null);
+  let hydrated = $state(false);
+  onMount(() => { hydrated = true; });
+  const returnHref = $derived(hydrated ? writingHref(page.url) : "/");
 
   const image = $derived(
     post.coverYoutubeId
@@ -73,7 +81,7 @@
 <article>
   <header class="article-header">
     <div class="article-header-inner">
-      <a class="back-link" href="/">
+      <a class="back-link" href={returnHref}>
         <ArrowLeft size={15} /> 전체 글
       </a>
       <h1>{post.title}</h1>
@@ -116,8 +124,9 @@
     </div>
   {:else if post.cover}
     <figure class="article-cover">
-      <img
+      <ResponsiveImage
         src={post.cover}
+        sizes="(max-width: 1080px) calc(100vw - 40px), 1040px"
         alt={post.coverAlt ?? post.title}
         width="1800"
         height="1029"
@@ -135,12 +144,12 @@
     {#if post.headings.length > 0}
       <ArticleToc headings={post.headings} />
     {/if}
-    <div class="prose">
+    <div class="prose" bind:this={contentEl}>
       {@html post.html}
     </div>
   </div>
 </article>
 
-<CodeCopyEnhancer />
-<MermaidHandler />
-<GiscusComments />
+<CodeCopyEnhancer root={contentEl} contentKey={post.slug} />
+<MermaidHandler root={contentEl} />
+{#key post.slug}<GiscusComments />{/key}

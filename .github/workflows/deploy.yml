@@ -23,10 +23,6 @@ jobs:
       PUBLIC_GISCUS_REPO_ID: ${{ vars.GISCUS_REPO_ID }}
       PUBLIC_GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
       PUBLIC_GISCUS_CATEGORY_ID: ${{ vars.GISCUS_CATEGORY_ID }}
-      NEXT_PUBLIC_GISCUS_REPO: ${{ vars.GISCUS_REPO }}
-      NEXT_PUBLIC_GISCUS_REPO_ID: ${{ vars.GISCUS_REPO_ID }}
-      NEXT_PUBLIC_GISCUS_CATEGORY: ${{ vars.GISCUS_CATEGORY }}
-      NEXT_PUBLIC_GISCUS_CATEGORY_ID: ${{ vars.GISCUS_CATEGORY_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -23,10 +23,10 @@
   {@render children()}
 {:else}
   <SiteHeader />
-  <main>
+  <a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
+  <main id="main-content" tabindex="-1">
     {@render children()}
   </main>
   <SiteFooter />
 {/if}
-
 

@@ -1,16 +1,22 @@
 <script lang="ts">
   import { dev } from "$app/environment";
+  import { page } from "$app/state";
+  import { siteConfig } from "$lib/site";
 
   const navigation = [
     { href: "/", label: "Writing" },
     { href: "/about/", label: "About" },
     ...(dev ? [{ href: "/studio", label: "Studio", isExternal: false }] : []),
     {
-      href: "https://github.com/jaeyoung0509",
+      href: siteConfig.author.github,
       label: "GitHub ↗",
       isExternal: true,
     },
   ];
+  function isCurrent(href: string) {
+    const pathname = page.url.pathname;
+    return href === "/" ? pathname === "/" || pathname.startsWith("/blog/") : pathname.startsWith(href);
+  }
 </script>
 
 <header class="site-header">
@@ -27,6 +33,7 @@
       {#each navigation as item (item.href)}
         <a
           href={item.href}
+          aria-current={!item.isExternal && isCurrent(item.href) ? "page" : undefined}
           target={item.isExternal ? "_blank" : undefined}
           rel={item.isExternal ? "noreferrer" : undefined}
         >

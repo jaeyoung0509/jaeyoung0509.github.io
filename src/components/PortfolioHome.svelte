@@ -39,44 +39,6 @@
     expandedWork[slug] = !expandedWork[slug];
   }
 
-  function reveal(node: HTMLElement, delay: number = 0) {
-    if (typeof window === "undefined") return {};
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduceMotion) {
-      node.classList.add("is-visible");
-      return {};
-    }
-    node.classList.add("reveal");
-    node.style.setProperty(
-      "--reveal-delay",
-      `${Math.min(Math.max(delay, 0), 400)}ms`,
-    );
-    let io: IntersectionObserver | null = null;
-    if ("IntersectionObserver" in window) {
-      io = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              node.classList.add("is-visible");
-              io?.disconnect();
-            }
-          }
-        },
-        { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
-      );
-      io.observe(node);
-    } else {
-      node.classList.add("is-visible");
-    }
-    return {
-      destroy() {
-        io?.disconnect();
-      },
-    };
-  }
-
   onMount(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -124,6 +86,7 @@
           type="button"
           class="lang-btn"
           class:active={lang === "ko"}
+          aria-pressed={lang === "ko"}
           onclick={() => setLanguage("ko")}
         >
           KO
@@ -133,6 +96,7 @@
           type="button"
           class="lang-btn"
           class:active={lang === "en"}
+          aria-pressed={lang === "en"}
           onclick={() => setLanguage("en")}
         >
           EN
@@ -190,38 +154,27 @@
 
   <!-- Focus / Approach Section -->
   <section class="portfolio-section section-approach" id="about">
-    <div class="section-title-row" use:reveal={0}>
-      <span class="section-eyebrow">{c.about.eyebrow}</span>
-      <h2 class="section-heading-statement">{c.about.title}</h2>
+    <div class="section-title-row">
+      <h2 class="section-heading-large">{c.about.title}</h2>
     </div>
 
     <div class="about-statement-layout">
-      <p class="about-lead-statement" use:reveal={80}>
-        {c.about.paragraphs[0]}
-      </p>
-      <ol class="about-point-list">
-        {#each c.about.paragraphs.slice(1) as paragraph, idx (idx)}
-          <li class="about-point" use:reveal={140 + idx * 90}>
-            <span class="about-point-num" aria-hidden="true"
-              >{String(idx + 1).padStart(2, "0")}</span
-            >
-            <p class="about-sub-statement">{paragraph}</p>
-          </li>
-        {/each}
-      </ol>
+      {#each c.about.paragraphs as paragraph (paragraph)}
+        <p class="about-sub-statement">{paragraph}</p>
+      {/each}
     </div>
   </section>
 
   <!-- Selected Work Section -->
   <section class="portfolio-section section-work" id="work">
-    <div class="section-title-row" use:reveal={0}>
+    <div class="section-title-row">
       <h2 class="section-heading-large">{c.workSection.title}</h2>
       <p class="section-heading-sub">{c.workSection.subtitle}</p>
     </div>
 
     <div class="work-showcase">
-      {#each projects as project, pIdx (project.slug)}
-        <div class="work-reveal" use:reveal={Math.min(pIdx, 3) * 70}>
+      {#each projects as project (project.slug)}
+        <div class="work-reveal">
           <ProjectEntry
             {project}
             isExpanded={expandedWork[project.slug] ?? false}
@@ -237,14 +190,14 @@
 
   <!-- Open Source -->
   <section class="portfolio-section section-oss" id="oss">
-    <div class="section-title-row" use:reveal={0}>
+    <div class="section-title-row">
       <h2 class="section-heading-large">{c.oss.title}</h2>
       <p class="section-heading-sub">{c.oss.subtitle}</p>
     </div>
 
     <div class="oss-list">
-      {#each c.oss.contributions as item, oIdx (item.name)}
-        <div class="oss-reveal" use:reveal={Math.min(oIdx, 2) * 70}>
+      {#each c.oss.contributions as item (item.name)}
+        <div class="oss-reveal">
           <OpenSourceEntry {item} />
         </div>
       {/each}
@@ -253,11 +206,11 @@
 
   <!-- Experience Summary -->
   <section class="portfolio-section section-experience" id="experience">
-    <div class="section-title-row" use:reveal={0}>
+    <div class="section-title-row">
       <h2 class="section-heading-large">{c.experience.title}</h2>
     </div>
 
-    <div class="exp-list" use:reveal={60}>
+    <div class="exp-list">
       <article class="exp-entry-compact">
         <div class="exp-header-row">
           <div>

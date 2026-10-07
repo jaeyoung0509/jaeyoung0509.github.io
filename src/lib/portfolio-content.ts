@@ -55,7 +55,7 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
     meta: {
       title: "이재영 · Software Engineer",
       description:
-        "복잡한 금융 워크플로우를 고객과 운영이 실제로 쓰기 좋은 시스템으로 개선해왔습니다. B2B BNPL 결제, 신용평가, 전자계약, 정산 백엔드 엔지니어 이재영의 포트폴리오.",
+        "백엔드 개발자 이재영의 작업 기록. B2B 외상결제 서비스 개발 경험과 개인 프로젝트, 오픈소스 기여를 정리했습니다.",
       ogImage: `${siteConfig.url}/images/editorial-backend-desk.jpg`,
     },
     hero: {
@@ -63,25 +63,25 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
       location: "대한민국 서울",
       name: "이재영",
       headline:
-        "복잡한 금융 워크플로우를\n고객과 운영이 실제로 쓰기 좋은 시스템으로 개선해왔습니다.",
+        "백엔드를 개발하고,\n필요한 도구를 만듭니다.",
       subheadline:
-        "B2B BNPL에서 3년 7개월간 결제, 신용평가, 전자계약, 정산 백엔드를 개발하고 운영했습니다. 가입부터 첫 외상결제 이용까지 3영업일 이상 걸리던 흐름을 정상 시간대 10분 이내로 줄이고, 계약 단계 이탈률을 약 50%에서 5% 미만으로 낮췄습니다.",
+        "FinovusLab에서 B2B 외상결제 서비스의 백엔드를 개발하고 운영했습니다. 주로 Python과 Go를 사용하고, 개발하면서 불편했던 작업을 도구로 만들어보기도 합니다.",
       ctaWork: "프로젝트 보기",
       techStack: ["Python", "Go", "PostgreSQL", "AWS"],
     },
     about: {
       eyebrow: "일하는 방식",
-      title: "결제와 운영 과정에서 반복되는 문제를 시스템으로 줄여왔습니다.",
+      title: "해온 일",
       paragraphs: [
-        "FinovusLab에서 B2B 외상결제를 만들 때, 가입부터 첫 결제까지 3영업일 넘게 걸렸습니다. 계약 단계에서 들어온 고객의 절반쯤이 기다리다 떠났고, 운영팀은 서류를 눈으로 확인하고 일일이 연락해야 했습니다.",
-        "그래서 서류 확인을 외부 기관 연동과 비동기 심사로 바꿨습니다. 결제 승인과 한도 차감·복원은 하나의 트랜잭션으로 묶었고, 계약·정산·알림은 뒤로 빼서 외부 상태에 흔들리지 않게 했습니다. 파트너마다 달랐던 계약·정산 규칙은 공통 규칙과 파트너별 정책으로 나눠 관리했습니다.",
-        "외부 점검이나 장애로 파이프라인이 멈춰도, 저장해 둔 진행 상태에서 이어서 처리되도록 했습니다. 고객이 다시 신청하지 않아도 되는 구조입니다. 문서만으로 이해가 안 되는 동작은 코드를 직접 따라가 보고, 반복되는 운영 작업은 스크립트와 도구로 줄였습니다.",
+        "FinovusLab에서는 결제, 신용평가, 전자계약, 정산 기능을 맡았습니다. 외부 기관 API를 연동하고, 수작업으로 처리하던 심사와 운영 업무를 자동화하는 작업을 했습니다.",
+        "결제 상태와 한도를 함께 갱신하고, 계약·정산·알림 같은 후속 작업은 비동기로 처리했습니다. 외부 서비스 점검이나 오류로 중단된 작업을 다시 처리할 수 있도록 진행 상태도 저장했습니다.",
+        "개인 프로젝트로는 DB 환경을 준비하는 CLI와 macOS 정리 앱을 만들고 있습니다. 사용하던 오픈소스에서 발견한 문제는 이슈나 PR로 남기고, 그 과정에서 배운 내용은 블로그에 기록합니다.",
       ],
     },
     workSection: {
       title: "주요 프로젝트",
       subtitle:
-        "실무에서 운영한 금융 시스템과 반복 작업을 줄이기 위해 만든 도구입니다.",
+        "업무에서 다룬 시스템과 개인적으로 만든 도구들입니다.",
       expandCTA: "자세히 보기 ↓",
       collapseCTA: "닫기 ↑",
     },
@@ -136,7 +136,7 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
       period: "2022.04 – 2025.11",
       domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
       summary:
-        "B2B BNPL의 결제·신용평가·전자계약·정산 백엔드를 개발하고 운영했습니다. 가입부터 첫 결제까지의 리드타임을 3영업일에서 10분 이내로 단축하고, 결제와 후속 작업을 분리해 외부 시스템 장애의 영향을 격리했습니다.",
+        "B2B 외상결제 서비스의 백엔드 개발과 운영을 담당했습니다. 결제·한도 관리, 외부 기관 연동, 전자계약·정산 처리와 운영 도구를 개발했습니다.",
     },
   },
   en: {
@@ -151,20 +151,20 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
       location: "Seoul, South Korea",
       name: "Jaeyoung Lee",
       headline:
-        "Improving complex financial workflows into systems\nthat work reliably for customers and operations.",
+        "I build backend systems\nand tools for everyday work.",
       subheadline:
-        "Over 3 years and 7 months in B2B BNPL, I designed and operated backend systems for payments, credit assessment, digital contracts, and settlements. I reduced the onboarding-to-first-transaction timeline from 3+ business days to under 10 minutes during operating hours, and cut contract drop-off rate from ~50% to under 5%.",
+        "I worked on the backend of a B2B credit-payment service at FinovusLab. I mainly use Python and Go, and build tools for tasks I find cumbersome during development.",
       ctaWork: "Projects",
       techStack: ["Python", "Go", "PostgreSQL", "AWS"],
     },
     about: {
       eyebrow: "How I Work",
       title:
-        "I reduce repeated payment and operations problems with backend systems.",
+        "What I have worked on",
       paragraphs: [
-        "When I joined the B2B credit-payment service at FinovusLab, onboarding to the first payment took over 3 business days. About half the customers dropped off at the contract step while waiting, and the ops team checked documents by eye and followed up one by one.",
-        "I replaced manual reviews with external verification and async screening. Payment approval and limit deduction/restoration run in one transaction, while contracts, settlements, and notifications run afterwards so external delays don't block payment. Partner-specific contract and settlement rules are kept as shared rules plus per-partner policies.",
-        "If a pipeline stops for external maintenance or an outage, it continues from the saved progress — customers don't need to reapply. When docs don't explain a behavior, I read the source directly, and I turn repeated ops work into scripts and tools.",
+        "At FinovusLab, I worked on payments, credit assessment, digital contracts, and settlements. My work included integrating external APIs and automating manual review and operations tasks.",
+        "I kept payment status and credit-limit updates in the same transaction, and handled contracts, settlements, and notifications asynchronously. I also stored job progress so interrupted work could be retried after maintenance or errors.",
+        "Outside work, I build a database setup CLI and a macOS cleanup app. I report problems I encounter in open source through issues and pull requests, and write about what I learn on this blog.",
       ],
     },
     workSection: {
@@ -225,7 +225,7 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
       period: "2022.04 – 2025.11",
       domain: "B2B BNPL · Payment / Credit / Contract / Settlement",
       summary:
-        "Designed and operated backend systems for payments, credit assessment, digital contracts, and settlements in B2B BNPL. Reduced onboarding-to-transaction lead time from 3 business days to under 10 minutes, and decoupled payments from asynchronous follow-up tasks to isolate external failures.",
+        "Backend development and operations for a B2B credit-payment service. Worked on payment and credit-limit management, external API integrations, contracts, settlements, and internal tools.",
     },
   },
 };

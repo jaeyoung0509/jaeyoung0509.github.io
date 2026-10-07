@@ -8,6 +8,8 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeStringify from "rehype-stringify";
 import { visit } from "unist-util-visit";
 import { createHighlighter, type Highlighter } from "shiki";
+import type { Root as MarkdownRoot } from "mdast";
+import type { Root as HtmlRoot, RootContent } from "hast";
 import type { PostHeading } from "./post-shared";
 
 let highlighterPromise: Promise<Highlighter> | null = null;
@@ -176,10 +178,10 @@ function transformCustomTags(content: string): string {
   return transformed;
 }
 
-function getNodeText(node: any): string {
+function getNodeText(node: RootContent): string {
   if (!node) return "";
   if (node.type === "text") return node.value;
-  if (node.children) return node.children.map(getNodeText).join("");
+  if ("children" in node) return node.children.map(getNodeText).join("");
   return "";
 }
 
@@ -196,35 +198,31 @@ export async function compileMarkdown(source: string): Promise<CompiledMarkdown>
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
-    .use(() => (tree) => {
-      visit(tree, "code", (node: any) => {
+    .use(() => (tree: MarkdownRoot) => {
+      visit(tree, "code", (node, index, parent) => {
+        if (index === undefined || !parent) return;
+        let html: string;
         if (node.lang === "mermaid") {
-          node.type = "html";
-          node.value = `<figure class="mermaid-diagram" aria-label="워크플로 다이어그램" data-chart="${escapeHtml(
-            node.value,
-          )}"><div class="mermaid-loading">다이어그램을 불러오는 중입니다.</div></figure>`;
+          html = `<figure class="mermaid-diagram" aria-label="워크플로 다이어그램" data-chart="${escapeHtml(node.value)}"><div class="mermaid-loading">다이어그램을 불러오는 중입니다.</div></figure>`;
         } else {
           try {
             const lang = node.lang || "text";
-            const html = highlighter.codeToHtml(node.value, {
-              lang: highlighter.getLoadedLanguages().includes(lang)
-                ? lang
-                : "text",
+            html = highlighter.codeToHtml(node.value, {
+              lang: highlighter.getLoadedLanguages().includes(lang) ? lang : "text",
               theme: "github-dark-dimmed",
             });
-            node.type = "html";
-            node.value = html;
           } catch {
-            // fallback
+            return; // Leave the original code node for the default Markdown renderer.
           }
         }
+        parent.children[index] = { type: "html", value: html };
       });
     })
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)
     .use(rehypeSlug)
-    .use(() => (tree) => {
-      visit(tree, "element", (node: any) => {
+    .use(() => (tree: HtmlRoot) => {
+      visit(tree, "element", (node) => {
         if (node.tagName === "h2" || node.tagName === "h3") {
           const depth = (node.tagName === "h2" ? 2 : 3) as 2 | 3;
           const id = node.properties?.id ? String(node.properties.id) : "";

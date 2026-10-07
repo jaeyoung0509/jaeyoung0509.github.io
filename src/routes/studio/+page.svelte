@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StudioDialog from "$components/studio/StudioDialog.svelte";
+  import { errorMessage } from "$lib/errors";
   import { onMount } from "svelte";
   import {
     Plus,
@@ -14,12 +16,12 @@
     AlertCircle,
     X,
     HardDrive,
-    Sparkles,
   } from "lucide-svelte";
   import type { StudioPostData, ImageGarbageReport } from "$lib/studio";
 
   let posts = $state<StudioPostData[]>([]);
   let loading = $state(true);
+  let dashboardError = $state("");
   let searchQuery = $state("");
   let selectedLocale = $state<"all" | "ko" | "en">("all");
   let selectedStatus = $state<"all" | "published" | "draft">("all");
@@ -47,12 +49,14 @@
 
   async function loadData() {
     loading = true;
+    dashboardError = "";
     try {
       const [postsRes, gitRes] = await Promise.all([
         fetch("/api/studio/posts"),
         fetch("/api/studio/git"),
       ]);
 
+      if (!postsRes.ok) throw new Error("글 목록을 불러오지 못했습니다.");
       if (postsRes.ok) {
         const data = await postsRes.json();
         posts = data.posts || [];
@@ -62,7 +66,7 @@
         gitStatus = await gitRes.json();
       }
     } catch (err) {
-      console.error("Failed to load studio data:", err);
+      dashboardError = errorMessage(err, "글 목록을 불러오지 못했습니다.");
     } finally {
       loading = false;
     }
@@ -94,9 +98,10 @@
         body: JSON.stringify({ filenames: unusedImages.map((img) => img.filename) }),
       });
       if (res.ok) {
-        unusedImages = [];
-        showImageCleanerModal = false;
-        alert("미사용 이미지가 모두 안전하게 정리되었습니다.");
+        const result = await res.json();
+        unusedImages = unusedImages.filter(image => !result.deleted.includes(image.filename));
+        if (result.failed.length) dashboardError = "일부 이미지를 정리하지 못했습니다. 다시 검사해주세요.";
+        else showImageCleanerModal = false;
       }
     } catch {
       alert("정리 중 오류가 발생했습니다.");
@@ -142,8 +147,8 @@
         const gitRes = await fetch("/api/studio/git");
         if (gitRes.ok) gitStatus = await gitRes.json();
       }
-    } catch (err: any) {
-      gitPushResult = { success: false, text: err.message || "Git Push 실패" };
+    } catch (err) {
+      gitPushResult = { success: false, text: errorMessage(err, "Git Push 실패") };
     } finally {
       gitPushing = false;
     }
@@ -226,6 +231,7 @@
     </div>
   </header>
 
+  {#if dashboardError}<p class="dashboard-error" role="alert">{dashboardError}</p>{/if}
   <main class="dashboard-content">
     <!-- Stats Row -->
     <div class="stats-strip">
@@ -421,21 +427,8 @@
     {/if}
   </main>
 
-  <!-- Delete Confirm Modal -->
-  {#if deleteConfirmSlug}
-    <div
-      class="modal-backdrop"
-      onclick={() => (deleteConfirmSlug = null)}
-      role="presentation"
-    >
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div
-        class="confirm-card"
-        onclick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        tabindex="-1"
-      >
+  <StudioDialog open={deleteConfirmSlug !== null} label="포스트 삭제" onDismiss={() => (deleteConfirmSlug = null)}>
+    <div class="confirm-card">
         <h3>포스트 삭제</h3>
         <p>
           <strong>{deleteConfirmSlug}.mdx</strong> 파일을 로컬 디스크에서 삭제하시겠습니까?
@@ -456,25 +449,11 @@
             삭제
           </button>
         </div>
-      </div>
     </div>
-  {/if}
+  </StudioDialog>
 
-  <!-- Asset Garbage Collection Modal -->
-  {#if showImageCleanerModal}
-    <div
-      class="modal-backdrop"
-      onclick={() => (showImageCleanerModal = false)}
-      role="presentation"
-    >
-      <!-- svelte-ignore a11y_click_events_have_key_events -->
-      <div
-        class="cleaner-card"
-        onclick={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        tabindex="-1"
-      >
+  <StudioDialog bind:open={showImageCleanerModal} label="미사용 이미지 정리">
+    <div class="cleaner-card">
         <header class="cleaner-header">
           <h3>미사용 이미지 에셋 정리</h3>
           <button
@@ -534,9 +513,8 @@
             </button>
           {/if}
         </footer>
-      </div>
     </div>
-  {/if}
+  </StudioDialog>
 </div>
 
 <style>
@@ -577,7 +555,7 @@
     text-decoration: none;
     padding: 4px 8px;
     border-radius: 3px;
-    transition: all var(--dur-short) var(--ease-out);
+    transition: color var(--dur-short), background-color var(--dur-short), border-color var(--dur-short) var(--ease-out);
   }
 
   .link-back:hover {
@@ -637,7 +615,7 @@
     background: var(--surface);
     color: var(--ink);
     cursor: pointer;
-    transition: all var(--dur-short) var(--ease-out);
+    transition: color var(--dur-short), background-color var(--dur-short), border-color var(--dur-short) var(--ease-out);
   }
 
   .btn-secondary:hover {
@@ -727,7 +705,7 @@
     font-size: 12px;
   }
 
-  .git-icon {
+  :global(.git-icon) {
     color: var(--muted);
   }
 
@@ -785,7 +763,7 @@
     color: var(--ink);
     border-radius: 3px;
     cursor: pointer;
-    transition: all var(--dur-short) var(--ease-out);
+    transition: color var(--dur-short), background-color var(--dur-short), border-color var(--dur-short) var(--ease-out);
   }
 
   .btn-git-push:hover:not(:disabled) {
@@ -833,7 +811,7 @@
     border-radius: 3px;
   }
 
-  .search-icon {
+  :global(.search-icon) {
     color: var(--muted);
   }
 
@@ -1015,7 +993,7 @@
     color: var(--ink);
     text-decoration: none;
     cursor: pointer;
-    transition: all var(--dur-short) var(--ease-out);
+    transition: color var(--dur-short), background-color var(--dur-short), border-color var(--dur-short) var(--ease-out);
   }
 
   .btn-row-action:hover {
@@ -1052,17 +1030,6 @@
   }
 
   /* Modals */
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 20, 18, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    backdrop-filter: blur(2px);
-  }
-
   .confirm-card {
     background: var(--page);
     padding: 24px;
@@ -1141,7 +1108,7 @@
     gap: 6px;
   }
 
-  .clean-check-icon {
+  :global(.clean-check-icon) {
     color: var(--accent);
     margin-bottom: 6px;
   }
@@ -1265,7 +1232,7 @@
     margin-top: 12px;
   }
 
-  .animate-spin {
+  :global(.animate-spin) {
     animation: spin 1s linear infinite;
   }
 
@@ -1277,4 +1244,5 @@
       transform: rotate(360deg);
     }
   }
+  .dashboard-error { margin: 0; padding: 16px 24px; color: #a12622; border-bottom: 1px solid var(--line); }
 </style>

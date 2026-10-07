@@ -1,0 +1,32 @@
+{
+  "/images/20260812_165412.jpg": {
+    "width": 900,
+    "height": 1200,
+    "srcset": "/images/responsive/63e04ce970e3-400.webp 400w, /images/responsive/63e04ce970e3-800.webp 800w, /images/responsive/63e04ce970e3-900.webp 900w"
+  },
+  "/images/editorial-backend-desk.jpg": {
+    "width": 1800,
+    "height": 1013,
+    "srcset": "/images/responsive/6456aabd6fbf-400.webp 400w, /images/responsive/6456aabd6fbf-800.webp 800w, /images/responsive/6456aabd6fbf-1200.webp 1200w, /images/responsive/6456aabd6fbf-1800.webp 1800w"
+  },
+  "/images/temporal-logo.png": {
+    "width": 597,
+    "height": 335,
+    "srcset": "/images/responsive/d605619f39ac-400.webp 400w, /images/responsive/d605619f39ac-597.webp 597w"
+  },
+  "/images/thumbnail.jpeg": {
+    "width": 1050,
+    "height": 1400,
+    "srcset": "/images/responsive/07aa33e48f08-400.webp 400w, /images/responsive/07aa33e48f08-800.webp 800w, /images/responsive/07aa33e48f08-1050.webp 1050w"
+  },
+  "/images/zenith-dashboard.png": {
+    "width": 2144,
+    "height": 1544,
+    "srcset": "/images/responsive/6b5015c5e46c-400.webp 400w, /images/responsive/6b5015c5e46c-800.webp 800w, /images/responsive/6b5015c5e46c-1200.webp 1200w, /images/responsive/6b5015c5e46c-1800.webp 1800w"
+  },
+  "/images/zenith-quick-panel.png": {
+    "width": 1640,
+    "height": 1166,
+    "srcset": "/images/responsive/35efb88ddcd1-400.webp 400w, /images/responsive/35efb88ddcd1-800.webp 800w, /images/responsive/35efb88ddcd1-1200.webp 1200w, /images/responsive/35efb88ddcd1-1640.webp 1640w"
+  }
+}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StudioDialog from "./StudioDialog.svelte";
   import { Video, Bookmark, Link, FileText, X } from "lucide-svelte";
 
   let {
@@ -34,29 +35,14 @@
     } else if (e.key === "4" && isYouTube) {
       e.preventDefault();
       onSelect("text");
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      onSelect(isYouTube ? "video" : "embed");
     }
   }
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
 
-{#if isOpen}
-  <div
-    class="paste-popover-backdrop"
-    onclick={() => onSelect("text")}
-    role="presentation"
-  >
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <div
-      class="paste-popover-card"
-      onclick={(e) => e.stopPropagation()}
-      role="dialog"
-      aria-modal="true"
-      tabindex="-1"
-    >
+<StudioDialog bind:open={isOpen} label="URL 붙여넣기 옵션" onDismiss={() => onSelect("text")}>
+  <div class="paste-popover-card">
       <header class="popover-header">
         <span class="header-label">URL 붙여넣기 옵션</span>
         <span class="url-preview" title={url}>{url}</span>
@@ -182,26 +168,14 @@
           </button>
         {/if}
       </div>
-    </div>
   </div>
-{/if}
+</StudioDialog>
 
 <style>
-  .paste-popover-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 20, 18, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    backdrop-filter: blur(2px);
-  }
-
   .paste-popover-card {
     background: var(--page);
     width: 460px;
-    max-width: 92%;
+    max-width: 100%;
     border-radius: 4px;
     border: 1px solid var(--line);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
@@ -282,7 +256,7 @@
     text-align: left;
     cursor: pointer;
     color: var(--ink);
-    transition: all var(--dur-short) var(--ease-out);
+    transition: background-color var(--dur-short) var(--ease-out);
   }
 
   .option-item:hover,

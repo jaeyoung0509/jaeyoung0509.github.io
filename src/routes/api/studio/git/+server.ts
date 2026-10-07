@@ -1,6 +1,7 @@
+import { errorMessage, errorStatus } from "$lib/errors";
 import { json, error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { getGitStatus, executeGitPush, ensureDevMode } from "$lib/studio";
+import { getGitStatus, executeGitPush, ensureDevMode } from "$lib/server/studio";
 
 export const prerender = false;
 
@@ -16,7 +17,7 @@ export const POST: RequestHandler = async ({ request }) => {
     const { message } = await request.json();
     const result = await executeGitPush(message || "content: update post");
     return json(result);
-  } catch (err: any) {
-    throw error(500, err.message || "Git command failed");
+  } catch (err) {
+    throw error(errorStatus(err), errorMessage(err, "Git command failed"));
   }
 };

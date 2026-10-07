@@ -1,9 +1,10 @@
 <script lang="ts">
+  import ResponsiveImage from "./ResponsiveImage.svelte";
   import { ArrowUpRight } from "lucide-svelte";
   import type { PostMeta } from "$lib/post-shared";
   import { formatDate } from "$lib/post-shared";
 
-  let { post, eager = false }: { post: PostMeta; eager?: boolean } = $props();
+  let { post, href, eager = false }: { post: PostMeta; href?: string; eager?: boolean } = $props();
 
   const coverImage = $derived(
     post.coverYoutubeId
@@ -22,12 +23,13 @@
 <article class="post-row">
   <a
     class="post-row-link"
-    href={`/blog/${post.slug}/`}
+    href={href ?? `/blog/${post.slug}/`}
     aria-label={`${post.title} 읽기`}
   >
     <div class="post-image">
-      <img
+      <ResponsiveImage
         src={coverImage}
+        sizes="(max-width: 650px) calc(100vw - 40px), (max-width: 900px) calc((100vw - 64px) / 2), 370px"
         alt={coverAlt}
         width="1200"
         height="750"
@@ -41,7 +43,7 @@
     </div>
     <div class="post-copy">
       <div class="post-heading">
-        <h3>{post.title}</h3>
+        <h2>{post.title}</h2>
         <ArrowUpRight size={18} strokeWidth={1.7} aria-hidden="true" />
       </div>
       <p>{post.description}</p>

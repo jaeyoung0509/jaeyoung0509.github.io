@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { X, GitBranch, RefreshCw, Send, Check } from "lucide-svelte";
+  import { X, GitBranch, RefreshCw, Send } from "lucide-svelte";
   import StudioCoverDropzone from "./StudioCoverDropzone.svelte";
   import type { StudioPostData } from "$lib/studio";
+  import { sanitizeSlug } from "$lib/post-shared";
+  import StudioDialog from "./StudioDialog.svelte";
 
   let {
     post = $bindable(),
@@ -12,6 +14,7 @@
     publishResult = null,
     onUpload,
     onPublish,
+    onChanged = () => {},
   }: {
     post: StudioPostData;
     isOpen: boolean;
@@ -20,32 +23,16 @@
     gitMessage: string;
     publishResult: { success: boolean; text: string } | null;
     onUpload: (file: File) => Promise<string | null>;
-    onPublish: () => void;
+    onPublish: (asDraft: boolean) => void;
+    onChanged?: () => void;
   } = $props();
 
-  function slugify(text: string): string {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s가-힣-]/gu, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  }
+  let saveAsDraft = $state(false);
+  $effect(() => { if (isOpen) saveAsDraft = false; });
 </script>
 
-{#if isOpen}
-  <div
-    class="modal-backdrop"
-    onclick={() => (isOpen = false)}
-    role="presentation"
-  >
-    <div
-      class="modal-card"
-      onclick={(e) => e.stopPropagation()}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-    >
+<StudioDialog bind:open={isOpen} label="출간 설정">
+  <div class="modal-card">
       <header class="modal-header">
         <h2 id="modal-title">출간 설정</h2>
         <button
@@ -68,6 +55,7 @@
               bind:coverAlt={post.coverAlt}
               bind:coverYoutubeId={post.coverYoutubeId}
               {onUpload}
+              {onChanged}
             />
 
             <div class="input-field mt-3">
@@ -75,8 +63,9 @@
               <input
                 type="text"
                 class="form-input"
-                placeholder="이미지 설명"
+                placeholder="이미지 설명" aria-label="커버 대체 텍스트"
                 bind:value={post.coverAlt}
+                oninput={onChanged}
               />
             </div>
           </div>
@@ -88,9 +77,10 @@
               <span class="field-title">포스트 요약 (Description)</span>
               <textarea
                 class="form-textarea"
-                rows={3}
+                rows={3} aria-label="포스트 요약"
                 placeholder="포스트의 핵심 요약을 입력하세요 (미입력 시 본문 앞부분 자동 추출)"
                 bind:value={post.description}
+                oninput={onChanged}
               ></textarea>
             </div>
 
@@ -101,7 +91,7 @@
                 <button
                   type="button"
                   class="text-action-btn"
-                  onclick={() => (post.slug = slugify(post.title))}
+                  onclick={() => { post.slug = sanitizeSlug(post.title); onChanged(); }}
                 >
                   제목에서 자동 생성
                 </button>
@@ -111,8 +101,9 @@
                 <input
                   type="text"
                   class="slug-text-input"
-                  placeholder="post-slug"
+                  placeholder="post-slug" aria-label="URL 슬러그"
                   bind:value={post.slug}
+                oninput={onChanged}
                 />
               </div>
             </div>
@@ -120,11 +111,12 @@
             <!-- Toggles -->
             <div class="toggle-group">
               <label class="checkbox-label">
-                <input type="checkbox" bind:checked={post.draft} />
-                <span>임시저장 상태로 보관 (Draft)</span>
+                <input type="checkbox" bind:checked={saveAsDraft} />
+                <span>공개하지 않고 초안으로 저장</span>
               </label>
               <label class="checkbox-label">
-                <input type="checkbox" bind:checked={post.featured} />
+                <input type="checkbox" bind:checked={post.featured}
+                oninput={onChanged} />
                 <span>추천 포스트 (Featured)</span>
               </label>
             </div>
@@ -134,14 +126,16 @@
               <div class="input-field flex-1">
                 <span class="field-label">발행일</span>
                 <input
-                  type="date"
+                  type="date" aria-label="발행일"
                   class="form-input"
                   bind:value={post.publishedAt}
+                oninput={onChanged}
                 />
               </div>
               <div class="input-field flex-1">
                 <span class="field-label">언어</span>
-                <select class="form-input" bind:value={post.locale}>
+                <select aria-label="언어" class="form-input" bind:value={post.locale}
+                oninput={onChanged}>
                   <option value="ko">한국어 (ko)</option>
                   <option value="en">English (en)</option>
                 </select>
@@ -161,6 +155,7 @@
                   type="text"
                   class="form-input mt-2"
                   placeholder="커밋 메시지 (예: content: publish new post)"
+                  aria-label="Git 커밋 메시지"
                   bind:value={gitMessage}
                 />
               {/if}
@@ -168,6 +163,7 @@
 
             {#if publishResult}
               <div
+                role="status"
                 class="result-banner {publishResult.success ? 'success' : 'error'}"
               >
                 {publishResult.text}
@@ -188,37 +184,25 @@
         <button
           type="button"
           class="btn-primary"
-          onclick={onPublish}
+          onclick={() => onPublish(saveAsDraft)}
           disabled={isPublishing}
         >
           {#if isPublishing}
             <RefreshCw size={14} class="animate-spin" /> 처리 중...
           {:else}
-            <Send size={14} /> {post.draft ? "임시저장 완료" : "출간하기"}
+            <Send size={14} /> {saveAsDraft ? "초안 저장" : "출간하기"}
           {/if}
         </button>
       </footer>
-    </div>
   </div>
-{/if}
+</StudioDialog>
 
 <style>
-  .modal-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 20, 18, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    backdrop-filter: blur(3px);
-  }
-
   .modal-card {
     background: var(--page);
-    width: 800px;
-    max-width: 95%;
-    max-height: 90vh;
+    width: min(800px, calc(100vw - 32px));
+    max-width: 100%;
+    max-height: calc(100dvh - 32px);
     border-radius: 4px;
     border: 1px solid var(--line);
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
@@ -397,7 +381,7 @@
     margin-top: 6px;
   }
 
-  .inline-icon {
+  :global(.inline-icon) {
     display: inline;
     vertical-align: -2px;
   }
@@ -483,7 +467,7 @@
     font-weight: 500;
   }
 
-  .animate-spin {
+  :global(.animate-spin) {
     animation: spin 1s linear infinite;
   }
 
@@ -501,4 +485,7 @@
       grid-template-columns: 1fr;
     }
   }
+  .btn-primary, .btn-secondary, .icon-close-btn, .text-action-btn { min-height: 44px; }
+  .icon-close-btn { min-width: 44px; }
+  .form-input:focus-visible, .form-textarea:focus-visible, .slug-text-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 </style>

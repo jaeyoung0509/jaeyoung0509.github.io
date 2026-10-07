@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import matter from "gray-matter";
+import { generatePostId, sanitizeSlug, getWritingStats } from "../src/lib/post-shared.ts";
 
 test("배포된 정적 빌드(out/)에 Studio 및 API 경로가 전혀 노출되지 않는다 (보안 검증)", () => {
   const outDir = path.join(process.cwd(), "out");
@@ -162,43 +163,18 @@ test("실시간 마크다운 컴파일 시 목차(TOC) 헤딩 계층 구조를 �
 });
 
 test("글자 수 및 예상 읽기 시간(Reading Time) 계산 알고리즘이 올바르게 동작한다", () => {
-  function calculateReadingMetrics(text) {
-    const totalChars = text.length;
-    const charsNoSpaces = text.replace(/\s/g, "").length;
-    const koreanChars = (text.match(/[\uac00-\ud7a3]/g) || []).length;
-    const latinWords = (text.match(/[a-zA-Z0-9_-]+/g) || []).length;
-    const readMins = Math.max(1, Math.ceil(koreanChars / 450 + latinWords / 220));
-
-    return { totalChars, charsNoSpaces, readMins };
-  }
-
   const shortText = "간단한 글입니다.";
-  const shortResult = calculateReadingMetrics(shortText);
+  const shortResult = getWritingStats(shortText);
   assert.equal(shortResult.readMins, 1, "짧은 글은 최소 1분이어야 합니다");
   assert.equal(shortResult.totalChars, 9);
   assert.equal(shortResult.charsNoSpaces, 8);
 
   const longText = "안녕하세요 ".repeat(300); // 1500 chars (600 korean chars)
-  const longResult = calculateReadingMetrics(longText);
+  const longResult = getWritingStats(longText);
   assert.ok(longResult.readMins >= 2, "1500자 이상의 글은 2분 이상이어야 합니다");
 });
 
 test("포스트 고유 ID(UUID) 생성 및 한글/영문 슬러그 정규화가 정확히 동작한다", () => {
-  function generatePostId() {
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substring(2, 7);
-    return `p_${timestamp}_${random}`;
-  }
-
-  function sanitizeSlug(slug) {
-    return slug
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s가-힣-]/gu, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  }
-
   // 1. UUID 포맷 및 고유성 검증
   const id1 = generatePostId();
   const id2 = generatePostId();

@@ -1,6 +1,7 @@
+import { errorMessage, errorStatus } from "$lib/errors";
 import { json, error } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
-import { saveUploadedImage, ensureDevMode } from "$lib/studio";
+import { saveUploadedImage, ensureDevMode } from "$lib/server/studio";
 
 export const prerender = false;
 
@@ -29,7 +30,7 @@ export const POST: RequestHandler = async ({ request }) => {
       const result = saveUploadedImage(buffer, filename || "pasted_image.png");
       return json(result);
     }
-  } catch (err: any) {
-    throw error(500, err.message || "Failed to upload image");
+  } catch (err) {
+    throw error(errorStatus(err), errorMessage(err, "Failed to upload image"));
   }
 };

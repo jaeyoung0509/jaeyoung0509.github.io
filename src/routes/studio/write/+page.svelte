@@ -1,479 +1,149 @@
 <script lang="ts">
-  import { onMount, tick } from "svelte";
+  import { onMount, onDestroy, tick } from "svelte";
   import { page } from "$app/state";
-  import {
-    ArrowLeft,
-    Save,
-    Send,
-    Eye,
-    Columns,
-    FileCode,
-    Check,
-    AlertCircle,
-    X,
-    RefreshCw,
-    Clock,
-  } from "lucide-svelte";
+  import { beforeNavigate, goto } from "$app/navigation";
+  import { ArrowLeft, Save, Send, Eye, Columns, FileCode, Check, AlertCircle, X, RefreshCw, Clock } from "lucide-svelte";
   import StudioCoverDropzone from "$components/studio/StudioCoverDropzone.svelte";
   import StudioToolbar from "$components/studio/StudioToolbar.svelte";
   import StudioPreview from "$components/studio/StudioPreview.svelte";
   import StudioPublishModal from "$components/studio/StudioPublishModal.svelte";
   import StudioUrlPasteModal from "$components/studio/StudioUrlPasteModal.svelte";
-  import type { StudioPostData } from "$lib/studio";
+  import { EditorSession } from "$lib/studio/editor-session.svelte";
+  import { SplitLayout, type EditorView } from "$lib/studio/split-layout.svelte";
+  import { insertAtSelection, pastedUrl, type PasteKind } from "$lib/studio/editor-input";
+  import { createDescription, getWritingStats } from "$lib/post-shared";
+  import { errorMessage } from "$lib/errors";
+  import "../../../styles/studio-editor.css";
 
-  // Post State
-  let post = $state<StudioPostData>({
-    slug: "",
-    title: "",
-    description: "",
-    publishedAt: new Date().toISOString().slice(0, 10),
-    tags: [],
-    locale: "ko",
-    featured: false,
-    draft: false,
-    cover: undefined,
-    coverAlt: undefined,
-    coverYoutubeId: undefined,
-    coverYoutubeTitle: undefined,
-    content: "",
-  });
-
-  let originalSlug = $state<string | null>(null);
+  const session = new EditorSession();
+  const post = $derived(session.post);
   let newTagInput = $state("");
   let tagInputRef = $state<HTMLInputElement | null>(null);
   let textareaRef = $state<HTMLTextAreaElement | null>(null);
   let editorScrollRef = $state<HTMLElement | null>(null);
   let previewScrollRef = $state<HTMLElement | null>(null);
   let workspaceRef = $state<HTMLElement | null>(null);
-
-  // Editor View State
-  let viewMode = $state<"split" | "editor" | "preview">("split");
-  let saveStatus = $state<"saved" | "saving" | "unsaved" | "error">("saved");
-  let lastSavedAt = $state<string>("");
+  const split = new SplitLayout(() => workspaceRef);
+  let viewMode = $state<EditorView>("split");
   let showPublishModal = $state(false);
   let isPublishing = $state(false);
   let gitPushOnSave = $state(false);
   let gitCommitMessage = $state("");
   let publishResult = $state<{ success: boolean; text: string } | null>(null);
+  let pasteUrlModal = $state({ isOpen: false, url: "", selectedText: "", start: 0, end: 0 });
+  const writingStats = $derived(getWritingStats(post.content));
 
-  // Resizable Split Ratio State
-  let splitRatio = $state(50);
-  let isDraggingResizer = $state(false);
+  const triggerAutoSave = () => session.changed();
+  const uploadImageFile = (file: File) => session.upload(file);
 
-  // URL Paste Popover State
-  let pasteUrlModal = $state<{
-    isOpen: boolean;
-    url: string;
-    selectedText: string;
-    start: number;
-    end: number;
-  }>({
-    isOpen: false,
-    url: "",
-    selectedText: "",
-    start: 0,
-    end: 0,
-  });
-
-  let autoSaveTimer: NodeJS.Timeout | null = null;
-  let isSyncingScroll = false;
-
-  // Realtime Writing Metrics
-  const writingStats = $derived.by(() => {
-    const raw = post.content || "";
-    const totalChars = raw.length;
-    const charsNoSpaces = raw.replace(/\s/g, "").length;
-    const koreanChars = (raw.match(/[\uac00-\ud7a3]/g) || []).length;
-    const latinWords = (raw.match(/[a-zA-Z0-9_-]+/g) || []).length;
-    const readMins = Math.max(1, Math.ceil(koreanChars / 450 + latinWords / 220));
-
-    return {
-      totalChars,
-      charsNoSpaces,
-      readMins,
-    };
-  });
-
-  function startResizing(e: PointerEvent) {
-    e.preventDefault();
-    isDraggingResizer = true;
-    window.addEventListener("pointermove", handleResizerMove);
-    window.addEventListener("pointerup", stopResizing);
-  }
-
-  function handleResizerMove(e: PointerEvent) {
-    if (!isDraggingResizer || !workspaceRef) return;
-    const rect = workspaceRef.getBoundingClientRect();
-    const newRatio = ((e.clientX - rect.left) / rect.width) * 100;
-    const clamped = Math.max(20, Math.min(80, newRatio));
-    requestAnimationFrame(() => {
-      splitRatio = Math.round(clamped);
-      try {
-        localStorage.setItem("studio_split_ratio", String(splitRatio));
-      } catch {}
-    });
-  }
-
-  function stopResizing() {
-    isDraggingResizer = false;
-    window.removeEventListener("pointermove", handleResizerMove);
-    window.removeEventListener("pointerup", stopResizing);
-  }
-
-  function resetResizer() {
-    splitRatio = 50;
-    try {
-      localStorage.setItem("studio_split_ratio", "50");
-    } catch {}
-  }
-
-  function handleUrlPasteSelect(type: "video" | "embed" | "link" | "text") {
-    const { url, selectedText, start, end } = pasteUrlModal;
-    pasteUrlModal.isOpen = false;
-
-    let replacement = url;
-    if (type === "video") {
-      replacement = `\n${url}\n`;
-    } else if (type === "embed") {
-      replacement = `\n!embed(${url})\n`;
-    } else if (type === "link") {
-      const label = selectedText || url;
-      replacement = `[${label}](${url})`;
-    } else {
-      replacement = url;
-    }
-
-    post.content =
-      post.content.substring(0, start) +
-      replacement +
-      post.content.substring(end);
-
-    triggerAutoSave();
-
-    tick().then(() => {
-      if (!textareaRef) return;
-      textareaRef.focus();
-      textareaRef.setSelectionRange(
-        start + replacement.length,
-        start + replacement.length,
-      );
-    });
-  }
-
-  function slugify(text: string): string {
-    return text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s가-힣-]/gu, "")
-      .replace(/[\s_-]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  }
-
-  async function loadPostBySlug(slug: string) {
-    try {
-      const res = await fetch(`/api/studio/posts/${encodeURIComponent(slug)}`);
-      if (res.ok) {
-        const data = await res.json();
-        post = data.post;
-        originalSlug = data.post.slug;
-      }
-    } catch (err) {
-      console.error("Failed to load post:", err);
-    }
-  }
-
-  function triggerAutoSave() {
-    saveStatus = "unsaved";
-
-    if (autoSaveTimer) clearTimeout(autoSaveTimer);
-    autoSaveTimer = setTimeout(() => {
-      if (post.title.trim()) {
-        savePost(true);
-      }
-    }, 1500);
-  }
-
-  async function savePost(isAutoSave = false): Promise<boolean> {
-    if (!post.title.trim()) {
-      if (!isAutoSave) alert("제목을 입력해주세요.");
-      return false;
-    }
-
-    if (!post.id) {
-      post.id = `p_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 7)}`;
-    }
-
-    if (!post.slug) {
-      post.slug = slugify(post.title) || post.id;
-    }
-
-    saveStatus = "saving";
-    try {
-      const res = await fetch("/api/studio/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          post,
-          originalSlug,
-        }),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        originalSlug = data.slug;
-        post.slug = data.slug;
-        if (data.id) post.id = data.id;
-        saveStatus = "saved";
-
-        // Update URL query string seamlessly so refresh keeps editing this post
-        if (typeof window !== "undefined" && !page.url.searchParams.get("slug")) {
-          const newUrl = `${window.location.pathname}?slug=${encodeURIComponent(data.slug)}`;
-          window.history.replaceState({}, "", newUrl);
-        }
-
-        const now = new Date();
-        lastSavedAt = `${now.getHours().toString().padStart(2, "0")}:${now
-          .getMinutes()
-          .toString()
-          .padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
-        return true;
-      } else {
-        saveStatus = "error";
-        return false;
-      }
-    } catch {
-      saveStatus = "error";
-      return false;
-    }
-  }
-
-  async function handleFinalPublish() {
-    isPublishing = true;
-    publishResult = null;
-
-    if (!post.description) {
-      const cleanText = post.content
-        .replace(/#+ /g, "")
-        .replace(/!\[.*?\]\(.*?\)/g, "")
-        .replace(/\[.*?\]\(.*?\)/g, "$1")
-        .replace(/[`*_~]/g, "")
-        .replace(/\n+/g, " ")
-        .trim();
-      post.description = cleanText.slice(0, 140) || post.title;
-    }
-
-    const saved = await savePost(false);
-    if (!saved) {
-      isPublishing = false;
-      publishResult = { success: false, text: "포스트 저장에 실패했습니다." };
-      return;
-    }
-
-    if (gitPushOnSave) {
-      try {
-        const msg =
-          gitCommitMessage ||
-          `content: ${post.draft ? "draft" : "publish"} "${post.title}"`;
-        const res = await fetch("/api/studio/git", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg }),
-        });
-        const data = await res.json();
-        publishResult = {
-          success: data.success,
-          text: data.success
-            ? "저장 및 GitHub 배포 완료!"
-            : `저장 완료, Git Push 실패: ${data.output}`,
-        };
-      } catch (err: any) {
-        publishResult = {
-          success: false,
-          text: `저장 완료, Git Push 에러: ${err.message}`,
-        };
-      }
-    } else {
-      publishResult = {
-        success: true,
-        text: "로컬 디스크 저장 완료!",
-      };
-    }
-
-    isPublishing = false;
-  }
-
-  function handleTagKeyDown(e: KeyboardEvent) {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      const val = newTagInput.trim().replace(/^#/, "");
-      if (val && !post.tags.includes(val)) {
-        post.tags = [...post.tags, val];
-        newTagInput = "";
-        triggerAutoSave();
-      }
-    } else if (
-      e.key === "Backspace" &&
-      newTagInput === "" &&
-      post.tags.length > 0
-    ) {
-      post.tags = post.tags.slice(0, -1);
-      triggerAutoSave();
-    }
-  }
-
-  function removeTag(tagToRemove: string) {
-    post.tags = post.tags.filter((t) => t !== tagToRemove);
-    triggerAutoSave();
-  }
-
-  async function uploadImageFile(file: File): Promise<string | null> {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const res = await fetch("/api/studio/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      return data.url;
-    }
-    return null;
-  }
-
-  async function handlePaste(e: ClipboardEvent) {
-    const items = e.clipboardData?.items;
-
-    // 1. Image upload paste
-    if (items) {
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf("image") !== -1) {
-          e.preventDefault();
-          const file = items[i].getAsFile();
-          if (!file) continue;
-
-          const placeholder = `\n![업로드 중...](${Date.now()})\n`;
-          insertTextAtCursor(placeholder);
-
-          const imageUrl = await uploadImageFile(file);
-          if (imageUrl) {
-            const finalMarkdown = `\n![${file.name.replace(/\.[^/.]+$/, "")}](${imageUrl})\n`;
-            post.content = post.content.replace(placeholder, finalMarkdown);
-            triggerAutoSave();
-          } else {
-            post.content = post.content.replace(
-              placeholder,
-              "\n> [이미지 업로드 실패]\n",
-            );
-          }
-          return;
-        }
-      }
-    }
-
-    // 2. URL paste popover (Notion style)
-    const pastedText = e.clipboardData?.getData("text/plain")?.trim();
-    if (pastedText && /^https?:\/\/[^\s]+$/i.test(pastedText) && textareaRef) {
-      e.preventDefault();
-      const start = textareaRef.selectionStart;
-      const end = textareaRef.selectionEnd;
-      const selectedText = post.content.substring(start, end).trim();
-
-      pasteUrlModal = {
-        isOpen: true,
-        url: pastedText,
-        selectedText,
-        start,
-        end,
-      };
-    }
+  async function selectCursor(start: number, end = start) {
+    await tick();
+    textareaRef?.focus();
+    textareaRef?.setSelectionRange(start, end);
   }
 
   function insertTextAtCursor(prefix: string, suffix = "", defaultText = "") {
     if (!textareaRef) return;
-    const start = textareaRef.selectionStart;
-    const end = textareaRef.selectionEnd;
-    const selected = post.content.substring(start, end) || defaultText;
-    const replacement = `${prefix}${selected}${suffix}`;
-
-    post.content =
-      post.content.substring(0, start) +
-      replacement +
-      post.content.substring(end);
-
+    const result = insertAtSelection(post.content, textareaRef.selectionStart, textareaRef.selectionEnd, prefix, suffix, defaultText);
+    post.content = result.content;
     triggerAutoSave();
-
-    tick().then(() => {
-      if (!textareaRef) return;
-      textareaRef.focus();
-      textareaRef.setSelectionRange(
-        start + prefix.length,
-        start + prefix.length + selected.length,
-      );
-    });
+    void selectCursor(result.start, result.end);
   }
 
-  function handleTextareaKeyDown(e: KeyboardEvent) {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      insertTextAtCursor("  ");
-    } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
-      e.preventDefault();
-      savePost(false);
+  function handleUrlPasteSelect(kind: PasteKind) {
+    const { url, selectedText, start, end } = pasteUrlModal;
+    pasteUrlModal.isOpen = false;
+    const replacement = pastedUrl(kind, url, selectedText);
+    post.content = post.content.slice(0, start) + replacement + post.content.slice(end);
+    triggerAutoSave();
+    void selectCursor(start + replacement.length);
+  }
+
+  async function handlePaste(event: ClipboardEvent) {
+    for (const item of event.clipboardData?.items ?? []) {
+      if (!item.type.startsWith("image/")) continue;
+      const file = item.getAsFile();
+      if (!file) continue;
+      event.preventDefault();
+      const placeholder = `\n![업로드 중...](${crypto.randomUUID()})\n`;
+      insertTextAtCursor(placeholder);
+      const url = await uploadImageFile(file);
+      post.content = post.content.replace(placeholder, url ? `\n![${file.name.replace(/\.[^/.]+$/, "")}](${url})\n` : "\n> 이미지 업로드에 실패했습니다.\n");
+      triggerAutoSave();
+      return;
+    }
+    const url = event.clipboardData?.getData("text/plain")?.trim();
+    if (url && /^https?:\/\/[^\s]+$/i.test(url) && textareaRef) {
+      event.preventDefault();
+      const start = textareaRef.selectionStart;
+      const end = textareaRef.selectionEnd;
+      pasteUrlModal = { isOpen: true, url, selectedText: post.content.slice(start, end).trim(), start, end };
     }
   }
 
-  let activeScrollPane: "editor" | "preview" = "editor";
-
-  function handleEditorScroll() {
-    if (activeScrollPane !== "editor" || !editorScrollRef || !previewScrollRef || viewMode !== "split") return;
-
-    const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
-    const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
-    if (editorMax <= 0 || previewMax <= 0) return;
-
-    const ratio = editorScrollRef.scrollTop / editorMax;
-    previewScrollRef.scrollTop = ratio * previewMax;
+  function handleTagKeyDown(event: KeyboardEvent) {
+    if (event.key === "Enter" || event.key === ",") {
+      event.preventDefault();
+      const tag = newTagInput.trim().replace(/^#/, "");
+      if (tag && !post.tags.includes(tag)) { post.tags.push(tag); newTagInput = ""; triggerAutoSave(); }
+    } else if (event.key === "Backspace" && !newTagInput && post.tags.length) {
+      post.tags.pop(); triggerAutoSave();
+    }
   }
 
-  function handlePreviewScroll() {
-    if (activeScrollPane !== "preview" || !editorScrollRef || !previewScrollRef || viewMode !== "split") return;
-
-    const previewMax = previewScrollRef.scrollHeight - previewScrollRef.clientHeight;
-    const editorMax = editorScrollRef.scrollHeight - editorScrollRef.clientHeight;
-    if (previewMax <= 0 || editorMax <= 0) return;
-
-    const ratio = previewScrollRef.scrollTop / previewMax;
-    editorScrollRef.scrollTop = ratio * editorMax;
+  function removeTag(tag: string) { post.tags = post.tags.filter(value => value !== tag); triggerAutoSave(); }
+  function handleTextareaKeyDown(event: KeyboardEvent) {
+    if (event.key === "Tab") { event.preventDefault(); insertTextAtCursor("  "); }
+    else if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") { event.preventDefault(); void session.save(); }
   }
 
-  function autoResizeTextarea() {
-    if (!textareaRef) return;
-    textareaRef.style.height = "auto";
-    textareaRef.style.height = Math.max(600, textareaRef.scrollHeight) + "px";
+  async function handleFinalPublish(asDraft = false) {
+    isPublishing = true;
+    publishResult = null;
+    post.description ||= createDescription(post.content, post.title);
+    const saved = await session.save(false, "publish", asDraft);
+    if (!saved) { isPublishing = false; publishResult = { success: false, text: session.error }; return; }
+    try {
+      if (gitPushOnSave) {
+        const response = await fetch("/api/studio/git", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: gitCommitMessage || `content: ${asDraft ? "draft" : "publish"} ${post.title}` }),
+        });
+        const result = await response.json();
+        publishResult = { success: result.success, text: result.success ? "저장 및 GitHub 푸시 완료" : `저장 완료, 푸시 실패: ${result.output}` };
+      } else publishResult = { success: true, text: asDraft ? "초안을 로컬에 저장했습니다." : "발행 상태로 로컬에 저장했습니다." };
+    } catch (error) { publishResult = { success: false, text: `저장 완료, 푸시 실패: ${errorMessage(error)}` }; }
+    finally { isPublishing = false; }
   }
+
+  function handleEditorScroll() { split.syncScroll("editor", editorScrollRef, previewScrollRef, viewMode); }
+  function handlePreviewScroll() { split.syncScroll("preview", editorScrollRef, previewScrollRef, viewMode); }
 
   $effect(() => {
-    if (post.content !== undefined) {
-      tick().then(autoResizeTextarea);
-    }
+    void post.content;
+    tick().then(() => { if (textareaRef) { textareaRef.style.height = "auto"; textareaRef.style.height = `${Math.max(600, textareaRef.scrollHeight)}px`; } });
+  });
+
+  beforeNavigate(({ cancel, to, type }) => {
+    if (!session.dirty && session.status !== "saving") return;
+    if (type === "leave") { cancel(); return; }
+    if (to && post.title.trim()) {
+      cancel();
+      void session.save(true).then(saved => { if (saved) void goto(to.url); });
+    } else if (!window.confirm("저장하지 않은 변경사항을 버리고 나갈까요?")) cancel();
   });
 
   onMount(() => {
-    try {
-      const savedRatio = localStorage.getItem("studio_split_ratio");
-      if (savedRatio) {
-        const num = Number(savedRatio);
-        if (num >= 20 && num <= 80) splitRatio = num;
-      }
-    } catch {}
-
-    const slugParam = page.url.searchParams.get("slug");
-    if (slugParam) {
-      loadPostBySlug(slugParam);
-    }
+    split.restore();
+    const slug = page.url.searchParams.get("slug");
+    if (slug) void session.load(slug);
+    const media = window.matchMedia("(max-width: 860px)");
+    const sync = () => { if (media.matches && viewMode === "split") viewMode = "editor"; };
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
   });
+  onDestroy(() => { session.dispose(); split.stop(); });
 </script>
 
 <svelte:head>
@@ -481,8 +151,8 @@
 </svelte:head>
 
 <div
-  class="editor-workspace {isDraggingResizer ? 'is-resizing' : ''}"
-  style="--split-ratio: {splitRatio}%;"
+  class="editor-workspace {split.dragging ? 'is-resizing' : ''}"
+  style="--split-ratio: {split.ratio}%;"
 >
   <!-- Minimalist Top Navigation Header -->
   <header class="editor-top-nav">
@@ -492,16 +162,16 @@
         <span>나가기</span>
       </a>
       <div class="nav-divider"></div>
-      <div class="nav-save-status">
-        {#if saveStatus === "saving"}
+      <div class="nav-save-status" role="status">
+        {#if session.status === "saving"}
           <span class="status-text saving">
             <RefreshCw size={11} class="animate-spin" /> 저장 중
           </span>
-        {:else if saveStatus === "saved"}
+        {:else if session.status === "saved"}
           <span class="status-text saved">
-            <Check size={12} /> 저장됨 {lastSavedAt ? `(${lastSavedAt})` : ""}
+            <Check size={12} /> 저장됨 {session.lastSavedAt ? `(${session.lastSavedAt})` : ""}
           </span>
-        {:else if saveStatus === "unsaved"}
+        {:else if session.status === "unsaved"}
           <span class="status-text unsaved">
             <AlertCircle size={11} /> 변경사항 있음
           </span>
@@ -517,7 +187,8 @@
     <div class="nav-view-switcher">
       <button
         type="button"
-        class="switcher-btn {viewMode === 'split' ? 'is-active' : ''}"
+        class="switcher-btn split-mode {viewMode === 'split' ? 'is-active' : ''}"
+        aria-pressed={viewMode === 'split'}
         onclick={() => (viewMode = 'split')}
       >
         <Columns size={14} />
@@ -526,6 +197,7 @@
       <button
         type="button"
         class="switcher-btn {viewMode === 'editor' ? 'is-active' : ''}"
+        aria-pressed={viewMode === 'editor'}
         onclick={() => (viewMode = 'editor')}
       >
         <FileCode size={14} />
@@ -534,6 +206,7 @@
       <button
         type="button"
         class="switcher-btn {viewMode === 'preview' ? 'is-active' : ''}"
+        aria-pressed={viewMode === 'preview'}
         onclick={() => (viewMode = 'preview')}
       >
         <Eye size={14} />
@@ -551,22 +224,24 @@
       <button
         type="button"
         class="btn-action secondary"
-        onclick={() => savePost(false)}
+        onclick={() => session.save()}
         title="단축키 Cmd+S"
       >
         <Save size={14} />
-        <span>임시저장</span>
+        <span>{post.draft ? "임시저장" : "저장"}</span>
       </button>
       <button
         type="button"
         class="btn-action primary"
-        onclick={() => (showPublishModal = true)}
+        onclick={() => { publishResult = null; showPublishModal = true; }}
       >
         <Send size={14} />
         <span>출간하기</span>
       </button>
     </div>
   </header>
+
+  {#if session.error}<p class="editor-error" role="alert">{session.error}</p>{/if}
 
   <!-- Pinned Subheader Markdown Toolbar -->
   <StudioToolbar onInsert={insertTextAtCursor} />
@@ -579,12 +254,14 @@
     <!-- Left Writing Canvas -->
     <div
       class="editor-column"
+      role="region"
+      aria-label="마크다운 편집"
       bind:this={editorScrollRef}
       onscroll={handleEditorScroll}
-      onmouseenter={() => (activeScrollPane = "editor")}
-      ontouchstart={() => (activeScrollPane = "editor")}
-      onwheel={() => (activeScrollPane = "editor")}
-      onpointerdown={() => (activeScrollPane = "editor")}
+      onmouseenter={() => (split.activePane = "editor")}
+      ontouchstart={() => (split.activePane = "editor")}
+      onwheel={() => (split.activePane = "editor")}
+      onpointerdown={() => (split.activePane = "editor")}
     >
       <div class="editor-inner">
         <!-- Drag & Drop Cover Section -->
@@ -604,6 +281,8 @@
             type="text"
             class="editor-title-input"
             placeholder="제목을 입력하세요"
+            aria-label="포스트 제목"
+            disabled={session.loading}
             bind:value={post.title}
             oninput={triggerAutoSave}
           />
@@ -628,7 +307,7 @@
                       e.stopPropagation();
                       removeTag(tag);
                     }}
-                    aria-label="태그 삭제"
+                    aria-label={`${tag} 태그 삭제`}
                   >
                     <X size={10} />
                   </button>
@@ -638,6 +317,7 @@
                 type="text"
                 class="editor-tag-input"
                 placeholder="태그 입력..."
+                aria-label="태그 입력"
                 bind:this={tagInputRef}
                 bind:value={newTagInput}
                 onkeydown={handleTagKeyDown}
@@ -652,6 +332,8 @@
         <div class="editor-body-box">
           <textarea
             class="markdown-textarea"
+            aria-label="마크다운 본문"
+            disabled={session.loading}
             placeholder="내용을 작성하세요... (이미지 복사 붙여넣기 Cmd+V 지원)"
             bind:this={textareaRef}
             bind:value={post.content}
@@ -666,12 +348,17 @@
     <!-- Draggable Resizer Handle -->
     {#if viewMode === 'split'}
       <div
-        class="resizer-handle {isDraggingResizer ? 'is-dragging' : ''}"
-        onpointerdown={startResizing}
-        ondblclick={resetResizer}
-        role="separator"
-        aria-orientation="vertical"
-        aria-valuenow={splitRatio}
+        class="resizer-handle {split.dragging ? 'is-dragging' : ''}"
+        onpointerdown={split.start}
+        ondblclick={() => split.setRatio(50)}
+        role="slider"
+        tabindex="0"
+        aria-label="에디터와 미리보기 너비 조절"
+        aria-valuemin="20"
+        aria-valuemax="80"
+        onkeydown={split.keyboard}
+        aria-orientation="horizontal"
+        aria-valuenow={split.ratio}
         title="드래그하여 크기 조절 (더블클릭 시 50:50 초기화)"
       >
         <div class="resizer-line"></div>
@@ -692,17 +379,17 @@
         content={post.content}
         bind:scrollRef={previewScrollRef}
         onScroll={handlePreviewScroll}
-        onMouseEnter={() => (activeScrollPane = "preview")}
-        onTouchStart={() => (activeScrollPane = "preview")}
-        onWheel={() => (activeScrollPane = "preview")}
-        onPointerDown={() => (activeScrollPane = "preview")}
+        onMouseEnter={() => (split.activePane = "preview")}
+        onTouchStart={() => (split.activePane = "preview")}
+        onWheel={() => (split.activePane = "preview")}
+        onPointerDown={() => (split.activePane = "preview")}
       />
     </div>
   </div>
 
   <!-- Publish Modal -->
   <StudioPublishModal
-    bind:post
+    bind:post={session.post}
     bind:isOpen={showPublishModal}
     isPublishing={isPublishing}
     bind:gitPush={gitPushOnSave}
@@ -710,6 +397,7 @@
     publishResult={publishResult}
     onUpload={uploadImageFile}
     onPublish={handleFinalPublish}
+    onChanged={triggerAutoSave}
   />
 
   <!-- Notion-style URL Paste Option Popover -->
@@ -720,380 +408,3 @@
     onSelect={handleUrlPasteSelect}
   />
 </div>
-
-<style>
-  .editor-workspace {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: var(--page);
-    color: var(--ink);
-    font-family: var(--font-body);
-    overflow: hidden;
-  }
-
-  .editor-workspace.is-resizing {
-    user-select: none;
-    cursor: col-resize;
-  }
-
-  /* Top Navigation */
-  .editor-top-nav {
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    border-bottom: 1px solid var(--line);
-    background: var(--page);
-    flex-shrink: 0;
-    z-index: 20;
-  }
-
-  .nav-section-left,
-  .nav-section-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .nav-back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--muted);
-    text-decoration: none;
-    padding: 4px 8px;
-    border-radius: 3px;
-    transition: all var(--dur-short) var(--ease-out);
-  }
-
-  .nav-back-link:hover {
-    color: var(--ink);
-    background: var(--surface);
-  }
-
-  .nav-divider {
-    width: 1px;
-    height: 14px;
-    background: var(--line);
-  }
-
-  .status-text {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    font-family: var(--font-mono);
-  }
-
-  .status-text.saved {
-    color: var(--accent);
-  }
-
-  .status-text.saving {
-    color: var(--muted);
-  }
-
-  .status-text.unsaved {
-    color: #d35400;
-  }
-
-  .status-text.error {
-    color: #c0392b;
-  }
-
-  /* Segmented Switcher */
-  .nav-view-switcher {
-    display: flex;
-    align-items: center;
-    background: var(--surface);
-    padding: 2px;
-    border-radius: 4px;
-    border: 1px solid var(--line);
-  }
-
-  .switcher-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 10px;
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all var(--dur-short) var(--ease-out);
-  }
-
-  .switcher-btn.is-active {
-    background: var(--page);
-    color: var(--ink);
-    font-weight: 600;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-
-  /* Writing Stats Pill */
-  .writing-stats-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--muted);
-    background: var(--surface);
-    padding: 4px 8px;
-    border-radius: 3px;
-    border: 1px solid var(--line);
-  }
-
-  /* Buttons */
-  .btn-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 3px;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all var(--dur-short) var(--ease-out);
-  }
-
-  .btn-action.secondary {
-    background: var(--surface);
-    border-color: var(--line);
-    color: var(--ink);
-  }
-
-  .btn-action.secondary:hover {
-    background: var(--surface-strong);
-  }
-
-  .btn-action.primary {
-    background: var(--accent);
-    color: #ffffff;
-  }
-
-  .btn-action.primary:hover {
-    background: var(--accent-strong);
-  }
-
-  /* Main Workspace */
-  .workspace-body {
-    flex: 1;
-    display: grid;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .workspace-body.view-split {
-    grid-template-columns: calc(var(--split-ratio, 50%) - 4px) 8px calc(100% - var(--split-ratio, 50%) - 4px);
-  }
-
-  .workspace-body.view-editor {
-    grid-template-columns: 1fr;
-  }
-
-  .workspace-body.view-editor .preview-column,
-  .workspace-body.view-editor .resizer-handle {
-    display: none;
-  }
-
-  .workspace-body.view-preview {
-    grid-template-columns: 1fr;
-  }
-
-  .workspace-body.view-preview .editor-column,
-  .workspace-body.view-preview .resizer-handle {
-    display: none;
-  }
-
-  /* Resizer Handle */
-  .resizer-handle {
-    width: 8px;
-    height: 100%;
-    cursor: col-resize;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    z-index: 10;
-    user-select: none;
-    touch-action: none;
-  }
-
-  .resizer-line {
-    width: 1px;
-    height: 100%;
-    background: var(--line);
-    transition: all var(--dur-short) var(--ease-out);
-  }
-
-  .resizer-handle:hover .resizer-line,
-  .resizer-handle.is-dragging .resizer-line {
-    width: 3px;
-    background: var(--accent);
-  }
-
-  .editor-column {
-    height: 100%;
-    background: var(--page);
-    overflow-y: auto;
-    box-sizing: border-box;
-    padding: 32px 36px 140px;
-    will-change: scroll-position;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
-
-  .preview-column {
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .editor-inner {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-
-  .editor-cover-box {
-    margin-bottom: 20px;
-  }
-
-  .editor-header {
-    margin-bottom: 0;
-  }
-
-  .editor-title-input {
-    width: 100%;
-    border: none;
-    outline: none;
-    font-size: 32px;
-    font-weight: 750;
-    color: var(--ink);
-    background: transparent;
-    padding: 0;
-    line-height: 1.3;
-    margin: 0 0 12px 0;
-    min-height: 42px;
-  }
-
-  .editor-title-input::placeholder {
-    color: var(--faint);
-  }
-
-  .editor-meta-line {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-family: var(--font-mono);
-    color: var(--muted);
-    min-height: 28px;
-    flex-wrap: wrap;
-    cursor: text;
-  }
-
-  .editor-dot {
-    color: var(--faint);
-  }
-
-  .editor-tags {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-
-  .editor-tag-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--accent);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    padding: 2px 7px;
-    border-radius: 3px;
-  }
-
-  .tag-delete-btn {
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-  }
-
-  .tag-delete-btn:hover {
-    color: #c0392b;
-  }
-
-  .editor-tag-input {
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 11px;
-    font-family: var(--font-mono);
-    color: var(--ink);
-    min-width: 100px;
-  }
-
-  .editor-divider {
-    height: 1px;
-    background: var(--line);
-    margin: 18px 0 24px;
-  }
-
-  .editor-body-box {
-    min-height: 500px;
-  }
-
-  .markdown-textarea {
-    width: 100%;
-    min-height: 600px;
-    border: none;
-    outline: none;
-    resize: none;
-    padding: 0;
-    font-family: var(--font-mono);
-    font-size: 14.5px;
-    line-height: 1.75;
-    background: transparent;
-    color: var(--ink);
-    box-sizing: border-box;
-    overflow: hidden;
-    field-sizing: content;
-  }
-
-  .animate-spin {
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @media (max-width: 860px) {
-    .workspace-body.view-split {
-      grid-template-columns: 1fr;
-    }
-    .resizer-handle {
-      display: none;
-    }
-  }
-</style>

@@ -4,7 +4,7 @@ import {
   ensureDevMode,
   getUnusedImages,
   deleteUnusedImages,
-} from "$lib/studio";
+} from "$lib/server/studio";
 
 export const prerender = false;
 
