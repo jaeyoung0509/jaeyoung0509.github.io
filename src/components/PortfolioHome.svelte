@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
-  import { SvelteSet } from "svelte/reactivity";
   import { replaceState } from "$app/navigation";
   import { ArrowUpRight, ArrowDown, MapPin } from "lucide-svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
@@ -67,33 +66,6 @@
     return () => sections.disconnect();
   });
 
-  function revealPortfolio(node: HTMLElement) {
-    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const animations = new SvelteSet<Animation>();
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        observer.unobserve(entry.target);
-        if (preference.matches) continue;
-        const animation = entry.target.animate(
-          [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "translateY(0)" }],
-          { duration: 480, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
-        );
-        animations.add(animation);
-        animation.finished.then(() => animations.delete(animation)).catch(() => animations.delete(animation));
-      }
-    }, { threshold: 0.08 });
-    node.querySelectorAll(".hero-section, .section-title-row, .about-statement-layout, .work-reveal, .oss-reveal, .exp-list")
-      .forEach(element => observer.observe(element));
-    const stopMotion = () => { if (preference.matches) animations.forEach(animation => animation.cancel()); };
-    preference.addEventListener("change", stopMotion);
-    return { destroy() {
-      observer.disconnect();
-      animations.forEach(animation => animation.cancel());
-      preference.removeEventListener("change", stopMotion);
-    } };
-  }
-
   const c = $derived(portfolioContent[lang]);
   const projects = $derived(workProjects[lang]);
 </script>
@@ -106,7 +78,7 @@
   locale={lang === "ko" ? "ko_KR" : "en_US"}
 />
 
-<div class="portfolio-container" lang={lang} use:revealPortfolio>
+<div class="portfolio-container" lang={lang}>
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-top-meta">
@@ -141,43 +113,48 @@
       </div>
     </div>
 
-    <h1 class="hero-display-name">{c.hero.name}</h1>
+    <div class="hero-intro-grid">
+      <div class="hero-identity">
+        <h1 class="hero-display-name">{c.hero.name}</h1>
 
-    <p class="hero-main-lead">
-      {@html c.hero.headline.replace(/\n/g, "<br />")}
-    </p>
+        <p class="hero-main-lead">
+          {@html c.hero.headline.replace(/\n/g, "<br />")}
+        </p>
+      </div>
+      <div class="hero-note">
+        <p class="hero-sub-lead">
+          {c.hero.subheadline}
+        </p>
 
-    <p class="hero-sub-lead">
-      {c.hero.subheadline}
-    </p>
-
-    <div class="hero-action-area">
-      <a href="#work" class="btn-hero-primary">
-        {c.hero.ctaWork} <ArrowDown size={14} />
-      </a>
-      <div class="hero-links-cluster">
-        <a
-          href={siteConfig.author.github}
-          target="_blank"
-          rel="noreferrer"
-          class="hero-text-link"
-        >
-          GitHub <ArrowUpRight size={13} />
-        </a>
-        <span class="hero-link-sep" aria-hidden="true">·</span>
-        <a
-          href={siteConfig.author.linkedin}
-          target="_blank"
-          rel="noreferrer"
-          class="hero-text-link"
-        >
-          LinkedIn <ArrowUpRight size={13} />
-        </a>
+        <div class="hero-action-area">
+          <a href="#work" class="btn-hero-primary">
+            {c.hero.ctaWork} <ArrowDown size={14} />
+          </a>
+          <div class="hero-links-cluster">
+            <a
+              href={siteConfig.author.github}
+              target="_blank"
+              rel="noreferrer"
+              class="hero-text-link"
+            >
+              GitHub <ArrowUpRight size={13} />
+            </a>
+            <span class="hero-link-sep" aria-hidden="true">·</span>
+            <a
+              href={siteConfig.author.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              class="hero-text-link"
+            >
+              LinkedIn <ArrowUpRight size={13} />
+            </a>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="hero-tech-strip">
-      <span class="tech-strip-label">Core /</span>
+      <span class="tech-strip-label">{lang === "ko" ? "주로 쓰는 도구" : "Usually working with"}</span>
       <div class="tech-items-group">
         {#each c.hero.techStack as tech, idx (tech)}
           <span class="tech-item">{tech}</span>
@@ -191,10 +168,10 @@
 
   <nav class="portfolio-nav" aria-label={lang === "ko" ? "소개 페이지 목차" : "About page sections"}>
     {#each [
-      { id: "about", label: c.about.title },
-      { id: "work", label: c.workSection.title },
-      { id: "oss", label: c.oss.title },
-      { id: "experience", label: c.experience.title },
+      { id: "about", label: lang === "ko" ? "소개" : "Intro" },
+      { id: "work", label: lang === "ko" ? "프로젝트" : "Projects" },
+      { id: "oss", label: lang === "ko" ? "오픈소스" : "Open source" },
+      { id: "experience", label: lang === "ko" ? "경력" : "Experience" },
     ] as section (section.id)}
       <a href={`#${section.id}`} class:is-current={activeSection === section.id}
         aria-current={activeSection === section.id ? "location" : undefined}>{section.label}</a>

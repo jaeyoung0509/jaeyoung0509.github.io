@@ -63,15 +63,15 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
       location: "대한민국 서울",
       name: "이재영",
       headline:
-        "백엔드를 개발하고,\n필요한 도구를 만듭니다.",
+        "백엔드 개발자입니다.\n가끔 필요한 도구도 만듭니다.",
       subheadline:
-        "FinovusLab에서 B2B 외상결제 서비스의 백엔드를 개발하고 운영했습니다. 주로 Python과 Go를 사용하고, 개발하면서 불편했던 작업을 도구로 만들어보기도 합니다.",
+        "Python과 Go로 일합니다. FinovusLab에서는 결제·계약·정산을 맡았습니다. 여기에는 그때 한 일과, 개발하다 번거로워서 직접 만든 도구들을 모았습니다.",
       ctaWork: "프로젝트 보기",
       techStack: ["Python", "Go", "PostgreSQL", "AWS"],
     },
     about: {
       eyebrow: "일하는 방식",
-      title: "해온 일",
+      title: "그동안 한 일",
       paragraphs: [
         "FinovusLab에서는 결제, 신용평가, 전자계약, 정산 기능을 맡았습니다. 외부 기관 API를 연동하고, 수작업으로 처리하던 심사와 운영 업무를 자동화하는 작업을 했습니다.",
         "결제 상태와 한도를 함께 갱신하고, 계약·정산·알림 같은 후속 작업은 비동기로 처리했습니다. 외부 서비스 점검이나 오류로 중단된 작업을 다시 처리할 수 있도록 진행 상태도 저장했습니다.",
@@ -79,16 +79,16 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
       ],
     },
     workSection: {
-      title: "주요 프로젝트",
+      title: "만든 것들",
       subtitle:
-        "업무에서 다룬 시스템과 개인적으로 만든 도구들입니다.",
+        "회사에서 맡았던 서비스와 혼자 만든 도구들.",
       expandCTA: "자세히 보기 ↓",
       collapseCTA: "닫기 ↑",
     },
     oss: {
       title: "오픈소스",
       subtitle:
-        "오픈소스를 사용하며 발견한 문제와 개선 사항을 이슈와 PR로 공유했습니다.",
+        "쓰다가 발견한 문제를 따라가며 남긴 이슈와 PR.",
       contributions: [
         {
           name: "Temporal Python SDK",
@@ -151,9 +151,9 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
       location: "Seoul, South Korea",
       name: "Jaeyoung Lee",
       headline:
-        "I build backend systems\nand tools for everyday work.",
+        "Backend developer.\nOccasional toolmaker.",
       subheadline:
-        "I worked on the backend of a B2B credit-payment service at FinovusLab. I mainly use Python and Go, and build tools for tasks I find cumbersome during development.",
+        "I work with Python and Go. At FinovusLab, I built payment, contract, and settlement systems. These are notes on that work and tools I made for recurring annoyances.",
       ctaWork: "Projects",
       techStack: ["Python", "Go", "PostgreSQL", "AWS"],
     },
@@ -170,7 +170,7 @@ export const portfolioContent: Record<"ko" | "en", PortfolioContent> = {
     workSection: {
       title: "Projects",
       subtitle:
-        "Systems I operated in production and developer tools built for recurring problems.",
+        "Services I worked on, and tools I made for myself.",
       expandCTA: "View details ↓",
       collapseCTA: "Close ↑",
     },

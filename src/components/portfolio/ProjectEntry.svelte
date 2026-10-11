@@ -4,6 +4,7 @@
   import { ChevronDown } from "lucide-svelte";
   import type { WorkProject } from "$lib/work";
   import ProjectDetail from "./ProjectDetail.svelte";
+  import ResponsiveImage from "$components/ResponsiveImage.svelte";
 
   let {
     project,
@@ -32,10 +33,6 @@
 </script>
 
 <article id={project.slug} class="work-item" class:is-expanded={isExpanded}>
-  <div class="work-num-col">
-    <span class="work-large-num">{project.number}</span>
-  </div>
-
   <div class="work-main-col">
     <div class="work-meta-top">
       <span class="work-domain-label">{project.domain}</span>
@@ -62,42 +59,29 @@
     </div>
     <p class="work-premise">{project.premise}</p>
 
-    <dl class="work-psr-group">
-      <div class="work-psr-row">
-        <dt class="work-psr-label">{lang === "ko" ? "배경" : "Problem"}</dt>
-        <dd class="work-psr-content">{project.problem}</dd>
-      </div>
+    <div class="project-summary">
+      <p>{project.problem}</p>
+      <p>{project.solution}</p>
+    </div>
 
-      <div class="work-psr-row">
-        <dt class="work-psr-label">{lang === "ko" ? "작업" : "Solution"}</dt>
-        <dd class="work-psr-content">{project.solution}</dd>
-      </div>
+    <ul class="project-outcomes" aria-label={lang === "ko" ? "구현한 기능" : "Implemented features"}>
+      {#each project.results as result (result.metric)}
+        <li>
+          <strong>{result.metric}</strong>
+          {#if result.label}<span> — {result.label}</span>{/if}
+        </li>
+      {/each}
+    </ul>
 
-      <div class="work-psr-row">
-        <dt class="work-psr-label">{lang === "ko" ? "변경 내용" : "Result"}</dt>
-        <dd class="work-psr-content">
-          <ul class="result-metric-list">
-            {#each project.results as result (result.metric)}
-              <li class="result-metric-row">
-                <span class="result-metric-value">
-                  {#if result.metric.includes("→")}
-                    {@const parts = result.metric.split("→")}
-                    {parts[0].trim()}
-                    <span class="metric-arrow" aria-hidden="true">→</span>
-                    {parts.slice(1).join("→").trim()}
-                  {:else}
-                    {result.metric}
-                  {/if}
-                </span>
-                {#if result.label}
-                  <span class="result-metric-label">{result.label}</span>
-                {/if}
-              </li>
-            {/each}
-          </ul>
-        </dd>
-      </div>
-    </dl>
+    {#if project.slug === "zenith"}
+      <figure class="project-screen">
+        <ResponsiveImage src="/images/zenith-dashboard.png"
+          alt={lang === "ko" ? "Zenith에서 개발 산출물과 캐시의 용량을 확인하는 스토리지 화면" : "Zenith storage dashboard showing developer build artifacts and caches"}
+          sizes="(max-width: 760px) calc(100vw - 28px), 720px"
+          loading="lazy" decoding="async" width="2144" height="1544" />
+        <figcaption>{lang === "ko" ? "직접 쓰면서 고치고 있는 Zenith의 스토리지 화면." : "The Zenith storage screen I use and keep improving."}</figcaption>
+      </figure>
+    {/if}
 
     <p class="work-stack-line" aria-label="Technology stack">
       {#each project.stack as tech, idx (tech)}

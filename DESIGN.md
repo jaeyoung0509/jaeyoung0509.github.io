@@ -43,8 +43,9 @@ small gaps stay compact around metadata and controls.
 
 ## Motion
 
-Motion-cut. Only short hover transitions are allowed. No scroll reveals,
-bounces, parallax, or decorative animation.
+Motion is restrained. About may use one short introduction entrance and a
+disclosure transition, both respecting reduced motion. No repeated scroll reveals,
+bounces, or parallax.
 
 ## Interaction
 
@@ -66,13 +67,17 @@ bounces, parallax, or decorative animation.
 
 - Section headings are plain, sentence-case titles. Do not pair every heading with
   a small uppercase eyebrow.
-- A project is an article preview: number, domain, title, short premise, a compact
-  Problem / Solution / Result definition list, and a slash-separated stack line.
+- A project reads as a work note: domain, title, short premise, two plain paragraphs,
+  a compact feature list, and a slash-separated stack line. Avoid decorative numbering
+  and repeated Problem / Solution / Result labels.
 - Do not render project signals, technology names, actions, or statuses as pills.
 - Project summaries use horizontal rules and whitespace. They have no surface fill,
   outline, shadow, or rounded card container.
-- Expanded case studies may use rules and indentation for hierarchy, but not nested
-  banners or repeated bordered boxes.
+- Expanded case studies use plain headings and rules. At wide widths, a diagram
+  sits beside its explanation; on phones it follows the notes with local horizontal
+  scrolling. Diagrams have no decorative background or oversized frame.
+- The section index is an ordinary row of text links, never a floating tab bar.
+- Real project screenshots can break up the notes; show them without fake UI chrome.
 - Open-source work is a single-column record list. Status is quiet metadata; green is
   reserved for a small state icon or link interaction.
 - The About overview is prose, not a pair of statistic cards. If a fact repeats the
