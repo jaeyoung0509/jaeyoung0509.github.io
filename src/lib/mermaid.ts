@@ -9,6 +9,8 @@ function getEngine() {
     const color = (name: string) => style.getPropertyValue(name).trim();
     mermaid.initialize({
       startOnLoad: false, securityLevel: "strict", theme: "base",
+      htmlLabels: false,
+      flowchart: { useMaxWidth: true, nodeSpacing: 40, rankSpacing: 64, padding: 18 },
       themeVariables: {
         fontFamily: style.getPropertyValue("--font-body").trim(), fontSize: "14px",
         primaryColor: color("--page"), primaryTextColor: color("--ink"),
@@ -44,9 +46,20 @@ export function observeMermaid(root: HTMLElement) {
     renderQueue = renderQueue.then(async () => {
       if (disposed || !figure.isConnected) return;
       try {
+        // Font metrics must be stable before Mermaid measures SVG labels.
+        await document.fonts.ready;
         const mermaid = await getEngine();
         const { svg } = await mermaid.render(`diagram-${crypto.randomUUID()}`, chart);
-        if (!disposed && figure.isConnected) figure.innerHTML = svg;
+        if (!disposed && figure.isConnected) {
+          figure.innerHTML = svg;
+          const diagram = figure.querySelector("svg");
+          if (diagram) {
+            const width = diagram.viewBox.baseVal.width;
+            if (width > 0) diagram.style.width = `${width}px`;
+            diagram.setAttribute("role", "img");
+            diagram.setAttribute("aria-label", figure.getAttribute("aria-label") ?? "Architecture diagram");
+          }
+        }
       } catch {
         if (!disposed && figure.isConnected) showFallback(figure, chart);
       }

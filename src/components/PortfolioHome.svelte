@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
+  import { SvelteSet } from "svelte/reactivity";
   import { replaceState } from "$app/navigation";
   import { ArrowUpRight, ArrowDown, MapPin } from "lucide-svelte";
   import MermaidHandler from "$components/MermaidHandler.svelte";
@@ -10,6 +11,7 @@
   import { siteConfig } from "$lib/site";
   import Seo from "$components/Seo.svelte";
 
+  let activeSection = $state("about");
   let lang = $state<"en" | "ko">("ko");
   let expandedWork = $state<Record<string, boolean>>({
     paymonths: false,
@@ -53,9 +55,44 @@
       const hash = window.location.hash.replace(/^#/, "");
       if (hash && hash in expandedWork) {
         expandedWork[hash] = true;
+        tick().then(() => document.getElementById(hash)?.scrollIntoView({ behavior: "instant", block: "start" }));
       }
     }
+    const sections = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) activeSection = entry.target.id;
+      }
+    }, { rootMargin: "-10% 0px -60% 0px" });
+    document.querySelectorAll(".portfolio-section[id]").forEach(section => sections.observe(section));
+    return () => sections.disconnect();
   });
+
+  function revealPortfolio(node: HTMLElement) {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const animations = new SvelteSet<Animation>();
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.unobserve(entry.target);
+        if (preference.matches) continue;
+        const animation = entry.target.animate(
+          [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "translateY(0)" }],
+          { duration: 480, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
+        );
+        animations.add(animation);
+        animation.finished.then(() => animations.delete(animation)).catch(() => animations.delete(animation));
+      }
+    }, { threshold: 0.08 });
+    node.querySelectorAll(".hero-section, .section-title-row, .about-statement-layout, .work-reveal, .oss-reveal, .exp-list")
+      .forEach(element => observer.observe(element));
+    const stopMotion = () => { if (preference.matches) animations.forEach(animation => animation.cancel()); };
+    preference.addEventListener("change", stopMotion);
+    return { destroy() {
+      observer.disconnect();
+      animations.forEach(animation => animation.cancel());
+      preference.removeEventListener("change", stopMotion);
+    } };
+  }
 
   const c = $derived(portfolioContent[lang]);
   const projects = $derived(workProjects[lang]);
@@ -69,7 +106,7 @@
   locale={lang === "ko" ? "ko_KR" : "en_US"}
 />
 
-<div class="portfolio-container">
+<div class="portfolio-container" lang={lang} use:revealPortfolio>
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-top-meta">
@@ -151,6 +188,18 @@
       </div>
     </div>
   </section>
+
+  <nav class="portfolio-nav" aria-label={lang === "ko" ? "소개 페이지 목차" : "About page sections"}>
+    {#each [
+      { id: "about", label: c.about.title },
+      { id: "work", label: c.workSection.title },
+      { id: "oss", label: c.oss.title },
+      { id: "experience", label: c.experience.title },
+    ] as section (section.id)}
+      <a href={`#${section.id}`} class:is-current={activeSection === section.id}
+        aria-current={activeSection === section.id ? "location" : undefined}>{section.label}</a>
+    {/each}
+  </nav>
 
   <!-- Focus / Approach Section -->
   <section class="portfolio-section section-approach" id="about">

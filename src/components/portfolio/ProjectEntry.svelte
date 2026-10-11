@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+  import { fly } from "svelte/transition";
   import { ChevronDown } from "lucide-svelte";
   import type { WorkProject } from "$lib/work";
   import ProjectDetail from "./ProjectDetail.svelte";
@@ -19,7 +21,14 @@
     collapseCTA: string;
   } = $props();
 
-
+  let reducedMotion = $state(true);
+  onMount(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => { reducedMotion = preference.matches; };
+    sync();
+    preference.addEventListener("change", sync);
+    return () => preference.removeEventListener("change", sync);
+  });
 </script>
 
 <article id={project.slug} class="work-item" class:is-expanded={isExpanded}>
@@ -32,7 +41,25 @@
       <span class="work-domain-label">{project.domain}</span>
     </div>
 
-    <h3 class="work-title">{project.title}</h3>
+    <div class="work-heading-row">
+      <h3 class="work-title">{project.title}</h3>
+      <div class="work-action-col">
+        <button
+          type="button"
+          class="work-toggle-btn"
+          class:is-active={isExpanded}
+          onclick={() => onToggle(project.slug)}
+          aria-expanded={isExpanded}
+          aria-controls={`work-details-${project.slug}`}
+          aria-label={`${project.title}: ${isExpanded ? collapseCTA : expandCTA}`}
+        >
+          <span class="toggle-label">
+            {(isExpanded ? collapseCTA : expandCTA).replace(/[↓↑]\s*$/, "").trim()}
+          </span>
+          <ChevronDown size={13} class="toggle-icon" />
+        </button>
+      </div>
+    </div>
     <p class="work-premise">{project.premise}</p>
 
     <dl class="work-psr-group">
@@ -82,26 +109,10 @@
     </p>
 
     {#if isExpanded}
-      <div>
+      <div in:fly={{ y: reducedMotion ? 0 : 10, duration: reducedMotion ? 0 : 240 }}>
         <ProjectDetail {project} {lang} />
       </div>
     {/if}
   </div>
 
-  <div class="work-action-col">
-    <button
-      type="button"
-      class="work-toggle-btn"
-      class:is-active={isExpanded}
-      onclick={() => onToggle(project.slug)}
-      aria-expanded={isExpanded}
-      aria-controls={`work-details-${project.slug}`}
-      aria-label={isExpanded ? collapseCTA : expandCTA}
-    >
-      <span class="toggle-label">
-        {isExpanded ? collapseCTA : expandCTA}
-      </span>
-      <ChevronDown size={13} class="toggle-icon" />
-    </button>
-  </div>
 </article>

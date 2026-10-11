@@ -30,13 +30,18 @@
       <h4 class="cs-heading">
         {lang === "ko" ? "아키텍처 및 작업 흐름" : "Architecture & Job Flow"}
       </h4>
-      <figure class="mermaid-diagram" data-chart={project.mermaidDiagram}>
-        <div class="mermaid-loading">
-          {lang === "ko"
-            ? "다이어그램 로딩 중..."
-            : "Rendering architecture diagram..."}
-        </div>
-      </figure>
+      <p class="diagram-hint">
+        {lang === "ko" ? "작업 요청부터 결과 저장까지의 흐름입니다. 작은 화면에서는 좌우로 스크롤해 보세요." : "From job request to stored results. Scroll horizontally on smaller screens."}
+      </p>
+      {#key project.mermaidDiagram}
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard users can scroll the diagram with arrow keys.) -->
+        <figure class="mermaid-diagram" data-chart={project.mermaidDiagram}
+          tabindex="0" aria-label={`${project.title} — ${lang === "ko" ? "아키텍처 및 작업 흐름" : "Architecture & Job Flow"}`}>
+          <div class="mermaid-loading" role="status">
+            {lang === "ko" ? "다이어그램 로딩 중…" : "Rendering architecture diagram…"}
+          </div>
+        </figure>
+      {/key}
     </div>
   {/if}
 
