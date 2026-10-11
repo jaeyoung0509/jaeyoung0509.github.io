@@ -4,6 +4,7 @@ description: >-
   Zenith 메뉴바 아이콘의 좌클릭이 갑자기 우클릭처럼 동작하기 시작했습니다.
   Tauri에서 AppKit까지 내려가 원인을 찾고, 뒤이어 나타난 Ghost Click까지 고친 과정입니다.
 publishedAt: "2026-09-19"
+updatedAt: "2026-10-11"
 tags:
   - Tauri
   - Rust
@@ -39,7 +40,7 @@ coverAlt: macOS 메뉴바 아래로 열린 Zenith Quick Panel
 Tauri → tray-icon → AppKit → NSStatusItem
 ```
 
-결론부터 말하면 Zenith 코드보다는, `tray-icon`이 macOS에서 `NSStatusItem`과 `NSMenu`를 다루던 방식이 문제였습니다.
+확인해보니 `tray-icon`이 `NSStatusItem`에 `NSMenu`를 연결하는 방식 때문에 좌클릭 이벤트가 앱까지 전달되지 않고 있었습니다.
 
 ---
 
@@ -102,7 +103,7 @@ RightDown
 RightUp
 ```
 
-여기서 거의 원인이 확정됐습니다. `NSMenu`가 붙어 있으면 AppKit이 좌클릭을 먼저 가져가 메뉴를 열고, `tray-icon`이 기다리던 이벤트는 아래까지 내려오지 않았습니다.
+`NSMenu`를 연결하지 않으면 클릭 이벤트가 돌아왔습니다. 메뉴가 붙어 있을 때 AppKit이 좌클릭으로 메뉴를 열면서, `tray-icon`의 이벤트 처리까지 이어지지 않는 것으로 보였습니다.
 
 ## macOS가 갑자기 망가뜨린 건 아니었다
 
@@ -259,17 +260,13 @@ MouseUp   → toggle() → show()
 
 바탕화면을 눌러 `Focused(false)`로 닫힌 경우에는 트레이의 `MouseDown`을 거치지 않으니 플래그도 생기지 않습니다. 그 직후 메뉴바 아이콘을 눌러도 기다릴 필요 없이 바로 열립니다.
 
-임의의 시간을 재는 대신, 같은 클릭에서 나온 `MouseDown`과 `MouseUp`의 관계를 상태로 남긴 셈입니다.
+이제 오래 누른 클릭도 시간 제한 없이 같은 `MouseDown`과 `MouseUp`으로 처리합니다.
 
 ## 고치고 나서
 
-처음에는 그냥 Tauri 쪽 이벤트 버그인 줄 알았습니다.
+이번에는 두 문제를 따로 고쳤습니다. `NSMenu`를 우클릭할 때만 연결해 좌클릭 이벤트를 복구했고, 패널을 닫은 `MouseDown`의 뒤에 오는 `MouseUp`은 한 번 소비하도록 바꿨습니다.
 
-그런데 원인을 따라가 보니 `tray-icon`, `NSStatusItem`, `NSMenu`까지 내려가게 됐고, 그 문제를 고치고 나니 이번에는 `MouseDown → focus loss → MouseUp` 순서 때문에 또 버그가 났습니다.
-
-웹에서는 브라우저가 많이 가려주는 부분인데, 데스크톱 앱은 OS 이벤트까지 내려가기 시작하면 생각보다 볼 게 많았습니다.
-
-그래도 이렇게 동작을 하나씩 따라가 보는 과정 때문에 Zenith 만드는 게 재밌는 것 같습니다. 쉽지는 않지만요.
+처음에는 같은 트레이 클릭 문제로 보였는데, 하나는 AppKit의 메뉴 동작이었고 다른 하나는 Zenith의 이벤트 처리 순서였습니다. 클릭 이벤트를 나눠 기록해본 것이 원인을 찾는 데 도움이 됐습니다.
 
 ---
 

@@ -50,7 +50,7 @@ test("Temporal 대출 신청 글의 다이어그램과 목차를 정적으로 �
 
   assert.match(
     html,
-    /서버가 재시작돼도 업무는 계속됩니다/,
+    /Temporal로 대출 신청의 서류 제출부터 지급까지 구현하기/,
     "포스트 제목이 올바르지 않습니다",
   );
   assert.match(html, /class="mermaid-diagram"/, "Mermaid 다이어그램이 없습니다");
@@ -69,7 +69,7 @@ test("Go Mutex vs Atomic 벤치마크 글의 코드 및 벤치마크 결과를 �
 
   assert.match(
     html,
-    /Mutex는 왜 atomic보다 느릴까/,
+    /Go 카운터 벤치마크: Mutex, Atomic, 패딩을 비교해봤다/,
     "포스트 제목이 올바르지 않습니다",
   );
   assert.match(
